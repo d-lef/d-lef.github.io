@@ -379,17 +379,17 @@ class FlashcardApp {
         this.isCardFlipped = true;
     }
 
-    answerCard(difficulty) {
+    async answerCard(difficulty) {
         if (!this.isCardFlipped && this.studyMode !== 'type' && this.getCurrentCombinedMode() !== 'type') return;
         
         if (this.studyMode === 'combined') {
-            this.handleCombinedAnswer(difficulty);
+            await this.handleCombinedAnswer(difficulty);
         } else {
-            this.handleRegularAnswer(difficulty);
+            await this.handleRegularAnswer(difficulty);
         }
     }
     
-    handleCombinedAnswer(difficulty) {
+    async handleCombinedAnswer(difficulty) {
         const currentPair = this.combinedPairs[this.currentCardIndex];
         const card = currentPair.card;
         const mode = currentPair.mode;
