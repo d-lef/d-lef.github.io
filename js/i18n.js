@@ -28,10 +28,20 @@ class I18n {
                 // Stats
                 'stats.title': 'Study Statistics',
                 'stats.streak': 'Study Streak',
-                'stats.cards_today': 'Cards Studied Today',
+                'stats.reviews_today': 'Reviews Today',
+                'stats.accuracy_today': 'Today\'s Accuracy',
                 'stats.total_cards': 'Total Cards',
                 'stats.days': 'days',
                 'stats.cards': 'cards',
+                'stats.reviews': 'reviews',
+                'stats.no_study': 'No study',
+                'stats.light_study': 'Light study',
+                'stats.medium_study': 'Medium study',
+                'stats.intensive_study': 'Intensive study',
+                'stats.this_week': 'This Week',
+                'stats.total_reviews': 'Total Reviews',
+                'stats.avg_accuracy': 'Average Accuracy',
+                'stats.study_days': 'Study Days',
                 
                 // Study Mode
                 'study_mode.title': 'Choose Study Mode',
@@ -97,10 +107,20 @@ class I18n {
                 // Stats
                 'stats.title': 'Статистика изучения',
                 'stats.streak': 'Дни подряд',
-                'stats.cards_today': 'Карточек сегодня',
+                'stats.reviews_today': 'Повторений сегодня',
+                'stats.accuracy_today': 'Точность сегодня',
                 'stats.total_cards': 'Всего карточек',
                 'stats.days': 'дней',
                 'stats.cards': 'карточек',
+                'stats.reviews': 'повторений',
+                'stats.no_study': 'Не изучали',
+                'stats.light_study': 'Лёгкое изучение',
+                'stats.medium_study': 'Среднее изучение',
+                'stats.intensive_study': 'Интенсивное изучение',
+                'stats.this_week': 'На этой неделе',
+                'stats.total_reviews': 'Всего повторений',
+                'stats.avg_accuracy': 'Средняя точность',
+                'stats.study_days': 'Дней изучения',
                 
                 // Study Mode
                 'study_mode.title': 'Выберите режим изучения',

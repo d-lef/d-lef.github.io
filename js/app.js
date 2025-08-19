@@ -410,17 +410,24 @@ class FlashcardApp {
             cardState.bothCompleted = true;
             // Only now update the card with spaced repetition
             const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
-            this.updateCardInStorage(updatedCard);
+            await this.updateCardInStorage(updatedCard);
+            
+            // Track review stats
+            await this.trackReviewStat(difficulty);
+            
             this.studySession.cardsStudied++;
         }
         
         this.moveToNextPair();
     }
     
-    handleRegularAnswer(difficulty) {
+    async handleRegularAnswer(difficulty) {
         const card = this.currentStudyCards[this.currentCardIndex];
         const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
-        this.updateCardInStorage(updatedCard);
+        await this.updateCardInStorage(updatedCard);
+        
+        // Track review stats
+        await this.trackReviewStat(difficulty);
         
         this.studySession.cardsStudied++;
         this.currentCardIndex++;
@@ -437,6 +444,19 @@ class FlashcardApp {
         }
     }
     
+    async trackReviewStat(difficulty) {
+        try {
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            const isCorrect = difficulty === 'good' || difficulty === 'easy';
+            
+            if (window.supabaseService) {
+                await window.supabaseService.updateReviewStats(today, isCorrect);
+            }
+        } catch (error) {
+            console.error('Failed to track review stat:', error);
+        }
+    }
+
     async updateCardInStorage(updatedCard) {
         if (this.studySession.isStudyAll) {
             // Find the deck that contains this card and update it
@@ -734,13 +754,9 @@ class FlashcardApp {
     }
 
     async updateStats() {
-        const stats = storage.loadStats();
-        const decks = await storage.loadDecks();
-        const totalCards = decks.reduce((sum, deck) => sum + deck.cards.length, 0);
-        
-        document.getElementById('streak-count').textContent = stats.streak;
-        document.getElementById('cards-today').textContent = stats.cardsStudiedToday;
-        document.getElementById('total-cards').textContent = totalCards;
+        if (window.statistics) {
+            await window.statistics.refresh();
+        }
     }
 
     escapeHtml(text) {
@@ -750,6 +766,13 @@ class FlashcardApp {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     window.app = new FlashcardApp();
+    
+    // Initialize statistics after a short delay to ensure everything is loaded
+    setTimeout(async () => {
+        if (window.statistics) {
+            await window.statistics.initialize();
+        }
+    }, 1000);
 });

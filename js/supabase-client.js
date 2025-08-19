@@ -304,6 +304,9 @@ class SupabaseService {
                     case 'deleteCard':
                         await this.deleteCard(operation.data.cardId);
                         break;
+                    case 'updateReviewStats':
+                        await this.executeUpdateReviewStats(operation.data.date, operation.data.isCorrect);
+                        break;
                 }
             } catch (error) {
                 console.error('Failed to process sync operation:', error);
@@ -324,6 +327,109 @@ class SupabaseService {
         } catch (error) {
             console.error('Failed to load sync queue:', error);
             this.syncQueue = [];
+        }
+    }
+
+    async updateReviewStats(date, isCorrect) {
+        const operation = {
+            type: 'updateReviewStats',
+            data: { date, isCorrect },
+            timestamp: Date.now()
+        };
+
+        if (!this.isOnline) {
+            this.addToSyncQueue(operation);
+            return true;
+        }
+
+        try {
+            return await this.executeUpdateReviewStats(date, isCorrect);
+        } catch (error) {
+            console.error('Failed to update review stats:', error);
+            this.addToSyncQueue(operation);
+            return true;
+        }
+    }
+
+    async executeUpdateReviewStats(date, isCorrect) {
+        console.log('Updating review stats for:', { date, isCorrect });
+        
+        // Upsert review stats for the day
+        const { data, error } = await this.client
+            .from('review_stats')
+            .upsert({
+                day: date,
+                reviews: 1,
+                correct: isCorrect ? 1 : 0,
+                lapses: isCorrect ? 0 : 1
+            }, {
+                onConflict: 'day',
+                ignoreDuplicates: false
+            });
+
+        if (error) {
+            // If upsert failed, try to increment existing record
+            console.log('Upsert failed, trying increment approach:', error);
+            
+            // First get current stats
+            const { data: current, error: selectError } = await this.client
+                .from('review_stats')
+                .select('reviews, correct, lapses')
+                .eq('day', date)
+                .single();
+
+            if (selectError && selectError.code !== 'PGRST116') { // PGRST116 = no rows found
+                console.error('Failed to get current stats:', selectError);
+                throw selectError;
+            }
+
+            // Update with incremented values
+            const newStats = {
+                day: date,
+                reviews: (current?.reviews || 0) + 1,
+                correct: (current?.correct || 0) + (isCorrect ? 1 : 0),
+                lapses: (current?.lapses || 0) + (isCorrect ? 0 : 1)
+            };
+
+            const { error: updateError } = await this.client
+                .from('review_stats')
+                .upsert(newStats);
+
+            if (updateError) {
+                console.error('Failed to update review stats:', updateError);
+                throw updateError;
+            }
+        }
+
+        console.log('Review stats updated successfully');
+        return true;
+    }
+
+    async getReviewStats(startDate, endDate) {
+        try {
+            let query = this.client
+                .from('review_stats')
+                .select('day, reviews, correct, lapses')
+                .order('day', { ascending: false });
+
+            if (startDate) {
+                query = query.gte('day', startDate);
+            }
+            if (endDate) {
+                query = query.lte('day', endDate);
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Failed to get review stats:', error);
+                throw error;
+            }
+
+            return data || [];
+        } catch (error) {
+            console.error('Failed to fetch review stats:', error);
+            return [];
         }
     }
 
