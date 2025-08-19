@@ -1,28 +1,137 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Spaced Repetition</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard App</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/styles.css">
+    <meta name="theme-color" content="#4285f4">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
-  <h1>Review</h1>
-  <div id="q"></div>
-  <input id="a" autocomplete="off" />
-  <button id="check">Check</button>
-  <div id="result"></div>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <h1>📚 Flashcards</h1>
+            <nav>
+                <button id="decks-tab" class="tab-btn active">Decks</button>
+                <button id="stats-tab" class="tab-btn">Stats</button>
+            </nav>
+        </header>
 
-  <script src="/app.js"></script>
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js");
-    }
-  </script>
+        <!-- Decks View -->
+        <div id="decks-view" class="view active">
+            <div class="action-bar">
+                <button id="new-deck-btn" class="primary-btn">+ New Deck</button>
+            </div>
+            <div id="decks-list" class="decks-grid"></div>
+        </div>
+
+        <!-- Stats View -->
+        <div id="stats-view" class="view">
+            <div class="stats-container">
+                <h2>Study Statistics</h2>
+                <div class="stat-card">
+                    <h3>Study Streak</h3>
+                    <div id="streak-count" class="stat-number">0</div>
+                    <span class="stat-label">days</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Cards Studied Today</h3>
+                    <div id="cards-today" class="stat-number">0</div>
+                    <span class="stat-label">cards</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Cards</h3>
+                    <div id="total-cards" class="stat-number">0</div>
+                    <span class="stat-label">cards</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study View -->
+        <div id="study-view" class="view">
+            <div class="study-header">
+                <button id="back-to-decks" class="back-btn">← Back</button>
+                <div id="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+                <span id="card-counter">1/10</span>
+            </div>
+            
+            <div id="flashcard" class="flashcard">
+                <div class="card-content front">
+                    <div id="card-front" class="card-text"></div>
+                </div>
+                <div class="card-content back">
+                    <div id="card-back" class="card-text"></div>
+                    <div class="difficulty-buttons">
+                        <button id="again-btn" class="diff-btn again">Again</button>
+                        <button id="hard-btn" class="diff-btn hard">Hard</button>
+                        <button id="good-btn" class="diff-btn good">Good</button>
+                        <button id="easy-btn" class="diff-btn easy">Easy</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="study-actions">
+                <button id="flip-card" class="flip-btn">Flip Card</button>
+            </div>
+        </div>
+
+        <!-- Deck Management View -->
+        <div id="deck-view" class="view">
+            <div class="deck-header">
+                <button id="back-to-decks-from-deck" class="back-btn">← Back</button>
+                <h2 id="deck-title"></h2>
+                <button id="study-deck-btn" class="primary-btn">Study</button>
+            </div>
+            
+            <div class="action-bar">
+                <button id="new-card-btn" class="primary-btn">+ New Card</button>
+            </div>
+            
+            <div id="cards-list" class="cards-list"></div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="new-deck-modal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Deck</h3>
+            <input type="text" id="deck-name-input" placeholder="Deck name" maxlength="50">
+            <div class="modal-actions">
+                <button id="cancel-deck" class="secondary-btn">Cancel</button>
+                <button id="create-deck" class="primary-btn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="new-card-modal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Card</h3>
+            <div class="card-form">
+                <label for="card-front-input">Front:</label>
+                <textarea id="card-front-input" placeholder="Enter front side text" rows="3"></textarea>
+                
+                <label for="card-back-input">Back:</label>
+                <textarea id="card-back-input" placeholder="Enter back side text" rows="3"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="cancel-card" class="secondary-btn">Cancel</button>
+                <button id="create-card" class="primary-btn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/spaced-repetition.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
