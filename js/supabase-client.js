@@ -23,6 +23,20 @@ class SupabaseService {
 
     async syncDecks() {
         try {
+            console.log('Syncing decks from Supabase...');
+            
+            // First, test basic connection
+            const { data: testData, error: testError } = await this.client
+                .from('decks')
+                .select('count', { count: 'exact', head: true });
+            
+            if (testError) {
+                console.error('Supabase connection test failed:', testError);
+                throw testError;
+            }
+            
+            console.log('Supabase connection successful, deck count:', testData);
+            
             const { data, error } = await this.client
                 .from('decks')
                 .select(`
@@ -45,11 +59,18 @@ class SupabaseService {
                     )
                 `);
             
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase select error:', error);
+                throw error;
+            }
             
-            return this.transformDecksFromSupabase(data);
+            console.log('Raw Supabase data:', data);
+            const transformedDecks = this.transformDecksFromSupabase(data);
+            console.log('Transformed decks:', transformedDecks);
+            
+            return transformedDecks;
         } catch (error) {
-            console.error('Failed to sync decks from Supabase:', error);
+            console.error('Failed to sync decks from Supabase:', error.message, error);
             return null;
         }
     }
@@ -103,6 +124,8 @@ class SupabaseService {
     }
 
     async executeSaveDeck(deck, isNew) {
+        console.log('Executing save deck:', { deck, isNew });
+        
         const deckData = {
             id: deck.id,
             name: deck.name,
@@ -110,27 +133,44 @@ class SupabaseService {
         };
 
         if (isNew) {
-            const { error: deckError } = await this.client
+            console.log('Inserting new deck:', deckData);
+            const { data, error: deckError } = await this.client
                 .from('decks')
-                .insert([deckData]);
+                .insert([deckData])
+                .select();
             
-            if (deckError) throw deckError;
+            if (deckError) {
+                console.error('Deck insert error:', deckError);
+                throw deckError;
+            }
+            console.log('Deck inserted successfully:', data);
         } else {
-            const { error: deckError } = await this.client
+            console.log('Updating existing deck:', deckData.id);
+            const { data, error: deckError } = await this.client
                 .from('decks')
                 .update({
-                    name: deckData.name,
-                    updated_at: new Date().toISOString()
+                    name: deckData.name
                 })
-                .eq('id', deckData.id);
+                .eq('id', deckData.id)
+                .select();
             
-            if (deckError) throw deckError;
+            if (deckError) {
+                console.error('Deck update error:', deckError);
+                throw deckError;
+            }
+            console.log('Deck updated successfully:', data);
         }
 
         // Handle cards
         if (deck.cards && deck.cards.length > 0) {
+            console.log('Processing', deck.cards.length, 'cards');
             for (const card of deck.cards) {
-                await this.saveCard(card, deck.id, card.isNew);
+                try {
+                    await this.saveCard(card, deck.id, card.isNew || !card.reps);
+                } catch (error) {
+                    console.error('Failed to save card:', card.id, error);
+                    // Continue with other cards
+                }
             }
         }
 
@@ -138,35 +178,49 @@ class SupabaseService {
     }
 
     async saveCard(card, deckId, isNew = false) {
+        console.log('Saving card:', { cardId: card.id, deckId, isNew });
+        
         const cardData = {
             id: card.id,
             deck_id: deckId,
             front: card.front,
             back: card.back,
-            ease: card.ease || card.easeFactor || 2.5,
-            interval: card.interval || 1,
-            reps: card.reps || card.repetitions || 0,
-            lapses: card.lapses || 0,
-            grade: card.grade || null,
-            due_date: card.dueDate || card.nextReview ? new Date(card.dueDate || card.nextReview).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            last_reviewed: card.lastReviewed ? new Date(card.lastReviewed).toISOString().split('T')[0] : null,
-            created_at: card.createdAt || new Date().toISOString(),
+            ease: parseFloat(card.ease || card.easeFactor || 2.5),
+            interval: parseInt(card.interval || 1),
+            reps: parseInt(card.reps || card.repetitions || 0),
+            lapses: parseInt(card.lapses || 0),
+            grade: card.grade ? parseInt(card.grade) : null,
+            due_date: card.dueDate || card.due_date || (card.nextReview ? new Date(card.nextReview).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+            last_reviewed: card.lastReviewed || card.last_reviewed || null,
+            created_at: card.createdAt || card.created_at || new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
 
+        console.log('Card data prepared:', cardData);
+
         if (isNew) {
-            const { error } = await this.client
+            const { data, error } = await this.client
                 .from('cards')
-                .insert([cardData]);
+                .insert([cardData])
+                .select();
             
-            if (error) throw error;
+            if (error) {
+                console.error('Card insert error:', error);
+                throw error;
+            }
+            console.log('Card inserted successfully:', data);
         } else {
-            const { error } = await this.client
+            const { data, error } = await this.client
                 .from('cards')
                 .update(cardData)
-                .eq('id', cardData.id);
+                .eq('id', cardData.id)
+                .select();
             
-            if (error) throw error;
+            if (error) {
+                console.error('Card update error:', error);
+                throw error;
+            }
+            console.log('Card updated successfully:', data);
         }
 
         return true;
