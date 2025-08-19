@@ -390,9 +390,6 @@ class FlashcardApp {
     }
     
     async handleCombinedAnswer(difficulty) {
-        console.log('DEBUG: handleCombinedAnswer called with:', difficulty);
-        console.log('DEBUG: function is async?', this.handleCombinedAnswer.constructor.name === 'AsyncFunction');
-        
         const currentPair = this.combinedPairs[this.currentCardIndex];
         const card = currentPair.card;
         const mode = currentPair.mode;
@@ -413,19 +410,10 @@ class FlashcardApp {
             cardState.bothCompleted = true;
             // Only now update the card with spaced repetition
             const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
+            await this.updateCardInStorage(updatedCard);
             
-            console.log('DEBUG: About to call updateCardInStorage');
-            try {
-                await this.updateCardInStorage(updatedCard);
-                console.log('DEBUG: updateCardInStorage completed');
-                
-                // Track review stats
-                console.log('DEBUG: About to call trackReviewStat');
-                await this.trackReviewStat(difficulty);
-                console.log('DEBUG: trackReviewStat completed');
-            } catch (error) {
-                console.error('DEBUG: Error in async calls:', error);
-            }
+            // Track review stats
+            await this.trackReviewStat(difficulty);
             
             this.studySession.cardsStudied++;
         }
