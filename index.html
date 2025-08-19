@@ -61,16 +61,23 @@
             <div class="study-mode-options">
                 <div class="mode-option" id="flip-mode">
                     <div class="mode-icon">🔄</div>
-                    <h3>Flip Cards</h3>
+                    <h3>Flip Cards Only</h3>
                     <p>Traditional flashcard mode. See the front, flip to reveal answer, rate difficulty.</p>
                     <button class="mode-select-btn" data-mode="flip">Start Flip Mode</button>
                 </div>
                 
                 <div class="mode-option" id="type-mode">
                     <div class="mode-icon">⌨️</div>
-                    <h3>Type Answer</h3>
+                    <h3>Type Answer Only</h3>
                     <p>Type your answer and check if it's correct. More challenging and active recall.</p>
                     <button class="mode-select-btn" data-mode="type">Start Type Mode</button>
+                </div>
+                
+                <div class="mode-option" id="combined-mode">
+                    <div class="mode-icon">🎯</div>
+                    <h3>Combined Mode</h3>
+                    <p><strong>Rigorous study:</strong> Each card requires BOTH typing and flipping to pass. Best for retention!</p>
+                    <button class="mode-select-btn" data-mode="combined">Start Combined Mode</button>
                 </div>
             </div>
         </div>
@@ -83,6 +90,23 @@
                     <div id="progress-fill"></div>
                 </div>
                 <span id="card-counter">1/10</span>
+            </div>
+            
+            <!-- Combined Mode Progress -->
+            <div id="combined-progress" class="combined-progress" style="display: none;">
+                <div class="progress-steps">
+                    <div class="step" id="step-typing">
+                        <div class="step-icon">⌨️</div>
+                        <div class="step-label">Type Answer</div>
+                        <div class="step-status" id="typing-status">●</div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step" id="step-flipping">
+                        <div class="step-icon">🔄</div>
+                        <div class="step-label">Review Card</div>
+                        <div class="step-status" id="flipping-status">●</div>
+                    </div>
+                </div>
             </div>
             
             <div id="flashcard" class="flashcard">
