@@ -74,12 +74,20 @@ class FlashcardApp {
 
         document.addEventListener('keydown', (e) => {
             if (this.getCurrentView() === 'study') {
-                if (e.code === 'Space') {
+                // Don't trigger shortcuts if user is typing in an input field
+                const isTyping = document.activeElement.tagName === 'INPUT' || 
+                                document.activeElement.tagName === 'TEXTAREA';
+                
+                if (e.code === 'Space' && !isTyping) {
                     e.preventDefault();
-                    if (!this.isCardFlipped) {
-                        this.flipCard();
+                    // Only allow spacebar flip in flip mode or flip phase of combined mode
+                    if (this.studyMode === 'flip' || 
+                        (this.studyMode === 'combined' && this.combinedState?.currentStep === 'flipping')) {
+                        if (!this.isCardFlipped) {
+                            this.flipCard();
+                        }
                     }
-                } else if (this.isCardFlipped) {
+                } else if (this.isCardFlipped && !isTyping) {
                     switch (e.key) {
                         case '1': this.answerCard('again'); break;
                         case '2': this.answerCard('hard'); break;
