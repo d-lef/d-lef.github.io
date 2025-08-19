@@ -135,8 +135,8 @@ class FlashcardApp {
         this.showView('decks');
     }
 
-    renderDecks() {
-        const decks = storage.loadDecks();
+    async renderDecks() {
+        const decks = await storage.loadDecks();
         const decksList = document.getElementById('decks-list');
         
         if (decks.length === 0) {
@@ -156,15 +156,15 @@ class FlashcardApp {
         }).join('');
         
         document.querySelectorAll('.deck-card').forEach(card => {
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', async (e) => {
                 const deckId = e.currentTarget.dataset.deckId;
-                this.openDeck(deckId);
+                await this.openDeck(deckId);
             });
         });
     }
 
-    openDeck(deckId) {
-        const decks = storage.loadDecks();
+    async openDeck(deckId) {
+        const decks = await storage.loadDecks();
         this.currentDeck = decks.find(d => d.id === deckId);
         if (this.currentDeck) {
             this.showView('deck');
@@ -432,10 +432,10 @@ class FlashcardApp {
         }
     }
     
-    updateCardInStorage(updatedCard) {
+    async updateCardInStorage(updatedCard) {
         if (this.studySession.isStudyAll) {
             // Find the deck that contains this card and update it
-            const decks = storage.loadDecks();
+            const decks = await storage.loadDecks();
             const targetDeck = decks.find(deck => 
                 deck.cards.some(c => c.id === updatedCard.id)
             );
@@ -443,7 +443,7 @@ class FlashcardApp {
                 const cardIndex = targetDeck.cards.findIndex(c => c.id === updatedCard.id);
                 if (cardIndex >= 0) {
                     targetDeck.cards[cardIndex] = updatedCard;
-                    storage.saveDeck(targetDeck);
+                    await storage.saveDeck(targetDeck);
                 }
             }
         } else {
@@ -451,7 +451,7 @@ class FlashcardApp {
             const deckIndex = this.currentDeck.cards.findIndex(c => c.id === updatedCard.id);
             if (deckIndex >= 0) {
                 this.currentDeck.cards[deckIndex] = updatedCard;
-                storage.saveDeck(this.currentDeck);
+                await storage.saveDeck(this.currentDeck);
             }
         }
     }
@@ -598,7 +598,7 @@ class FlashcardApp {
         document.getElementById('deck-name-input').value = '';
     }
 
-    createDeck() {
+    async createDeck() {
         const name = document.getElementById('deck-name-input').value.trim();
         if (!name) {
             alert('Please enter a deck name');
@@ -606,13 +606,13 @@ class FlashcardApp {
         }
         
         const newDeck = {
-            id: storage.generateId(),
+            id: storage.generateUUID(),
             name,
             cards: [],
             createdAt: new Date().toISOString()
         };
         
-        if (storage.saveDeck(newDeck)) {
+        if (await storage.saveDeck(newDeck)) {
             this.hideNewDeckModal();
             this.renderDecks();
         } else {
@@ -651,7 +651,7 @@ class FlashcardApp {
         document.getElementById('card-front-input').focus();
     }
 
-    saveCard() {
+    async saveCard() {
         const front = document.getElementById('card-front-input').value.trim();
         const back = document.getElementById('card-back-input').value.trim();
         
@@ -668,16 +668,23 @@ class FlashcardApp {
         } else {
             // Create new card
             const newCard = {
-                id: storage.generateId(),
+                id: storage.generateUUID(),
                 front,
                 back,
                 createdAt: new Date().toISOString(),
-                reviewCount: 0
+                // SM-2 defaults
+                ease: 2.5,
+                interval: 1,
+                reps: 0,
+                lapses: 0,
+                due_date: new Date().toISOString().split('T')[0],
+                reviewCount: 0,
+                isNew: true
             };
             this.currentDeck.cards.push(newCard);
         }
         
-        if (storage.saveDeck(this.currentDeck)) {
+        if (await storage.saveDeck(this.currentDeck)) {
             this.hideNewCardModal();
             this.renderDeckView();
         } else {
@@ -685,8 +692,8 @@ class FlashcardApp {
         }
     }
 
-    startStudyAllSession() {
-        const decks = storage.loadDecks();
+    async startStudyAllSession() {
+        const decks = await storage.loadDecks();
         const allCards = [];
         
         // Collect all cards from all decks
@@ -721,9 +728,9 @@ class FlashcardApp {
         this.showView('study-mode');
     }
 
-    updateStats() {
+    async updateStats() {
         const stats = storage.loadStats();
-        const decks = storage.loadDecks();
+        const decks = await storage.loadDecks();
         const totalCards = decks.reduce((sum, deck) => sum + deck.cards.length, 0);
         
         document.getElementById('streak-count').textContent = stats.streak;

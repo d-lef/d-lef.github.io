@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v7';
+const CACHE_NAME = 'flashcard-app-v8';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,6 +6,7 @@ const urlsToCache = [
   '/js/app.js',
   '/js/storage.js',
   '/js/spaced-repetition.js',
+  '/js/supabase-client.js',
   '/manifest.json'
 ];
 

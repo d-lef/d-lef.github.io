@@ -1,78 +1,93 @@
 class SpacedRepetition {
     constructor() {
-        this.defaultInterval = 1;
-        this.easyBonus = 1.3;
-        this.intervalModifier = 1.0;
-        this.maxInterval = 36500;
+        this.maxInterval = 36500; // ~100 years max
     }
 
+    // Proper SM-2 Algorithm implementation
     calculateNextReview(card, difficulty) {
         const now = new Date();
-        let interval = card.interval || this.defaultInterval;
-        let easeFactor = card.easeFactor || 2.5;
-        let repetitions = card.repetitions || 0;
+        let interval = card.interval || 1;
+        let ease = card.ease || card.easeFactor || 2.5;
+        let reps = card.reps || card.repetitions || 0;
+        let lapses = card.lapses || 0;
+        let grade;
 
+        // Map difficulty to SM-2 grades (0-5)
         switch (difficulty) {
             case 'again':
-                repetitions = 0;
-                interval = 1;
-                easeFactor = Math.max(1.3, easeFactor - 0.2);
+                grade = 0;
                 break;
-                
             case 'hard':
-                repetitions += 1;
-                interval = Math.max(1, Math.round(interval * 1.2));
-                easeFactor = Math.max(1.3, easeFactor - 0.15);
+                grade = 2;
                 break;
-                
             case 'good':
-                repetitions += 1;
-                if (repetitions === 1) {
-                    interval = 6;
-                } else if (repetitions === 2) {
-                    interval = Math.round(interval * easeFactor);
-                } else {
-                    interval = Math.round(interval * easeFactor * this.intervalModifier);
-                }
+                grade = 3;
                 break;
-                
             case 'easy':
-                repetitions += 1;
-                if (repetitions === 1) {
-                    interval = 4;
-                } else if (repetitions === 2) {
-                    interval = Math.round(interval * easeFactor * this.easyBonus);
-                } else {
-                    interval = Math.round(interval * easeFactor * this.intervalModifier * this.easyBonus);
-                }
-                easeFactor = Math.min(5.0, easeFactor + 0.15);
+                grade = 5;
                 break;
+            default:
+                grade = 3;
         }
 
+        // SM-2 Algorithm
+        if (grade < 3) {
+            // Failed review - reset repetitions and increase lapses
+            reps = 0;
+            lapses += 1;
+            interval = 1;
+        } else {
+            // Successful review
+            reps += 1;
+            
+            if (reps === 1) {
+                interval = 1;
+            } else if (reps === 2) {
+                interval = 6;
+            } else {
+                interval = Math.round(interval * ease);
+            }
+        }
+
+        // Update ease factor based on grade
+        ease = ease + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
+        ease = Math.max(1.3, Math.min(5.0, ease));
+
+        // Cap maximum interval
         interval = Math.min(interval, this.maxInterval);
-        
+
+        // Calculate next review date
         const nextReview = new Date(now);
         nextReview.setDate(nextReview.getDate() + interval);
 
         return {
             interval,
-            easeFactor,
-            repetitions,
+            ease,
+            reps,
+            lapses,
+            grade,
+            dueDate: nextReview.toISOString().split('T')[0], // Date only
+            lastReviewed: now.toISOString().split('T')[0], // Date only
             nextReview: nextReview.toISOString(),
-            lastReviewed: now.toISOString()
+            // Legacy compatibility
+            easeFactor: ease,
+            repetitions: reps
         };
     }
 
     getCardsForStudy(deck, limit = 20) {
-        const now = new Date();
+        const today = new Date().toISOString().split('T')[0];
         const studyCards = [];
 
         for (const card of deck.cards) {
-            if (!card.nextReview) {
+            const dueDate = card.dueDate || card.due_date || card.nextReview;
+            
+            if (!dueDate || (card.reps || card.repetitions || 0) === 0) {
+                // New card
                 studyCards.push({...card, isNew: true});
             } else {
-                const nextReviewDate = new Date(card.nextReview);
-                if (nextReviewDate <= now) {
+                const cardDueDate = dueDate.split('T')[0]; // Handle both date and datetime
+                if (cardDueDate <= today) {
                     studyCards.push({...card, isDue: true});
                 }
             }
@@ -84,8 +99,11 @@ class SpacedRepetition {
             if (a.isDue && !b.isDue) return -1;
             if (!a.isDue && b.isDue) return 1;
             
-            if (a.nextReview && b.nextReview) {
-                return new Date(a.nextReview) - new Date(b.nextReview);
+            const aDue = a.dueDate || a.due_date || a.nextReview;
+            const bDue = b.dueDate || b.due_date || b.nextReview;
+            
+            if (aDue && bDue) {
+                return new Date(aDue) - new Date(bDue);
             }
             return 0;
         });
@@ -94,15 +112,18 @@ class SpacedRepetition {
     }
 
     getDueCount(deck) {
-        const now = new Date();
+        const today = new Date().toISOString().split('T')[0];
         let dueCount = 0;
 
         for (const card of deck.cards) {
-            if (!card.nextReview) {
+            const dueDate = card.dueDate || card.due_date || card.nextReview;
+            
+            if (!dueDate || (card.reps || card.repetitions || 0) === 0) {
+                // New card
                 dueCount++;
             } else {
-                const nextReviewDate = new Date(card.nextReview);
-                if (nextReviewDate <= now) {
+                const cardDueDate = dueDate.split('T')[0]; // Handle both date and datetime
+                if (cardDueDate <= today) {
                     dueCount++;
                 }
             }
