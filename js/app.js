@@ -91,10 +91,20 @@ class FlashcardApp {
     }
 
     showView(viewName) {
+        console.log('showView called with:', viewName);
+        
         document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         
-        document.getElementById(`${viewName}-view`).classList.add('active');
+        const targetView = document.getElementById(`${viewName}-view`);
+        console.log('Target view element:', targetView);
+        
+        if (targetView) {
+            targetView.classList.add('active');
+        } else {
+            console.error('Could not find view element:', `${viewName}-view`);
+        }
+        
         const tabBtn = document.getElementById(`${viewName}-tab`);
         if (tabBtn) tabBtn.classList.add('active');
         
@@ -193,14 +203,23 @@ class FlashcardApp {
     }
 
     showStudyModeSelection() {
-        if (!this.currentDeck) return;
+        console.log('showStudyModeSelection called');
+        console.log('currentDeck:', this.currentDeck);
+        
+        if (!this.currentDeck) {
+            console.log('No current deck, returning');
+            return;
+        }
         
         const studyCards = spacedRepetition.getCardsForStudy(this.currentDeck);
+        console.log('studyCards:', studyCards.length);
+        
         if (studyCards.length === 0) {
             alert('No cards to study right now!');
             return;
         }
         
+        console.log('Showing study-mode view');
         this.showView('study-mode');
     }
     
