@@ -5,6 +5,7 @@ class FlashcardApp {
         this.currentCardIndex = 0;
         this.isCardFlipped = false;
         this.studySession = null;
+        this.editingCard = null;
         
         this.initializeApp();
     }
@@ -21,10 +22,11 @@ class FlashcardApp {
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
         document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardModal());
+        document.getElementById('study-all-btn').addEventListener('click', () => this.startStudyAllSession());
         
         document.getElementById('create-deck').addEventListener('click', () => this.createDeck());
         document.getElementById('cancel-deck').addEventListener('click', () => this.hideNewDeckModal());
-        document.getElementById('create-card').addEventListener('click', () => this.createCard());
+        document.getElementById('save-card').addEventListener('click', () => this.saveCard());
         document.getElementById('cancel-card').addEventListener('click', () => this.hideNewCardModal());
         
         document.getElementById('flip-card').addEventListener('click', () => this.flipCard());
@@ -144,10 +146,22 @@ class FlashcardApp {
         
         cardsList.innerHTML = this.currentDeck.cards.map(card => `
             <div class="card-item">
-                <div class="card-item-front">${this.escapeHtml(card.front)}</div>
-                <div class="card-item-back">${this.escapeHtml(card.back)}</div>
+                <div class="card-item-content">
+                    <div class="card-item-front">${this.escapeHtml(card.front)}</div>
+                    <div class="card-item-back">${this.escapeHtml(card.back)}</div>
+                </div>
+                <button class="card-edit-btn" data-card-id="${card.id}">✏️ Edit</button>
             </div>
         `).join('');
+        
+        // Add event listeners for edit buttons
+        document.querySelectorAll('.card-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const cardId = e.target.dataset.cardId;
+                this.editCard(cardId);
+            });
+        });
     }
 
     startStudySession() {
@@ -203,10 +217,26 @@ class FlashcardApp {
         const card = this.currentStudyCards[this.currentCardIndex];
         const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
         
-        const deckIndex = this.currentDeck.cards.findIndex(c => c.id === card.id);
-        if (deckIndex >= 0) {
-            this.currentDeck.cards[deckIndex] = updatedCard;
-            storage.saveDeck(this.currentDeck);
+        if (this.studySession.isStudyAll) {
+            // Find the deck that contains this card and update it
+            const decks = storage.loadDecks();
+            const targetDeck = decks.find(deck => 
+                deck.cards.some(c => c.id === card.id)
+            );
+            if (targetDeck) {
+                const cardIndex = targetDeck.cards.findIndex(c => c.id === card.id);
+                if (cardIndex >= 0) {
+                    targetDeck.cards[cardIndex] = updatedCard;
+                    storage.saveDeck(targetDeck);
+                }
+            }
+        } else {
+            // Single deck study
+            const deckIndex = this.currentDeck.cards.findIndex(c => c.id === card.id);
+            if (deckIndex >= 0) {
+                this.currentDeck.cards[deckIndex] = updatedCard;
+                storage.saveDeck(this.currentDeck);
+            }
         }
         
         this.studySession.cardsStudied++;
@@ -281,6 +311,11 @@ class FlashcardApp {
 
     showNewCardModal() {
         if (!this.currentDeck) return;
+        this.editingCard = null;
+        document.getElementById('card-modal-title').textContent = 'Create New Card';
+        document.getElementById('save-card').textContent = 'Create';
+        document.getElementById('card-front-input').value = '';
+        document.getElementById('card-back-input').value = '';
         document.getElementById('new-card-modal').classList.add('active');
         document.getElementById('card-front-input').focus();
     }
@@ -289,9 +324,23 @@ class FlashcardApp {
         document.getElementById('new-card-modal').classList.remove('active');
         document.getElementById('card-front-input').value = '';
         document.getElementById('card-back-input').value = '';
+        this.editingCard = null;
     }
 
-    createCard() {
+    editCard(cardId) {
+        const card = this.currentDeck.cards.find(c => c.id === cardId);
+        if (!card) return;
+        
+        this.editingCard = card;
+        document.getElementById('card-modal-title').textContent = 'Edit Card';
+        document.getElementById('save-card').textContent = 'Save';
+        document.getElementById('card-front-input').value = card.front;
+        document.getElementById('card-back-input').value = card.back;
+        document.getElementById('new-card-modal').classList.add('active');
+        document.getElementById('card-front-input').focus();
+    }
+
+    saveCard() {
         const front = document.getElementById('card-front-input').value.trim();
         const back = document.getElementById('card-back-input').value.trim();
         
@@ -300,22 +349,65 @@ class FlashcardApp {
             return;
         }
         
-        const newCard = {
-            id: storage.generateId(),
-            front,
-            back,
-            createdAt: new Date().toISOString(),
-            reviewCount: 0
-        };
-        
-        this.currentDeck.cards.push(newCard);
+        if (this.editingCard) {
+            // Edit existing card
+            this.editingCard.front = front;
+            this.editingCard.back = back;
+            this.editingCard.updatedAt = new Date().toISOString();
+        } else {
+            // Create new card
+            const newCard = {
+                id: storage.generateId(),
+                front,
+                back,
+                createdAt: new Date().toISOString(),
+                reviewCount: 0
+            };
+            this.currentDeck.cards.push(newCard);
+        }
         
         if (storage.saveDeck(this.currentDeck)) {
             this.hideNewCardModal();
             this.renderDeckView();
         } else {
-            alert('Failed to create card');
+            alert('Failed to save card');
         }
+    }
+
+    startStudyAllSession() {
+        const decks = storage.loadDecks();
+        const allCards = [];
+        
+        // Collect all cards from all decks
+        decks.forEach(deck => {
+            deck.cards.forEach(card => {
+                allCards.push({...card, deckName: deck.name});
+            });
+        });
+        
+        if (allCards.length === 0) {
+            alert('No cards available to study!');
+            return;
+        }
+        
+        // Use spaced repetition to get cards to study
+        const tempDeck = {cards: allCards};
+        this.currentStudyCards = spacedRepetition.getCardsForStudy(tempDeck, 50);
+        
+        if (this.currentStudyCards.length === 0) {
+            alert('No cards to study right now!');
+            return;
+        }
+        
+        this.currentCardIndex = 0;
+        this.isCardFlipped = false;
+        this.studySession = {
+            startTime: new Date(),
+            cardsStudied: 0,
+            isStudyAll: true
+        };
+        
+        this.showView('study');
     }
 
     updateStats() {

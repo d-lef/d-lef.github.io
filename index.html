@@ -23,6 +23,7 @@
         <!-- Decks View -->
         <div id="decks-view" class="view active">
             <div class="action-bar">
+                <button id="study-all-btn" class="primary-btn">📚 Study All Cards</button>
                 <button id="new-deck-btn" class="primary-btn">+ New Deck</button>
             </div>
             <div id="decks-list" class="decks-grid"></div>
@@ -110,7 +111,7 @@
 
     <div id="new-card-modal" class="modal">
         <div class="modal-content">
-            <h3>Create New Card</h3>
+            <h3 id="card-modal-title">Create New Card</h3>
             <div class="card-form">
                 <label for="card-front-input">Front:</label>
                 <textarea id="card-front-input" placeholder="Enter front side text" rows="3"></textarea>
@@ -120,7 +121,7 @@
             </div>
             <div class="modal-actions">
                 <button id="cancel-card" class="secondary-btn">Cancel</button>
-                <button id="create-card" class="primary-btn">Create</button>
+                <button id="save-card" class="primary-btn">Create</button>
             </div>
         </div>
     </div>
