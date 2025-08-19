@@ -51,6 +51,30 @@
             </div>
         </div>
 
+        <!-- Study Mode Selection View -->
+        <div id="study-mode-view" class="view">
+            <div class="study-mode-header">
+                <button id="back-to-decks-from-mode" class="back-btn">← Back</button>
+                <h2 id="study-mode-title">Choose Study Mode</h2>
+            </div>
+            
+            <div class="study-mode-options">
+                <div class="mode-option" id="flip-mode">
+                    <div class="mode-icon">🔄</div>
+                    <h3>Flip Cards</h3>
+                    <p>Traditional flashcard mode. See the front, flip to reveal answer, rate difficulty.</p>
+                    <button class="mode-select-btn" data-mode="flip">Start Flip Mode</button>
+                </div>
+                
+                <div class="mode-option" id="type-mode">
+                    <div class="mode-icon">⌨️</div>
+                    <h3>Type Answer</h3>
+                    <p>Type your answer and check if it's correct. More challenging and active recall.</p>
+                    <button class="mode-select-btn" data-mode="type">Start Type Mode</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Study View -->
         <div id="study-view" class="view">
             <div class="study-header">
@@ -72,6 +96,38 @@
                         <button id="hard-btn" class="diff-btn hard">Hard</button>
                         <button id="good-btn" class="diff-btn good">Good</button>
                         <button id="easy-btn" class="diff-btn easy">Easy</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Typing Interface -->
+            <div id="typing-interface" class="typing-interface" style="display: none;">
+                <div class="typing-question">
+                    <div id="typing-front" class="typing-text"></div>
+                </div>
+                <div class="typing-input-area">
+                    <input type="text" id="typing-input" placeholder="Type your answer..." autocomplete="off">
+                    <button id="check-answer" class="check-btn">Check Answer</button>
+                </div>
+                <div id="answer-result" class="answer-result" style="display: none;">
+                    <div class="result-header">
+                        <div id="result-status" class="result-status"></div>
+                    </div>
+                    <div class="answer-comparison">
+                        <div class="your-answer">
+                            <strong>Your answer:</strong>
+                            <div id="your-answer-text"></div>
+                        </div>
+                        <div class="correct-answer">
+                            <strong>Correct answer:</strong>
+                            <div id="correct-answer-text"></div>
+                        </div>
+                    </div>
+                    <div class="difficulty-buttons">
+                        <button id="again-btn-typing" class="diff-btn again">Again</button>
+                        <button id="hard-btn-typing" class="diff-btn hard">Hard</button>
+                        <button id="good-btn-typing" class="diff-btn good">Good</button>
+                        <button id="easy-btn-typing" class="diff-btn easy">Easy</button>
                     </div>
                 </div>
             </div>
