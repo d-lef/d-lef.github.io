@@ -8,7 +8,8 @@ class FlashcardApp {
         this.editingCard = null;
         this.studyMode = 'flip'; // 'flip', 'type', or 'combined'
         this.currentAnswer = '';
-        this.combinedState = null; // tracks combined mode progress
+        this.combinedPairs = []; // array of {card, mode, completed} objects
+        this.combinedCardStates = new Map(); // tracks completion per card
         
         this.initializeApp();
     }
@@ -82,7 +83,7 @@ class FlashcardApp {
                     e.preventDefault();
                     // Only allow spacebar flip in flip mode or flip phase of combined mode
                     if (this.studyMode === 'flip' || 
-                        (this.studyMode === 'combined' && this.combinedState?.currentStep === 'flipping')) {
+                        (this.studyMode === 'combined' && this.getCurrentCombinedMode() === 'flip')) {
                         if (!this.isCardFlipped) {
                             this.flipCard();
                         }
@@ -239,19 +240,20 @@ class FlashcardApp {
             };
         }
         
-        // Initialize combined mode state
+        // Initialize combined mode pairs
         if (mode === 'combined') {
-            this.combinedState = {
-                currentStep: 'typing', // 'typing' or 'flipping'
-                typingCompleted: false,
-                flippingCompleted: false
-            };
+            this.initializeCombinedPairs();
         }
         
         this.showView('study');
     }
 
     renderStudyCard() {
+        if (this.studyMode === 'combined') {
+            this.renderCombinedPairInterface();
+            return;
+        }
+        
         if (!this.currentStudyCards.length) return;
         
         const card = this.currentStudyCards[this.currentCardIndex];
@@ -264,11 +266,16 @@ class FlashcardApp {
         // Show appropriate interface based on study mode
         if (this.studyMode === 'type') {
             this.renderTypingInterface(card);
-        } else if (this.studyMode === 'combined') {
-            this.renderCombinedInterface(card);
         } else {
             this.renderFlipInterface(card);
         }
+    }
+    
+    getCurrentCombinedMode() {
+        if (this.studyMode !== 'combined' || this.currentCardIndex >= this.combinedPairs.length) {
+            return null;
+        }
+        return this.combinedPairs[this.currentCardIndex].mode;
     }
     
     renderFlipInterface(card) {
@@ -276,10 +283,8 @@ class FlashcardApp {
         document.getElementById('typing-interface').style.display = 'none';
         document.querySelector('.study-actions').style.display = 'block';
         
-        // Hide combined progress for non-combined modes
-        if (this.studyMode !== 'combined') {
-            document.getElementById('combined-progress').style.display = 'none';
-        }
+        // Always hide combined progress (we removed the step-by-step progress)
+        document.getElementById('combined-progress').style.display = 'none';
         
         document.getElementById('card-front').textContent = card.front;
         document.getElementById('card-back').textContent = card.back;
@@ -296,12 +301,8 @@ class FlashcardApp {
         document.getElementById('typing-interface').style.display = 'block';
         document.querySelector('.study-actions').style.display = 'none';
         
-        // Hide combined progress for type-only mode, show for combined mode
-        if (this.studyMode === 'combined') {
-            document.getElementById('combined-progress').style.display = 'block';
-        } else {
-            document.getElementById('combined-progress').style.display = 'none';
-        }
+        // Always hide combined progress (we removed the step-by-step progress)
+        document.getElementById('combined-progress').style.display = 'none';
         
         document.getElementById('typing-front').textContent = card.front;
         document.getElementById('typing-input').value = '';
@@ -311,42 +312,58 @@ class FlashcardApp {
         this.currentAnswer = card.back;
     }
     
-    renderCombinedInterface(card) {
-        // Show combined progress indicator
-        document.getElementById('combined-progress').style.display = 'block';
+    initializeCombinedPairs() {
+        this.combinedPairs = [];
+        this.combinedCardStates = new Map();
         
-        // Update step status
-        this.updateCombinedProgress();
+        // Create pairs for each card: (card, "type") and (card, "flip")
+        this.currentStudyCards.forEach(card => {
+            this.combinedPairs.push({ card: card, mode: 'type', completed: false });
+            this.combinedPairs.push({ card: card, mode: 'flip', completed: false });
+            
+            // Track completion state for each card
+            this.combinedCardStates.set(card.id, {
+                typeCompleted: false,
+                flipCompleted: false,
+                bothCompleted: false
+            });
+        });
         
-        if (this.combinedState.currentStep === 'typing') {
-            this.renderTypingInterface(card);
-        } else {
-            this.renderFlipInterface(card);
+        // Shuffle the pairs
+        this.shuffleArray(this.combinedPairs);
+        
+        console.log('Combined pairs created:', this.combinedPairs.length);
+    }
+    
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
     }
     
-    updateCombinedProgress() {
-        const typingStatus = document.getElementById('typing-status');
-        const flippingStatus = document.getElementById('flipping-status');
-        
-        // Reset classes
-        typingStatus.className = 'step-status';
-        flippingStatus.className = 'step-status';
-        
-        if (this.combinedState.currentStep === 'typing') {
-            typingStatus.classList.add('active');
-            typingStatus.textContent = '●';
-        } else if (this.combinedState.typingCompleted) {
-            typingStatus.classList.add('completed');
-            typingStatus.textContent = '✓';
+    renderCombinedPairInterface() {
+        if (this.currentCardIndex >= this.combinedPairs.length) {
+            this.finishStudySession();
+            return;
         }
         
-        if (this.combinedState.currentStep === 'flipping') {
-            flippingStatus.classList.add('active');
-            flippingStatus.textContent = '●';
-        } else if (this.combinedState.flippingCompleted) {
-            flippingStatus.classList.add('completed');
-            flippingStatus.textContent = '✓';
+        const currentPair = this.combinedPairs[this.currentCardIndex];
+        const card = currentPair.card;
+        const mode = currentPair.mode;
+        
+        // Hide combined progress indicator (no longer needed)
+        document.getElementById('combined-progress').style.display = 'none';
+        
+        // Update progress counter to show current pair
+        const remainingPairs = this.combinedPairs.filter(p => !p.completed).length;
+        document.getElementById('card-counter').textContent = 
+            `${this.combinedPairs.length - remainingPairs + 1}/${this.combinedPairs.length} (${mode})`;
+        
+        if (mode === 'type') {
+            this.renderTypingInterface(card);
+        } else {
+            this.renderFlipInterface(card);
         }
     }
 
@@ -358,35 +375,49 @@ class FlashcardApp {
     }
 
     answerCard(difficulty) {
-        if (!this.isCardFlipped) return;
+        if (!this.isCardFlipped && this.studyMode !== 'type' && this.getCurrentCombinedMode() !== 'type') return;
         
-        const card = this.currentStudyCards[this.currentCardIndex];
-        const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
-        
-        if (this.studySession.isStudyAll) {
-            // Find the deck that contains this card and update it
-            const decks = storage.loadDecks();
-            const targetDeck = decks.find(deck => 
-                deck.cards.some(c => c.id === card.id)
-            );
-            if (targetDeck) {
-                const cardIndex = targetDeck.cards.findIndex(c => c.id === card.id);
-                if (cardIndex >= 0) {
-                    targetDeck.cards[cardIndex] = updatedCard;
-                    storage.saveDeck(targetDeck);
-                }
-            }
+        if (this.studyMode === 'combined') {
+            this.handleCombinedAnswer(difficulty);
         } else {
-            // Single deck study
-            const deckIndex = this.currentDeck.cards.findIndex(c => c.id === card.id);
-            if (deckIndex >= 0) {
-                this.currentDeck.cards[deckIndex] = updatedCard;
-                storage.saveDeck(this.currentDeck);
-            }
+            this.handleRegularAnswer(difficulty);
+        }
+    }
+    
+    handleCombinedAnswer(difficulty) {
+        const currentPair = this.combinedPairs[this.currentCardIndex];
+        const card = currentPair.card;
+        const mode = currentPair.mode;
+        
+        // Mark this pair as completed
+        currentPair.completed = true;
+        
+        // Update card state tracking
+        const cardState = this.combinedCardStates.get(card.id);
+        if (mode === 'type') {
+            cardState.typeCompleted = true;
+        } else {
+            cardState.flipCompleted = true;
         }
         
-        this.studySession.cardsStudied++;
+        // Check if both modes are completed for this card
+        if (cardState.typeCompleted && cardState.flipCompleted && !cardState.bothCompleted) {
+            cardState.bothCompleted = true;
+            // Only now update the card with spaced repetition
+            const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
+            this.updateCardInStorage(updatedCard);
+            this.studySession.cardsStudied++;
+        }
         
+        this.moveToNextPair();
+    }
+    
+    handleRegularAnswer(difficulty) {
+        const card = this.currentStudyCards[this.currentCardIndex];
+        const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
+        this.updateCardInStorage(updatedCard);
+        
+        this.studySession.cardsStudied++;
         this.currentCardIndex++;
         
         if (this.currentCardIndex >= this.currentStudyCards.length) {
@@ -396,18 +427,44 @@ class FlashcardApp {
             if (this.studyMode === 'type') {
                 document.querySelector('.typing-input-area').style.display = 'flex';
                 document.getElementById('answer-result').style.display = 'none';
-            } else if (this.studyMode === 'combined') {
-                // Reset combined mode state for next card
-                this.combinedState = {
-                    currentStep: 'typing',
-                    typingCompleted: false,
-                    flippingCompleted: false
-                };
-                document.querySelector('.typing-input-area').style.display = 'flex';
-                document.getElementById('answer-result').style.display = 'none';
-                const continueBtn = document.getElementById('continue-to-flip');
-                if (continueBtn) continueBtn.remove();
             }
+            this.renderStudyCard();
+        }
+    }
+    
+    updateCardInStorage(updatedCard) {
+        if (this.studySession.isStudyAll) {
+            // Find the deck that contains this card and update it
+            const decks = storage.loadDecks();
+            const targetDeck = decks.find(deck => 
+                deck.cards.some(c => c.id === updatedCard.id)
+            );
+            if (targetDeck) {
+                const cardIndex = targetDeck.cards.findIndex(c => c.id === updatedCard.id);
+                if (cardIndex >= 0) {
+                    targetDeck.cards[cardIndex] = updatedCard;
+                    storage.saveDeck(targetDeck);
+                }
+            }
+        } else {
+            // Single deck study
+            const deckIndex = this.currentDeck.cards.findIndex(c => c.id === updatedCard.id);
+            if (deckIndex >= 0) {
+                this.currentDeck.cards[deckIndex] = updatedCard;
+                storage.saveDeck(this.currentDeck);
+            }
+        }
+    }
+    
+    moveToNextPair() {
+        this.currentCardIndex++;
+        
+        if (this.currentCardIndex >= this.combinedPairs.length) {
+            this.finishStudySession();
+        } else {
+            // Reset typing interface
+            document.querySelector('.typing-input-area').style.display = 'flex';
+            document.getElementById('answer-result').style.display = 'none';
             this.renderStudyCard();
         }
     }
@@ -496,49 +553,13 @@ class FlashcardApp {
         // Hide input area
         document.querySelector('.typing-input-area').style.display = 'none';
         
-        // Handle combined mode progression
-        if (this.studyMode === 'combined' && this.combinedState.currentStep === 'typing') {
-            this.combinedState.typingCompleted = true;
-            // Don't show difficulty buttons yet in combined mode
-            document.querySelector('.difficulty-buttons').style.display = 'none';
-            
-            // Add continue button for combined mode
-            this.showContinueToFlipButton();
+        // In combined mode, we handle completion differently
+        if (this.studyMode === 'combined') {
+            // Show difficulty buttons immediately for typing in combined mode
+            document.querySelector('.difficulty-buttons').style.display = 'grid';
         }
     }
     
-    showContinueToFlipButton() {
-        const existingBtn = document.getElementById('continue-to-flip');
-        if (existingBtn) existingBtn.remove();
-        
-        const continueBtn = document.createElement('button');
-        continueBtn.id = 'continue-to-flip';
-        continueBtn.className = 'flip-btn';
-        continueBtn.textContent = 'Continue to Card Review';
-        continueBtn.style.marginTop = '1rem';
-        
-        continueBtn.addEventListener('click', () => {
-            this.proceedToFlipMode();
-        });
-        
-        document.getElementById('answer-result').appendChild(continueBtn);
-    }
-    
-    proceedToFlipMode() {
-        this.combinedState.currentStep = 'flipping';
-        
-        // Reset typing interface
-        document.querySelector('.typing-input-area').style.display = 'flex';
-        document.getElementById('answer-result').style.display = 'none';
-        document.getElementById('typing-input').value = '';
-        
-        // Show flip interface
-        const card = this.currentStudyCards[this.currentCardIndex];
-        this.renderFlipInterface(card);
-        
-        // Update progress
-        this.updateCombinedProgress();
-    }
     
     finishStudySession() {
         const stats = storage.loadStats();
