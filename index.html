@@ -13,18 +13,47 @@
     <div id="app">
         <!-- Header -->
         <header>
-            <h1>📚 Flashcards</h1>
+            <div class="header-top">
+                <h1>📚 <span data-i18n="app.title">Flashcards</span></h1>
+                <button id="settings-btn" class="settings-btn" title="Settings">⚙️</button>
+            </div>
             <nav>
-                <button id="decks-tab" class="tab-btn active">Decks</button>
-                <button id="stats-tab" class="tab-btn">Stats</button>
+                <button id="decks-tab" class="tab-btn active" data-i18n="nav.decks">Decks</button>
+                <button id="stats-tab" class="tab-btn" data-i18n="nav.stats">Stats</button>
             </nav>
+            
+            <!-- Settings Panel -->
+            <div id="settings-panel" class="settings-panel">
+                <div class="setting-row">
+                    <span data-i18n="settings.theme">Theme</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                        <span class="toggle-labels">
+                            <span data-i18n="settings.light">Light</span>
+                            <span data-i18n="settings.dark">Dark</span>
+                        </span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <span data-i18n="settings.language">Language</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="lang-toggle">
+                        <span class="slider"></span>
+                        <span class="toggle-labels">
+                            <span>EN</span>
+                            <span>RU</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
         </header>
 
         <!-- Decks View -->
         <div id="decks-view" class="view active">
             <div class="action-bar">
-                <button id="study-all-btn" class="primary-btn">📚 Study All Cards</button>
-                <button id="new-deck-btn" class="primary-btn">+ New Deck</button>
+                <button id="study-all-btn" class="primary-btn">📚 <span data-i18n="actions.study_all">Study All Cards</span></button>
+                <button id="new-deck-btn" class="primary-btn">+ <span data-i18n="actions.new_deck">New Deck</span></button>
             </div>
             <div id="decks-list" class="decks-grid"></div>
         </div>
@@ -32,21 +61,21 @@
         <!-- Stats View -->
         <div id="stats-view" class="view">
             <div class="stats-container">
-                <h2>Study Statistics</h2>
+                <h2 data-i18n="stats.title">Study Statistics</h2>
                 <div class="stat-card">
-                    <h3>Study Streak</h3>
+                    <h3 data-i18n="stats.streak">Study Streak</h3>
                     <div id="streak-count" class="stat-number">0</div>
-                    <span class="stat-label">days</span>
+                    <span class="stat-label" data-i18n="stats.days">days</span>
                 </div>
                 <div class="stat-card">
-                    <h3>Cards Studied Today</h3>
+                    <h3 data-i18n="stats.cards_today">Cards Studied Today</h3>
                     <div id="cards-today" class="stat-number">0</div>
-                    <span class="stat-label">cards</span>
+                    <span class="stat-label" data-i18n="stats.cards">cards</span>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Cards</h3>
+                    <h3 data-i18n="stats.total_cards">Total Cards</h3>
                     <div id="total-cards" class="stat-number">0</div>
-                    <span class="stat-label">cards</span>
+                    <span class="stat-label" data-i18n="stats.cards">cards</span>
                 </div>
             </div>
         </div>
@@ -54,30 +83,30 @@
         <!-- Study Mode Selection View -->
         <div id="study-mode-view" class="view">
             <div class="study-mode-header">
-                <button id="back-to-decks-from-mode" class="back-btn">← Back</button>
-                <h2 id="study-mode-title">Choose Study Mode</h2>
+                <button id="back-to-decks-from-mode" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <h2 id="study-mode-title" data-i18n="study_mode.title">Choose Study Mode</h2>
             </div>
             
             <div class="study-mode-options">
                 <div class="mode-option" id="flip-mode">
                     <div class="mode-icon">🔄</div>
-                    <h3>Flip Cards Only</h3>
-                    <p>Traditional flashcard mode. See the front, flip to reveal answer, rate difficulty.</p>
-                    <button class="mode-select-btn" data-mode="flip">Start Flip Mode</button>
+                    <h3 data-i18n="study_mode.flip_title">Flip Cards Only</h3>
+                    <p data-i18n="study_mode.flip_desc">Traditional flashcard mode. See the front, flip to reveal answer, rate difficulty.</p>
+                    <button class="mode-select-btn" data-mode="flip" data-i18n="study_mode.start_flip">Start Flip Mode</button>
                 </div>
                 
                 <div class="mode-option" id="type-mode">
                     <div class="mode-icon">⌨️</div>
-                    <h3>Type Answer Only</h3>
-                    <p>Type your answer and check if it's correct. More challenging and active recall.</p>
-                    <button class="mode-select-btn" data-mode="type">Start Type Mode</button>
+                    <h3 data-i18n="study_mode.type_title">Type Answer Only</h3>
+                    <p data-i18n="study_mode.type_desc">Type your answer and check if it's correct. More challenging and active recall.</p>
+                    <button class="mode-select-btn" data-mode="type" data-i18n="study_mode.start_type">Start Type Mode</button>
                 </div>
                 
                 <div class="mode-option" id="combined-mode">
                     <div class="mode-icon">🎯</div>
-                    <h3>Combined Mode</h3>
-                    <p><strong>Rigorous study:</strong> Each card requires BOTH typing and flipping to pass. Best for retention!</p>
-                    <button class="mode-select-btn" data-mode="combined">Start Combined Mode</button>
+                    <h3 data-i18n="study_mode.combined_title">Combined Mode</h3>
+                    <p><strong data-i18n="study_mode.rigorous">Rigorous study:</strong> <span data-i18n="study_mode.combined_desc">Each card requires BOTH typing and flipping to pass. Best for retention!</span></p>
+                    <button class="mode-select-btn" data-mode="combined" data-i18n="study_mode.start_combined">Start Combined Mode</button>
                 </div>
             </div>
         </div>
@@ -85,7 +114,7 @@
         <!-- Study View -->
         <div id="study-view" class="view">
             <div class="study-header">
-                <button id="back-to-decks" class="back-btn">← Back</button>
+                <button id="back-to-decks" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
                 <div id="progress-bar">
                     <div id="progress-fill"></div>
                 </div>
@@ -97,13 +126,13 @@
                 <div class="progress-steps">
                     <div class="step" id="step-typing">
                         <div class="step-icon">⌨️</div>
-                        <div class="step-label">Type Answer</div>
+                        <div class="step-label" data-i18n="study.type_answer">Type Answer</div>
                         <div class="step-status" id="typing-status">●</div>
                     </div>
                     <div class="step-arrow">→</div>
                     <div class="step" id="step-flipping">
                         <div class="step-icon">🔄</div>
-                        <div class="step-label">Review Card</div>
+                        <div class="step-label" data-i18n="study.review_card">Review Card</div>
                         <div class="step-status" id="flipping-status">●</div>
                     </div>
                 </div>
@@ -116,10 +145,10 @@
                 <div class="card-content back">
                     <div id="card-back" class="card-text"></div>
                     <div class="difficulty-buttons">
-                        <button id="again-btn" class="diff-btn again">Again</button>
-                        <button id="hard-btn" class="diff-btn hard">Hard</button>
-                        <button id="good-btn" class="diff-btn good">Good</button>
-                        <button id="easy-btn" class="diff-btn easy">Easy</button>
+                        <button id="again-btn" class="diff-btn again" data-i18n="difficulty.again">Again</button>
+                        <button id="hard-btn" class="diff-btn hard" data-i18n="difficulty.hard">Hard</button>
+                        <button id="good-btn" class="diff-btn good" data-i18n="difficulty.good">Good</button>
+                        <button id="easy-btn" class="diff-btn easy" data-i18n="difficulty.easy">Easy</button>
                     </div>
                 </div>
             </div>
@@ -130,8 +159,8 @@
                     <div id="typing-front" class="typing-text"></div>
                 </div>
                 <div class="typing-input-area">
-                    <input type="text" id="typing-input" placeholder="Type your answer..." autocomplete="off">
-                    <button id="check-answer" class="check-btn">Check Answer</button>
+                    <input type="text" id="typing-input" data-i18n-placeholder="study.type_placeholder" placeholder="Type your answer..." autocomplete="off">
+                    <button id="check-answer" class="check-btn" data-i18n="study.check_answer">Check Answer</button>
                 </div>
                 <div id="answer-result" class="answer-result" style="display: none;">
                     <div class="result-header">
@@ -139,38 +168,38 @@
                     </div>
                     <div class="answer-comparison">
                         <div class="your-answer">
-                            <strong>Your answer:</strong>
+                            <strong data-i18n="study.your_answer">Your answer:</strong>
                             <div id="your-answer-text"></div>
                         </div>
                         <div class="correct-answer">
-                            <strong>Correct answer:</strong>
+                            <strong data-i18n="study.correct_answer">Correct answer:</strong>
                             <div id="correct-answer-text"></div>
                         </div>
                     </div>
                     <div class="difficulty-buttons">
-                        <button id="again-btn-typing" class="diff-btn again">Again</button>
-                        <button id="hard-btn-typing" class="diff-btn hard">Hard</button>
-                        <button id="good-btn-typing" class="diff-btn good">Good</button>
-                        <button id="easy-btn-typing" class="diff-btn easy">Easy</button>
+                        <button id="again-btn-typing" class="diff-btn again" data-i18n="difficulty.again">Again</button>
+                        <button id="hard-btn-typing" class="diff-btn hard" data-i18n="difficulty.hard">Hard</button>
+                        <button id="good-btn-typing" class="diff-btn good" data-i18n="difficulty.good">Good</button>
+                        <button id="easy-btn-typing" class="diff-btn easy" data-i18n="difficulty.easy">Easy</button>
                     </div>
                 </div>
             </div>
             
             <div class="study-actions">
-                <button id="flip-card" class="flip-btn">Flip Card</button>
+                <button id="flip-card" class="flip-btn" data-i18n="study.flip_card">Flip Card</button>
             </div>
         </div>
 
         <!-- Deck Management View -->
         <div id="deck-view" class="view">
             <div class="deck-header">
-                <button id="back-to-decks-from-deck" class="back-btn">← Back</button>
+                <button id="back-to-decks-from-deck" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
                 <h2 id="deck-title"></h2>
-                <button id="study-deck-btn" class="primary-btn">Study</button>
+                <button id="study-deck-btn" class="primary-btn" data-i18n="actions.study">Study</button>
             </div>
             
             <div class="action-bar">
-                <button id="new-card-btn" class="primary-btn">+ New Card</button>
+                <button id="new-card-btn" class="primary-btn">+ <span data-i18n="actions.new_card">New Card</span></button>
             </div>
             
             <div id="cards-list" class="cards-list"></div>
@@ -180,28 +209,28 @@
     <!-- Modals -->
     <div id="new-deck-modal" class="modal">
         <div class="modal-content">
-            <h3>Create New Deck</h3>
-            <input type="text" id="deck-name-input" placeholder="Deck name" maxlength="50">
+            <h3 data-i18n="modal.create_deck">Create New Deck</h3>
+            <input type="text" id="deck-name-input" data-i18n-placeholder="modal.deck_name" placeholder="Deck name" maxlength="50">
             <div class="modal-actions">
-                <button id="cancel-deck" class="secondary-btn">Cancel</button>
-                <button id="create-deck" class="primary-btn">Create</button>
+                <button id="cancel-deck" class="secondary-btn" data-i18n="actions.cancel">Cancel</button>
+                <button id="create-deck" class="primary-btn" data-i18n="actions.create">Create</button>
             </div>
         </div>
     </div>
 
     <div id="new-card-modal" class="modal">
         <div class="modal-content">
-            <h3 id="card-modal-title">Create New Card</h3>
+            <h3 id="card-modal-title" data-i18n="modal.create_card">Create New Card</h3>
             <div class="card-form">
-                <label for="card-front-input">Front:</label>
-                <textarea id="card-front-input" placeholder="Enter front side text" rows="3"></textarea>
+                <label for="card-front-input" data-i18n="modal.front">Front:</label>
+                <textarea id="card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
                 
-                <label for="card-back-input">Back:</label>
-                <textarea id="card-back-input" placeholder="Enter back side text" rows="3"></textarea>
+                <label for="card-back-input" data-i18n="modal.back">Back:</label>
+                <textarea id="card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
             </div>
             <div class="modal-actions">
-                <button id="cancel-card" class="secondary-btn">Cancel</button>
-                <button id="save-card" class="primary-btn">Create</button>
+                <button id="cancel-card" class="secondary-btn" data-i18n="actions.cancel">Cancel</button>
+                <button id="save-card" class="primary-btn" data-i18n="actions.create">Create</button>
             </div>
         </div>
     </div>
@@ -210,6 +239,8 @@
     <script src="js/supabase-client.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/spaced-repetition.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {

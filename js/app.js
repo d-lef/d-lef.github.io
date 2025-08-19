@@ -18,6 +18,11 @@ class FlashcardApp {
         this.setupEventListeners();
         this.loadInitialView();
         this.updateStats();
+        
+        // Initialize translations
+        if (window.i18n) {
+            window.i18n.updatePageTranslations();
+        }
     }
 
     setupEventListeners() {
