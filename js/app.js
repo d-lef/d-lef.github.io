@@ -954,14 +954,13 @@ class FlashcardApp {
 
         if (confirm(`Are you sure you want to delete this card?\n\nFront: "${card.front}"\nBack: "${card.back}"\n\nThis action cannot be undone.`)) {
             try {
-                // Remove card from current deck
-                this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== cardId);
-                
-                // Save deck and delete card from Supabase
-                await storage.saveDeck(this.currentDeck);
+                // Delete card from Supabase first
                 if (window.supabaseService) {
                     await window.supabaseService.deleteCard(cardId);
                 }
+                
+                // Then remove card from current deck locally
+                this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== cardId);
                 
                 this.renderDeckView();
             } catch (error) {
