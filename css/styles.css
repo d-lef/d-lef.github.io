@@ -300,13 +300,45 @@ nav::-webkit-scrollbar {
 .deck-card .due-count {
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    right: 3rem;
     background: #ff4757;
     color: white;
     border-radius: 12px;
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+.deck-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.deck-edit-btn, .deck-delete-btn {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+    min-width: 28px;
+    text-align: center;
+}
+
+.deck-edit-btn:hover, .deck-delete-btn:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.deck-delete-btn:hover {
+    background: #ff4757;
+    color: white;
+    border-color: #ff4757;
 }
 
 /* Overview */
@@ -468,7 +500,7 @@ nav::-webkit-scrollbar {
 
 .sm2-explanation {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .sm2-concept {
@@ -943,23 +975,36 @@ nav::-webkit-scrollbar {
     font-size: 0.9rem;
 }
 
-.card-edit-btn {
+.card-actions {
     position: absolute;
     top: 1rem;
     right: 1rem;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.card-edit-btn, .card-delete-btn {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 0.5rem;
+    padding: 0.25rem 0.5rem;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     transition: all 0.2s ease;
+    min-width: 28px;
+    text-align: center;
 }
 
-.card-edit-btn:hover {
+.card-edit-btn:hover, .card-delete-btn:hover {
     background: var(--border-color);
     color: var(--text-primary);
+}
+
+.card-delete-btn:hover {
+    background: #ff4757;
+    color: white;
+    border-color: #ff4757;
 }
 
 /* Modals */

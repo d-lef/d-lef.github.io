@@ -6,6 +6,7 @@ class FlashcardApp {
         this.isCardFlipped = false;
         this.studySession = null;
         this.editingCard = null;
+        this.editingDeck = null;
         this.studyMode = 'flip'; // 'flip', 'type', or 'combined'
         this.currentAnswer = '';
         this.combinedPairs = []; // array of {card, mode, completed} objects
@@ -17,7 +18,7 @@ class FlashcardApp {
     initializeApp() {
         this.setupEventListeners();
         this.loadInitialView();
-        this.updateStats();
+        // this.updateStats(); // Disabled for debugging
         
         // Initialize translations
         if (window.i18n) {
@@ -108,6 +109,7 @@ class FlashcardApp {
     }
 
     showView(viewName) {
+        console.log('showView() called with:', viewName);
         document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         
@@ -120,6 +122,7 @@ class FlashcardApp {
                 this.renderOverview();
                 break;
             case 'decks':
+                console.log('About to call renderDecks()');
                 this.renderDecks();
                 break;
             case 'stats':
@@ -235,6 +238,7 @@ class FlashcardApp {
     }
 
     async renderDecks() {
+        console.log('renderDecks() called - should show edit/delete buttons');
         const decks = await storage.loadDecks();
         const decksList = document.getElementById('decks-list');
         
@@ -247,17 +251,41 @@ class FlashcardApp {
             const dueCount = spacedRepetition.getDueCount(deck);
             return `
                 <div class="deck-card" data-deck-id="${deck.id}">
-                    <h3>${this.escapeHtml(deck.name)}</h3>
-                    <div class="card-count">${deck.cards.length} cards</div>
-                    ${dueCount > 0 ? `<div class="due-count">${dueCount}</div>` : ''}
+                    <div class="deck-actions">
+                        <button class="deck-edit-btn" data-deck-id="${deck.id}" title="Edit deck">✏️</button>
+                        <button class="deck-delete-btn" data-deck-id="${deck.id}" title="Delete deck">🗑️</button>
+                    </div>
+                    <div class="deck-content">
+                        <h3>${this.escapeHtml(deck.name)}</h3>
+                        <div class="card-count">${deck.cards.length} cards</div>
+                        ${dueCount > 0 ? `<div class="due-count">${dueCount}</div>` : ''}
+                    </div>
                 </div>
             `;
         }).join('');
         
-        document.querySelectorAll('.deck-card').forEach(card => {
-            card.addEventListener('click', async (e) => {
-                const deckId = e.currentTarget.dataset.deckId;
+        // Add click handler for opening decks (but not when clicking action buttons)
+        document.querySelectorAll('.deck-card .deck-content').forEach(content => {
+            content.addEventListener('click', async (e) => {
+                const deckId = e.closest('.deck-card').dataset.deckId;
                 await this.openDeck(deckId);
+            });
+        });
+        
+        // Add handlers for deck management buttons
+        document.querySelectorAll('.deck-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const deckId = e.target.dataset.deckId;
+                this.editDeck(deckId);
+            });
+        });
+        
+        document.querySelectorAll('.deck-delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const deckId = e.target.dataset.deckId;
+                await this.deleteDeck(deckId);
             });
         });
     }
@@ -273,6 +301,7 @@ class FlashcardApp {
     renderDeckView() {
         if (!this.currentDeck) return;
         
+        console.log('renderDeckView() called - should show card edit/delete buttons');
         document.getElementById('deck-title').textContent = this.currentDeck.name;
         
         const cardsList = document.getElementById('cards-list');
@@ -287,16 +316,27 @@ class FlashcardApp {
                     <div class="card-item-front">${this.escapeHtml(card.front)}</div>
                     <div class="card-item-back">${this.escapeHtml(card.back)}</div>
                 </div>
-                <button class="card-edit-btn" data-card-id="${card.id}">✏️ Edit</button>
+                <div class="card-actions">
+                    <button class="card-edit-btn" data-card-id="${card.id}" title="Edit card">✏️</button>
+                    <button class="card-delete-btn" data-card-id="${card.id}" title="Delete card">🗑️</button>
+                </div>
             </div>
         `).join('');
         
-        // Add event listeners for edit buttons
+        // Add event listeners for card management buttons
         document.querySelectorAll('.card-edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const cardId = e.target.dataset.cardId;
                 this.editCard(cardId);
+            });
+        });
+        
+        document.querySelectorAll('.card-delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const cardId = e.target.dataset.cardId;
+                await this.deleteCard(cardId);
             });
         });
     }
@@ -715,6 +755,11 @@ class FlashcardApp {
     hideNewDeckModal() {
         document.getElementById('new-deck-modal').classList.remove('active');
         document.getElementById('deck-name-input').value = '';
+        this.editingDeck = null;
+        
+        // Reset modal labels to default
+        document.querySelector('#new-deck-modal h3').textContent = 'Create New Deck';
+        document.getElementById('create-deck').textContent = 'Create';
     }
 
     async createDeck() {
@@ -724,18 +769,32 @@ class FlashcardApp {
             return;
         }
         
-        const newDeck = {
-            id: storage.generateUUID(),
-            name,
-            cards: [],
-            createdAt: new Date().toISOString()
-        };
-        
-        if (await storage.saveDeck(newDeck)) {
-            this.hideNewDeckModal();
-            this.renderDecks();
+        if (this.editingDeck) {
+            // Edit existing deck
+            this.editingDeck.name = name;
+            this.editingDeck.updatedAt = new Date().toISOString();
+            
+            if (await storage.saveDeck(this.editingDeck)) {
+                this.hideNewDeckModal();
+                this.renderDecks();
+            } else {
+                alert('Failed to update deck');
+            }
         } else {
-            alert('Failed to create deck');
+            // Create new deck
+            const newDeck = {
+                id: storage.generateUUID(),
+                name,
+                cards: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            if (await storage.saveDeck(newDeck)) {
+                this.hideNewDeckModal();
+                this.renderDecks();
+            } else {
+                alert('Failed to create deck');
+            }
         }
     }
 
@@ -848,8 +907,74 @@ class FlashcardApp {
     }
 
     async updateStats() {
+        console.log('updateStats() called - temporarily disabled for debugging');
+        /*
         if (window.statistics) {
             await window.statistics.refresh();
+        }
+        */
+    }
+
+    async editDeck(deckId) {
+        const decks = await storage.loadDecks();
+        const deck = decks.find(d => d.id === deckId);
+        if (!deck) return;
+        
+        this.editingDeck = deck;
+        document.getElementById('deck-name-input').value = deck.name;
+        document.getElementById('new-deck-modal').classList.add('active');
+        document.getElementById('deck-name-input').focus();
+        
+        // Update modal for editing
+        document.querySelector('#new-deck-modal h3').textContent = 'Edit Deck';
+        document.getElementById('create-deck').textContent = 'Save';
+    }
+
+    async deleteDeck(deckId) {
+        const decks = await storage.loadDecks();
+        const deck = decks.find(d => d.id === deckId);
+        if (!deck) return;
+
+        const cardCount = deck.cards.length;
+        const message = cardCount > 0 
+            ? `Are you sure you want to delete "${deck.name}"?\n\nThis will permanently delete the deck and all ${cardCount} cards inside it. This action cannot be undone.`
+            : `Are you sure you want to delete "${deck.name}"?\n\nThis action cannot be undone.`;
+
+        if (confirm(message)) {
+            try {
+                await storage.deleteDeck(deckId);
+                this.renderDecks();
+                // If we're currently viewing this deck, go back to overview
+                if (this.getCurrentView() === 'deck' && this.currentDeck?.id === deckId) {
+                    this.showView('overview');
+                }
+            } catch (error) {
+                alert('Failed to delete deck. Please try again.');
+                console.error('Delete deck error:', error);
+            }
+        }
+    }
+
+    async deleteCard(cardId) {
+        const card = this.currentDeck.cards.find(c => c.id === cardId);
+        if (!card) return;
+
+        if (confirm(`Are you sure you want to delete this card?\n\nFront: "${card.front}"\nBack: "${card.back}"\n\nThis action cannot be undone.`)) {
+            try {
+                // Remove card from current deck
+                this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== cardId);
+                
+                // Save deck and delete card from Supabase
+                await storage.saveDeck(this.currentDeck);
+                if (window.supabaseService) {
+                    await window.supabaseService.deleteCard(cardId);
+                }
+                
+                this.renderDeckView();
+            } catch (error) {
+                alert('Failed to delete card. Please try again.');
+                console.error('Delete card error:', error);
+            }
         }
     }
 
@@ -864,9 +989,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.app = new FlashcardApp();
     
     // Initialize statistics after a short delay to ensure everything is loaded
+    console.log('Statistics initialization disabled for debugging');
+    /*
     setTimeout(async () => {
         if (window.statistics) {
             await window.statistics.initialize();
         }
     }, 1000);
+    */
 });

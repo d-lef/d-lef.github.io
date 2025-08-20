@@ -128,29 +128,51 @@ class Statistics {
     }
 
     updateDisplay(stats) {
-        // Update quick stats
-        document.getElementById('streak-count').textContent = stats.streak;
-        document.getElementById('reviews-today').textContent = stats.today.reviews;
-        document.getElementById('total-cards').textContent = stats.totalCards;
+        // Update quick stats - check if elements exist first
+        const streakElement = document.getElementById('overview-streak-count');
+        if (streakElement) {
+            streakElement.textContent = stats.streak;
+        }
+        
+        const reviewsTodayElement = document.getElementById('reviews-today');
+        if (reviewsTodayElement) {
+            reviewsTodayElement.textContent = stats.today.reviews;
+        }
+        
+        const totalCardsElement = document.getElementById('total-cards');
+        if (totalCardsElement) {
+            totalCardsElement.textContent = stats.totalCards;
+        }
         
         // Update today's accuracy
         const accuracyElement = document.getElementById('accuracy-today');
-        if (stats.today.reviews > 0) {
-            const accuracy = Math.round((stats.today.correct / stats.today.reviews) * 100);
-            accuracyElement.textContent = accuracy;
-        } else {
-            accuracyElement.textContent = '--';
+        if (accuracyElement) {
+            if (stats.today.reviews > 0) {
+                const accuracy = Math.round((stats.today.correct / stats.today.reviews) * 100);
+                accuracyElement.textContent = accuracy;
+            } else {
+                accuracyElement.textContent = '--';
+            }
         }
         
         // Update weekly stats
-        document.getElementById('week-reviews').textContent = stats.week.reviews;
-        document.getElementById('week-days').textContent = stats.week.days;
+        const weekReviewsElement = document.getElementById('week-reviews');
+        if (weekReviewsElement) {
+            weekReviewsElement.textContent = stats.week.reviews;
+        }
+        
+        const weekDaysElement = document.getElementById('week-days');
+        if (weekDaysElement) {
+            weekDaysElement.textContent = stats.week.days;
+        }
         
         const weekAccuracyElement = document.getElementById('week-accuracy');
-        if (stats.week.reviews > 0) {
-            weekAccuracyElement.textContent = stats.week.accuracy + '%';
-        } else {
-            weekAccuracyElement.textContent = '--';
+        if (weekAccuracyElement) {
+            if (stats.week.reviews > 0) {
+                weekAccuracyElement.textContent = stats.week.accuracy + '%';
+            } else {
+                weekAccuracyElement.textContent = '--';
+            }
         }
         
         // Update calendar

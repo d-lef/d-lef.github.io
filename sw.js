@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v14';
+const CACHE_NAME = 'flashcard-app-v18-fixed-stats';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,10 +11,31 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  console.log('Service worker installing with cache version:', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
+  // Force immediate activation
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  console.log('Service worker activating with cache version:', CACHE_NAME);
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  // Take control immediately
+  return self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
