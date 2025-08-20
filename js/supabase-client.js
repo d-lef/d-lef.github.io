@@ -479,6 +479,49 @@ class SupabaseService {
         }
     }
 
+    async clearAllData() {
+        try {
+            // Delete all cards first (due to foreign key constraints)
+            const { error: cardsError } = await this.client
+                .from('cards')
+                .delete()
+                .neq('id', 'dummy'); // This will delete all cards since no card has id 'dummy'
+            
+            if (cardsError) {
+                console.error('Failed to delete cards:', cardsError);
+                throw cardsError;
+            }
+            
+            // Delete all decks
+            const { error: decksError } = await this.client
+                .from('decks')
+                .delete()
+                .neq('id', 'dummy'); // This will delete all decks since no deck has id 'dummy'
+            
+            if (decksError) {
+                console.error('Failed to delete decks:', decksError);
+                throw decksError;
+            }
+            
+            // Delete all review stats
+            const { error: statsError } = await this.client
+                .from('review_stats')
+                .delete()
+                .neq('user_id', 'dummy'); // This will delete all stats since no user has id 'dummy'
+            
+            if (statsError) {
+                console.error('Failed to delete review stats:', statsError);
+                throw statsError;
+            }
+            
+            console.log('All Supabase data cleared successfully');
+            return true;
+        } catch (error) {
+            console.error('Failed to clear all data:', error);
+            throw error;
+        }
+    }
+
     generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             const r = Math.random() * 16 | 0;

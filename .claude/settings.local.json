@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git reset:*)",
+      "Bash(git pull:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\c\\Users\\d.lefanov"
+    ]
+  }
+}

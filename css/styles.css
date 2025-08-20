@@ -792,10 +792,12 @@ nav::-webkit-scrollbar {
 
 #progress-bar {
     flex: 1;
-    height: 8px;
+    height: 12px;
     background: var(--border-color);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
+    margin: 0 1rem;
+    min-width: 100px;
 }
 
 #progress-fill {
@@ -1180,9 +1182,36 @@ nav::-webkit-scrollbar {
 
 .typing-input-area {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* Mobile-first responsive design for typing interface */
+@media (max-width: 768px) {
+    .typing-input-area {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .typing-interface {
+        /* Allow scrolling when keyboard appears */
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        padding-bottom: 2rem;
+    }
+    
+    .typing-question {
+        /* Make question more compact on mobile */
+        margin-bottom: 1rem;
+        min-height: auto;
+    }
+    
+    .typing-text {
+        font-size: 1.1rem;
+        line-height: 1.4;
+    }
 }
 
 #typing-input {
@@ -1195,6 +1224,8 @@ nav::-webkit-scrollbar {
     transition: border-color 0.2s ease;
     background: var(--input-bg);
     color: var(--text-primary);
+    min-width: 0; /* Prevent flex item from overflowing */
+    width: 100%;
 }
 
 #typing-input:focus {
@@ -1213,6 +1244,16 @@ nav::-webkit-scrollbar {
     font-weight: 500;
     transition: all 0.2s ease;
     min-width: 120px;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+@media (max-width: 768px) {
+    .check-btn {
+        width: 100%;
+        min-width: auto;
+        padding: 1rem;
+    }
 }
 
 .check-btn:hover {
@@ -1463,6 +1504,85 @@ nav::-webkit-scrollbar {
         -webkit-appearance: none;
         -webkit-touch-callout: none;
     }
+}
+
+/* Card Transition Animations */
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Apply transitions to study interfaces */
+.flashcard {
+    transition: all 0.3s ease-in-out;
+}
+
+.flashcard.transitioning-out {
+    animation: slideOutToLeft 0.3s ease-in-out forwards;
+}
+
+.flashcard.transitioning-in {
+    animation: slideInFromRight 0.3s ease-in-out forwards;
+}
+
+.typing-interface {
+    transition: all 0.3s ease-in-out;
+}
+
+.typing-interface.transitioning-out {
+    animation: fadeInUp 0.3s ease-in-out reverse forwards;
+}
+
+.typing-interface.transitioning-in {
+    animation: fadeInUp 0.3s ease-in-out forwards;
+}
+
+.answer-result.showing {
+    animation: scaleIn 0.3s ease-in-out forwards;
+}
+
+/* Study view transitions */
+.study-transition {
+    animation: fadeInUp 0.4s ease-out forwards;
 }
 
 /* Compact Calendar for Overview */

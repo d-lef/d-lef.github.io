@@ -54,6 +54,10 @@ class FlashcardApp {
         document.getElementById('back-to-decks-from-deck').addEventListener('click', () => this.showView('decks'));
         document.getElementById('study-deck-btn').addEventListener('click', () => this.showStudyModeSelection());
         
+        // Testing tools
+        document.getElementById('add-test-data-btn').addEventListener('click', () => this.addTestData());
+        document.getElementById('erase-all-data-btn').addEventListener('click', () => this.eraseAllData());
+        
         // Typing mode event listeners
         document.getElementById('check-answer').addEventListener('click', () => this.checkTypedAnswer());
         document.getElementById('typing-input').addEventListener('keypress', (e) => {
@@ -404,38 +408,79 @@ class FlashcardApp {
         return this.combinedPairs[this.currentCardIndex].mode;
     }
     
+    transitionToInterface(newType, callback) {
+        // Get current visible interface
+        const flashcard = document.getElementById('flashcard');
+        const typingInterface = document.getElementById('typing-interface');
+        
+        let currentInterface = null;
+        if (flashcard.style.display !== 'none') {
+            currentInterface = flashcard;
+        } else if (typingInterface.style.display !== 'none') {
+            currentInterface = typingInterface;
+        }
+        
+        if (currentInterface) {
+            // Add exit animation
+            currentInterface.classList.add('transitioning-out');
+            setTimeout(() => {
+                currentInterface.classList.remove('transitioning-out');
+                callback();
+            }, 300);
+        } else {
+            // No current interface, just show new one
+            callback();
+        }
+    }
+    
     renderFlipInterface(card) {
-        document.getElementById('flashcard').style.display = 'block';
-        document.getElementById('typing-interface').style.display = 'none';
-        document.querySelector('.study-actions').style.display = 'block';
-        
-        // Always hide combined progress (we removed the step-by-step progress)
-        document.getElementById('combined-progress').style.display = 'none';
-        
-        document.getElementById('card-front').textContent = card.front;
-        document.getElementById('card-back').textContent = card.back;
-        
-        document.getElementById('flashcard').classList.remove('flipped');
-        document.getElementById('flip-card').style.display = 'block';
-        document.querySelector('.difficulty-buttons').style.display = 'none';
-        
-        this.isCardFlipped = false;
+        // Add transition animation
+        this.transitionToInterface('flip', () => {
+            document.getElementById('flashcard').style.display = 'block';
+            document.getElementById('typing-interface').style.display = 'none';
+            document.querySelector('.study-actions').style.display = 'block';
+            
+            // Always hide combined progress (we removed the step-by-step progress)
+            document.getElementById('combined-progress').style.display = 'none';
+            
+            document.getElementById('card-front').textContent = card.front;
+            document.getElementById('card-back').textContent = card.back;
+            
+            document.getElementById('flashcard').classList.remove('flipped');
+            document.getElementById('flip-card').style.display = 'block';
+            document.querySelector('.difficulty-buttons').style.display = 'none';
+            
+            this.isCardFlipped = false;
+            
+            // Apply entrance animation
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('transitioning-in');
+            setTimeout(() => flashcard.classList.remove('transitioning-in'), 300);
+        });
     }
     
     renderTypingInterface(card) {
-        document.getElementById('flashcard').style.display = 'none';
-        document.getElementById('typing-interface').style.display = 'block';
-        document.querySelector('.study-actions').style.display = 'none';
-        
-        // Always hide combined progress (we removed the step-by-step progress)
-        document.getElementById('combined-progress').style.display = 'none';
-        
-        document.getElementById('typing-front').textContent = card.front;
-        document.getElementById('typing-input').value = '';
-        document.getElementById('answer-result').style.display = 'none';
-        document.getElementById('typing-input').focus();
-        
-        this.currentAnswer = card.back;
+        // Add transition animation  
+        this.transitionToInterface('typing', () => {
+            document.getElementById('flashcard').style.display = 'none';
+            document.getElementById('typing-interface').style.display = 'block';
+            document.querySelector('.study-actions').style.display = 'none';
+            
+            // Always hide combined progress (we removed the step-by-step progress)
+            document.getElementById('combined-progress').style.display = 'none';
+            
+            document.getElementById('typing-front').textContent = card.front;
+            document.getElementById('typing-input').value = '';
+            document.getElementById('answer-result').style.display = 'none';
+            document.getElementById('typing-input').focus();
+            
+            this.currentAnswer = card.back;
+            
+            // Apply entrance animation
+            const typingInterface = document.getElementById('typing-interface');
+            typingInterface.classList.add('transitioning-in');
+            setTimeout(() => typingInterface.classList.remove('transitioning-in'), 300);
+        });
     }
     
     initializeCombinedPairs() {
@@ -481,10 +526,14 @@ class FlashcardApp {
         // Hide combined progress indicator (no longer needed)
         document.getElementById('combined-progress').style.display = 'none';
         
-        // Update progress counter to show current pair
-        const remainingPairs = this.combinedPairs.filter(p => !p.completed).length;
+        // Update progress counter and progress bar
+        const completedPairs = this.combinedPairs.filter(p => p.completed).length;
+        const totalPairs = this.combinedPairs.length;
+        const progress = totalPairs > 0 ? (completedPairs / totalPairs) * 100 : 0;
+        
+        document.getElementById('progress-fill').style.width = `${progress}%`;
         document.getElementById('card-counter').textContent = 
-            `${this.combinedPairs.length - remainingPairs + 1}/${this.combinedPairs.length} (${mode})`;
+            `${completedPairs + 1}/${totalPairs} (${mode})`;
         
         if (mode === 'type') {
             this.renderTypingInterface(card);
@@ -655,7 +704,19 @@ class FlashcardApp {
         }
         
         const result = this.compareAnswers(userAnswer, correctAnswer);
-        this.showAnswerResult(result, userAnswer, correctAnswer);
+        
+        // Automatically assign difficulty based on typing accuracy
+        let difficulty;
+        if (result === 'correct') {
+            difficulty = 'good';
+        } else if (result === 'partial') {
+            difficulty = 'hard';
+        } else {
+            difficulty = 'again';
+        }
+        
+        // Show brief feedback before automatically proceeding
+        this.showTypingFeedback(result, userAnswer, correctAnswer, difficulty);
     }
     
     compareAnswers(userAnswer, correctAnswer) {
@@ -667,35 +728,118 @@ class FlashcardApp {
             return 'correct';
         }
         
-        // Check if user answer is contained in correct answer or vice versa
-        const similarity = this.calculateSimilarity(user, correct);
+        // Calculate character-level similarity using Levenshtein distance
+        const similarity = this.calculateCharacterSimilarity(user, correct);
         
-        if (similarity > 0.8) {
+        // 90%+ similarity = correct (good)
+        if (similarity >= 0.9) {
             return 'correct';
-        } else if (similarity > 0.5) {
+        } 
+        // 70%+ similarity = partial (hard) - allowing for minor typos/missing letters
+        else if (similarity >= 0.7) {
             return 'partial';
-        } else {
+        } 
+        // Below 70% = incorrect (again)
+        else {
             return 'incorrect';
         }
     }
     
-    calculateSimilarity(str1, str2) {
-        // Simple similarity calculation based on common words
-        const words1 = str1.split(/\s+/).filter(w => w.length > 2);
-        const words2 = str2.split(/\s+/).filter(w => w.length > 2);
+    calculateCharacterSimilarity(str1, str2) {
+        // Calculate similarity using Levenshtein distance
+        const distance = this.levenshteinDistance(str1, str2);
+        const maxLength = Math.max(str1.length, str2.length);
         
-        if (words1.length === 0 || words2.length === 0) {
-            return 0;
+        if (maxLength === 0) return 1; // Both empty strings
+        
+        return 1 - (distance / maxLength);
+    }
+    
+    levenshteinDistance(str1, str2) {
+        const matrix = [];
+        
+        // Create matrix
+        for (let i = 0; i <= str2.length; i++) {
+            matrix[i] = [i];
+        }
+        for (let j = 0; j <= str1.length; j++) {
+            matrix[0][j] = j;
         }
         
-        let matches = 0;
-        words1.forEach(word1 => {
-            if (words2.some(word2 => word2.includes(word1) || word1.includes(word2))) {
-                matches++;
+        // Fill matrix
+        for (let i = 1; i <= str2.length; i++) {
+            for (let j = 1; j <= str1.length; j++) {
+                if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1, // substitution
+                        matrix[i][j - 1] + 1,     // insertion
+                        matrix[i - 1][j] + 1      // deletion
+                    );
+                }
             }
-        });
+        }
         
-        return matches / Math.max(words1.length, words2.length);
+        return matrix[str2.length][str1.length];
+    }
+    
+    showTypingFeedback(result, userAnswer, correctAnswer, difficulty) {
+        // Show visual feedback with proceed button
+        const answerResult = document.getElementById('answer-result');
+        const resultStatus = document.getElementById('result-status');
+        const yourAnswerElement = document.querySelector('.your-answer');
+        const correctAnswerElement = document.querySelector('.correct-answer');
+        const correctAnswerText = document.getElementById('correct-answer-text');
+        const difficultyButtons = answerResult.querySelector('.difficulty-buttons');
+        
+        // Set feedback text and color
+        if (result === 'correct') {
+            resultStatus.textContent = '✅ Correct!';
+            resultStatus.style.color = '#2ed573';
+            // Hide answer comparison when correct
+            yourAnswerElement.style.display = 'none';
+            correctAnswerElement.style.display = 'none';
+        } else {
+            if (result === 'partial') {
+                resultStatus.textContent = '⚠️ Close! (Minor mistakes)';
+                resultStatus.style.color = '#ffa502';
+            } else {
+                resultStatus.textContent = '❌ Incorrect';
+                resultStatus.style.color = '#ff3838';
+            }
+            // Show only correct answer when incorrect
+            yourAnswerElement.style.display = 'none';
+            correctAnswerElement.style.display = 'block';
+            correctAnswerText.textContent = correctAnswer;
+        }
+        
+        // Replace difficulty buttons with a proceed button
+        if (difficultyButtons) {
+            difficultyButtons.innerHTML = `
+                <button id="proceed-btn" class="primary-btn" style="width: 100%; padding: 12px; font-size: 16px;">
+                    Continue
+                </button>
+            `;
+            difficultyButtons.style.display = 'block';
+            
+            // Add click handler for proceed button
+            document.getElementById('proceed-btn').addEventListener('click', () => {
+                answerResult.style.display = 'none';
+                answerResult.classList.remove('showing');
+                
+                // Automatically answer with calculated difficulty
+                if (this.studyMode === 'combined') {
+                    this.handleCombinedAnswer(difficulty);
+                } else {
+                    this.answerCard(difficulty);
+                }
+            });
+        }
+        
+        // Show result and wait for user to click continue
+        answerResult.style.display = 'block';
+        answerResult.classList.add('showing');
     }
     
     showAnswerResult(result, userAnswer, correctAnswer) {
@@ -1006,6 +1150,90 @@ class FlashcardApp {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    async eraseAllData() {
+        if (!confirm('Are you sure you want to erase ALL data?\n\nThis will delete all decks and cards permanently. This action cannot be undone.')) {
+            return;
+        }
+        
+        try {
+            // Clear Supabase data
+            if (window.supabaseService) {
+                await window.supabaseService.clearAllData();
+            }
+            
+            // Clear local storage
+            localStorage.clear();
+            
+            alert('All data has been erased successfully!');
+            
+            // Refresh the current view
+            this.renderOverview();
+            this.renderDecks();
+        } catch (error) {
+            console.error('Failed to erase data:', error);
+            alert('Failed to erase data. Please try again.');
+        }
+    }
+
+    async addTestData() {
+        if (!confirm('Add test data?\n\nThis will create 2 decks with 10 cards each for testing purposes.')) {
+            return;
+        }
+        
+        try {
+            // Create test deck 1: Basic Spanish
+            const spanishDeck = {
+                id: storage.generateUUID(),
+                name: 'Basic Spanish',
+                cards: [
+                    { id: storage.generateUUID(), front: 'Hello', back: 'Hola', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Goodbye', back: 'Adiós', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Please', back: 'Por favor', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Thank you', back: 'Gracias', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Yes', back: 'Sí', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'No', back: 'No', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Water', back: 'Agua', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Food', back: 'Comida', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'House', back: 'Casa', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'Cat', back: 'Gato', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true }
+                ],
+                createdAt: new Date().toISOString()
+            };
+
+            // Create test deck 2: Programming Terms
+            const programmingDeck = {
+                id: storage.generateUUID(),
+                name: 'Programming Terms',
+                cards: [
+                    { id: storage.generateUUID(), front: 'What is a variable?', back: 'A container for storing data values', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is a function?', back: 'A reusable block of code that performs a specific task', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is an array?', back: 'An ordered list of elements', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is a loop?', back: 'A control structure that repeats a block of code', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is debugging?', back: 'The process of finding and fixing errors in code', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is an API?', back: 'Application Programming Interface - a set of protocols for building software', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is Git?', back: 'A version control system for tracking changes in files', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is HTML?', back: 'HyperText Markup Language - the structure of web pages', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is CSS?', back: 'Cascading Style Sheets - used for styling web pages', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
+                    { id: storage.generateUUID(), front: 'What is JavaScript?', back: 'A programming language for web development', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true }
+                ],
+                createdAt: new Date().toISOString()
+            };
+
+            // Save both decks
+            await storage.saveDeck(spanishDeck);
+            await storage.saveDeck(programmingDeck);
+
+            alert('Test data added successfully!\n\n2 decks created:\n- Basic Spanish (10 cards)\n- Programming Terms (10 cards)');
+            
+            // Refresh the decks view
+            this.renderDecks();
+            this.renderOverview();
+        } catch (error) {
+            console.error('Failed to add test data:', error);
+            alert('Failed to add test data. Please try again.');
+        }
     }
 }
 
