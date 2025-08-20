@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v21-fixed-delete';
+const CACHE_NAME = 'flashcard-app-v22-fixed-duplicate';
 const urlsToCache = [
   '/',
   '/index.html',

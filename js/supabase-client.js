@@ -166,7 +166,14 @@ class SupabaseService {
             console.log('Processing', deck.cards.length, 'cards');
             for (const card of deck.cards) {
                 try {
-                    await this.saveCard(card, deck.id, card.isNew || !card.reps);
+                    // Check if card is truly new (has isNew flag and no created_at from DB)
+                    const isNew = card.isNew === true && !card.created_at;
+                    await this.saveCard(card, deck.id, isNew);
+                    
+                    // Clear isNew flag after successful save
+                    if (card.isNew) {
+                        delete card.isNew;
+                    }
                 } catch (error) {
                     console.error('Failed to save card:', card.id, error);
                     // Continue with other cards
