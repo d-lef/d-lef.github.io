@@ -845,6 +845,7 @@ class FlashcardApp {
                 this.editingCard.front = front;
                 this.editingCard.back = back;
                 this.editingCard.updatedAt = new Date().toISOString();
+                this.editingCard.isModified = true;
             } else {
                 // Create new card
                 const newCard = {

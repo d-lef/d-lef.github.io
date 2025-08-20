@@ -161,28 +161,40 @@ class SupabaseService {
             console.log('Deck updated successfully:', data);
         }
 
-        // Handle cards
+        // Handle cards - only save new or modified cards
         if (deck.cards && deck.cards.length > 0) {
-            console.log('Processing', deck.cards.length, 'cards');
-            for (const card of deck.cards) {
-                try {
-                    // Check if card is truly new - only if it explicitly has isNew=true AND no database timestamps
-                    const isNew = card.isNew === true && !card.created_at && !card.updated_at;
-                    const result = await this.saveCard(card, deck.id, isNew);
-                    
-                    // If save was successful, mark card as no longer new
-                    if (result && card.isNew) {
-                        card.isNew = false;
-                        // Also add timestamp to prevent future confusion
-                        if (!card.created_at) {
-                            card.created_at = new Date().toISOString();
+            const cardsToSave = deck.cards.filter(card => 
+                card.isNew === true || card.isModified === true
+            );
+            
+            if (cardsToSave.length > 0) {
+                console.log('Processing', cardsToSave.length, 'new/modified cards out of', deck.cards.length, 'total cards');
+                
+                for (const card of cardsToSave) {
+                    try {
+                        // Check if card is truly new - only if it explicitly has isNew=true AND no database timestamps
+                        const isNew = card.isNew === true && !card.created_at && !card.updated_at;
+                        const result = await this.saveCard(card, deck.id, isNew);
+                        
+                        // If save was successful, mark card as no longer new/modified
+                        if (result) {
+                            if (card.isNew) {
+                                card.isNew = false;
+                                // Also add timestamp to prevent future confusion
+                                if (!card.created_at) {
+                                    card.created_at = new Date().toISOString();
+                                }
+                            }
+                            card.isModified = false;
+                            card.updated_at = new Date().toISOString();
                         }
-                        card.updated_at = new Date().toISOString();
+                    } catch (error) {
+                        console.error('Failed to save card:', card.id, error);
+                        // Continue with other cards
                     }
-                } catch (error) {
-                    console.error('Failed to save card:', card.id, error);
-                    // Continue with other cards
                 }
+            } else {
+                console.log('No new or modified cards to save');
             }
         }
 
@@ -211,16 +223,38 @@ class SupabaseService {
         console.log('Card data prepared:', cardData);
 
         if (isNew) {
-            const { data, error } = await this.client
+            // Double-check: verify card doesn't exist before inserting
+            const { data: existing } = await this.client
                 .from('cards')
-                .insert([cardData])
-                .select();
+                .select('id')
+                .eq('id', cardData.id)
+                .maybeSingle();
             
-            if (error) {
-                console.error('Card insert error:', error);
-                throw error;
+            if (existing) {
+                console.log('Card already exists, updating instead of inserting:', cardData.id);
+                const { data, error } = await this.client
+                    .from('cards')
+                    .update(cardData)
+                    .eq('id', cardData.id)
+                    .select();
+                
+                if (error) {
+                    console.error('Card update error:', error);
+                    throw error;
+                }
+                console.log('Card updated successfully:', data);
+            } else {
+                const { data, error } = await this.client
+                    .from('cards')
+                    .insert([cardData])
+                    .select();
+                
+                if (error) {
+                    console.error('Card insert error:', error);
+                    throw error;
+                }
+                console.log('Card inserted successfully:', data);
             }
-            console.log('Card inserted successfully:', data);
         } else {
             const { data, error } = await this.client
                 .from('cards')

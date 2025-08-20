@@ -138,7 +138,8 @@ class SpacedRepetition {
         return {
             ...card,
             ...reviewData,
-            reviewCount: (card.reviewCount || 0) + 1
+            reviewCount: (card.reviewCount || 0) + 1,
+            isModified: true
         };
     }
 }

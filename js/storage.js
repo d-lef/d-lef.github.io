@@ -102,7 +102,8 @@ class Storage {
                     reps: card.reps || card.repetitions || 0,
                     lapses: card.lapses || 0,
                     due_date: card.dueDate || card.due_date || new Date().toISOString().split('T')[0],
-                    isNew: !card.id || (!card.reps && !card.repetitions) // Mark new cards
+                    // Preserve the existing isNew flag - don't recalculate it
+                    isNew: card.isNew || false
                 }));
             }
 
