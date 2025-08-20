@@ -828,41 +828,55 @@ class FlashcardApp {
     async saveCard() {
         const front = document.getElementById('card-front-input').value.trim();
         const back = document.getElementById('card-back-input').value.trim();
+        const saveButton = document.getElementById('save-card');
         
         if (!front || !back) {
             alert('Please fill in both sides of the card');
             return;
         }
         
-        if (this.editingCard) {
-            // Edit existing card
-            this.editingCard.front = front;
-            this.editingCard.back = back;
-            this.editingCard.updatedAt = new Date().toISOString();
-        } else {
-            // Create new card
-            const newCard = {
-                id: storage.generateUUID(),
-                front,
-                back,
-                createdAt: new Date().toISOString(),
-                // SM-2 defaults
-                ease: 2.5,
-                interval: 1,
-                reps: 0,
-                lapses: 0,
-                due_date: new Date().toISOString().split('T')[0],
-                reviewCount: 0,
-                isNew: true
-            };
-            this.currentDeck.cards.push(newCard);
-        }
+        // Prevent double-clicking
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving...';
         
-        if (await storage.saveDeck(this.currentDeck)) {
-            this.hideNewCardModal();
-            this.renderDeckView();
-        } else {
+        try {
+            if (this.editingCard) {
+                // Edit existing card
+                this.editingCard.front = front;
+                this.editingCard.back = back;
+                this.editingCard.updatedAt = new Date().toISOString();
+            } else {
+                // Create new card
+                const newCard = {
+                    id: storage.generateUUID(),
+                    front,
+                    back,
+                    createdAt: new Date().toISOString(),
+                    // SM-2 defaults
+                    ease: 2.5,
+                    interval: 1,
+                    reps: 0,
+                    lapses: 0,
+                    due_date: new Date().toISOString().split('T')[0],
+                    reviewCount: 0,
+                    isNew: true
+                };
+                this.currentDeck.cards.push(newCard);
+            }
+            
+            if (await storage.saveDeck(this.currentDeck)) {
+                this.hideNewCardModal();
+                this.renderDeckView();
+            } else {
+                alert('Failed to save card');
+            }
+        } catch (error) {
+            console.error('Error saving card:', error);
             alert('Failed to save card');
+        } finally {
+            // Re-enable the save button
+            saveButton.disabled = false;
+            saveButton.textContent = this.editingCard ? 'Update' : 'Create';
         }
     }
 
