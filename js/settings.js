@@ -41,23 +41,6 @@ class Settings {
     }
     
     setupEventListeners() {
-        // Settings button
-        const settingsBtn = document.getElementById('settings-btn');
-        const settingsPanel = document.getElementById('settings-panel');
-        
-        if (settingsBtn && settingsPanel) {
-            settingsBtn.addEventListener('click', () => {
-                settingsPanel.classList.toggle('active');
-            });
-            
-            // Close settings when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!settingsBtn.contains(e.target) && !settingsPanel.contains(e.target)) {
-                    settingsPanel.classList.remove('active');
-                }
-            });
-        }
-        
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {

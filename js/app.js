@@ -26,8 +26,10 @@ class FlashcardApp {
     }
 
     setupEventListeners() {
+        document.getElementById('overview-tab').addEventListener('click', () => this.showView('overview'));
         document.getElementById('decks-tab').addEventListener('click', () => this.showView('decks'));
         document.getElementById('stats-tab').addEventListener('click', () => this.showView('stats'));
+        document.getElementById('settings-tab').addEventListener('click', () => this.showView('settings'));
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
         document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardModal());
@@ -114,11 +116,17 @@ class FlashcardApp {
         if (tabBtn) tabBtn.classList.add('active');
         
         switch (viewName) {
+            case 'overview':
+                this.renderOverview();
+                break;
             case 'decks':
                 this.renderDecks();
                 break;
             case 'stats':
                 this.updateStats();
+                break;
+            case 'settings':
+                // Settings view is static, no rendering needed
                 break;
             case 'study':
                 this.renderStudyCard();
@@ -137,7 +145,93 @@ class FlashcardApp {
     }
 
     loadInitialView() {
-        this.showView('decks');
+        this.showView('overview');
+    }
+
+    async renderOverview() {
+        const decks = await storage.loadDecks();
+        
+        // Calculate insights
+        let dueCount = 0;
+        let overdueCount = 0;
+        let totalCards = 0;
+        const today = new Date().toISOString().split('T')[0];
+        
+        decks.forEach(deck => {
+            totalCards += deck.cards.length;
+            deck.cards.forEach(card => {
+                const cardDueDate = card.dueDate || card.due_date;
+                if (cardDueDate) {
+                    if (cardDueDate === today) {
+                        dueCount++;
+                    } else if (cardDueDate < today) {
+                        overdueCount++;
+                    }
+                }
+            });
+        });
+        
+        // Get today's review stats
+        let reviewedToday = 0;
+        try {
+            if (window.supabaseService) {
+                const stats = await window.supabaseService.getReviewStats(today, today);
+                reviewedToday = stats.length > 0 ? stats[0].reviews : 0;
+            }
+        } catch (error) {
+            console.log('Could not fetch review stats:', error);
+        }
+        
+        // Get streak from statistics
+        let streak = 0;
+        if (window.statistics) {
+            try {
+                streak = await window.statistics.calculateStreak();
+            } catch (error) {
+                console.log('Could not calculate streak:', error);
+            }
+        }
+        
+        // Update insight cards
+        document.getElementById('due-cards-count').textContent = dueCount;
+        document.getElementById('reviewed-today-count').textContent = reviewedToday;
+        document.getElementById('overdue-cards-count').textContent = overdueCount;
+        document.getElementById('overview-streak-count').textContent = streak;
+        
+        // Render recent decks (show up to 5 most recently studied)
+        const recentDecksContainer = document.getElementById('recent-decks');
+        if (decks.length === 0) {
+            recentDecksContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No decks available. Create your first deck to get started!</p>';
+        } else {
+            // Sort by most recent activity (approximated by creation date for now)
+            const sortedDecks = [...decks].sort((a, b) => 
+                new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+            ).slice(0, 5);
+            
+            recentDecksContainer.innerHTML = sortedDecks.map(deck => {
+                const dueCardsInDeck = deck.cards.filter(card => {
+                    const cardDueDate = card.dueDate || card.due_date;
+                    return cardDueDate && cardDueDate <= today;
+                }).length;
+                
+                return `
+                    <div class="recent-deck-item" data-deck-id="${deck.id}">
+                        <div class="recent-deck-info">
+                            <div class="recent-deck-name">${this.escapeHtml(deck.name)}</div>
+                            <div class="recent-deck-stats">${deck.cards.length} cards • ${dueCardsInDeck} due</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers for recent decks
+            document.querySelectorAll('.recent-deck-item').forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    const deckId = e.currentTarget.dataset.deckId;
+                    await this.openDeck(deckId);
+                });
+            });
+        }
     }
 
     async renderDecks() {

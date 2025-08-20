@@ -7,14 +7,31 @@ class I18n {
                 'app.title': 'Flashcards',
                 
                 // Navigation
+                'nav.overview': 'Overview',
                 'nav.decks': 'Decks',
                 'nav.stats': 'Stats',
+                'nav.settings': 'Settings',
+                
+                // Overview
+                'overview.title': 'Study Overview',
+                'overview.due_today': 'Due Today',
+                'overview.reviewed_today': 'Reviewed Today',
+                'overview.overdue': 'Overdue Cards',
+                'overview.study_streak': 'Study Streak',
+                'overview.recent_activity': 'Recent Activity',
                 
                 // Settings
+                'settings.title': 'Settings',
+                'settings.appearance': 'Appearance',
                 'settings.theme': 'Theme',
                 'settings.light': 'Light',
                 'settings.dark': 'Dark',
                 'settings.language': 'Language',
+                'settings.study': 'Study Settings',
+                'settings.study_desc': 'Study configuration options will be available in future updates.',
+                'settings.about': 'About',
+                'settings.app_version': 'App Version: 2.0',
+                'settings.powered_by': 'Powered by Supabase & SM-2 Algorithm',
                 
                 // Actions
                 'actions.study_all': 'Study All Cards',
@@ -86,14 +103,31 @@ class I18n {
                 'app.title': 'Карточки',
                 
                 // Navigation
+                'nav.overview': 'Обзор',
                 'nav.decks': 'Колоды',
                 'nav.stats': 'Статистика',
+                'nav.settings': 'Настройки',
+                
+                // Overview
+                'overview.title': 'Обзор изучения',
+                'overview.due_today': 'Сегодня',
+                'overview.reviewed_today': 'Повторено сегодня',
+                'overview.overdue': 'Просрочено',
+                'overview.study_streak': 'Дни подряд',
+                'overview.recent_activity': 'Последняя активность',
                 
                 // Settings
+                'settings.title': 'Настройки',
+                'settings.appearance': 'Внешний вид',
                 'settings.theme': 'Тема',
                 'settings.light': 'Светлая',
                 'settings.dark': 'Тёмная',
                 'settings.language': 'Язык',
+                'settings.study': 'Настройки изучения',
+                'settings.study_desc': 'Параметры изучения будут доступны в будущих обновлениях.',
+                'settings.about': 'О программе',
+                'settings.app_version': 'Версия приложения: 2.0',
+                'settings.powered_by': 'Работает на Supabase и алгоритме SM-2',
                 
                 // Actions
                 'actions.study_all': 'Изучить все карточки',

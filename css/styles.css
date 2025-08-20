@@ -62,20 +62,6 @@ body {
     margin-bottom: 1rem;
 }
 
-.settings-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background 0.2s ease;
-    color: var(--text-secondary);
-}
-
-.settings-btn:hover {
-    background: var(--border-color);
-}
 
 header {
     background: var(--surface-color);
@@ -94,20 +80,6 @@ header h1 {
     color: var(--primary-color);
 }
 
-/* Settings Panel */
-.settings-panel {
-    display: none;
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-top: 1rem;
-    box-shadow: 0 4px 20px var(--shadow);
-    transition: all 0.3s ease;
-}
-
-.settings-panel.active {
-    display: block;
-}
 
 .setting-row {
     display: flex;
@@ -185,12 +157,19 @@ input:checked + .slider:before {
 
 nav {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     justify-content: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+nav::-webkit-scrollbar {
+    display: none;
 }
 
 .tab-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     border: none;
     background: transparent;
     color: var(--text-secondary);
@@ -198,6 +177,8 @@ nav {
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 500;
+    white-space: nowrap;
+    font-size: 0.9rem;
 }
 
 .tab-btn.active {
@@ -326,6 +307,169 @@ nav {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+/* Overview */
+.overview-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.overview-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.overview-header h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.large-btn {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(66, 133, 244, 0.4);
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.insight-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.insight-card:hover {
+    transform: translateY(-2px);
+}
+
+.insight-icon {
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--input-bg);
+    border-radius: 12px;
+}
+
+.insight-content {
+    flex: 1;
+}
+
+.insight-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.insight-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.recent-activity {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+.recent-activity h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.recent-decks-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.recent-deck-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: var(--input-bg);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.recent-deck-item:hover {
+    background: var(--border-color);
+}
+
+.recent-deck-info {
+    flex: 1;
+}
+
+.recent-deck-name {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.recent-deck-stats {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+/* Settings */
+.settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.settings-container h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.settings-section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+.settings-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.setting-description p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.about-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
 }
 
 /* Stats */
@@ -1140,12 +1284,41 @@ nav {
         grid-template-columns: 1fr;
     }
     
+    .insights-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     
     .week-stats {
         grid-template-columns: 1fr;
+    }
+    
+    .tab-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .overview-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .insight-number {
+        font-size: 1.5rem;
+    }
+    
+    .insight-label {
+        font-size: 0.8rem;
+    }
+    
+    .recent-deck-name {
+        font-size: 0.9rem;
+    }
+    
+    .recent-deck-stats {
+        font-size: 0.75rem;
     }
     
     .calendar-legend {
