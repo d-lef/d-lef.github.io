@@ -166,13 +166,18 @@ class SupabaseService {
             console.log('Processing', deck.cards.length, 'cards');
             for (const card of deck.cards) {
                 try {
-                    // Check if card is truly new (has isNew flag and no created_at from DB)
-                    const isNew = card.isNew === true && !card.created_at;
-                    await this.saveCard(card, deck.id, isNew);
+                    // Check if card is truly new - only if it explicitly has isNew=true AND no database timestamps
+                    const isNew = card.isNew === true && !card.created_at && !card.updated_at;
+                    const result = await this.saveCard(card, deck.id, isNew);
                     
-                    // Clear isNew flag after successful save
-                    if (card.isNew) {
-                        delete card.isNew;
+                    // If save was successful, mark card as no longer new
+                    if (result && card.isNew) {
+                        card.isNew = false;
+                        // Also add timestamp to prevent future confusion
+                        if (!card.created_at) {
+                            card.created_at = new Date().toISOString();
+                        }
+                        card.updated_at = new Date().toISOString();
                     }
                 } catch (error) {
                     console.error('Failed to save card:', card.id, error);
