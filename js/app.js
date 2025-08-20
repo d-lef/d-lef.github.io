@@ -18,7 +18,7 @@ class FlashcardApp {
     initializeApp() {
         this.setupEventListeners();
         this.loadInitialView();
-        // this.updateStats(); // Disabled for debugging
+        this.updateStats();
         
         // Initialize translations
         if (window.i18n) {
@@ -109,7 +109,6 @@ class FlashcardApp {
     }
 
     showView(viewName) {
-        console.log('showView() called with:', viewName);
         document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         
@@ -122,7 +121,6 @@ class FlashcardApp {
                 this.renderOverview();
                 break;
             case 'decks':
-                console.log('About to call renderDecks()');
                 this.renderDecks();
                 break;
             case 'stats':
@@ -238,7 +236,6 @@ class FlashcardApp {
     }
 
     async renderDecks() {
-        console.log('renderDecks() called - should show edit/delete buttons');
         const decks = await storage.loadDecks();
         const decksList = document.getElementById('decks-list');
         
@@ -301,7 +298,6 @@ class FlashcardApp {
     renderDeckView() {
         if (!this.currentDeck) return;
         
-        console.log('renderDeckView() called - should show card edit/delete buttons');
         document.getElementById('deck-title').textContent = this.currentDeck.name;
         
         const cardsList = document.getElementById('cards-list');
@@ -907,12 +903,9 @@ class FlashcardApp {
     }
 
     async updateStats() {
-        console.log('updateStats() called - temporarily disabled for debugging');
-        /*
         if (window.statistics) {
             await window.statistics.refresh();
         }
-        */
     }
 
     async editDeck(deckId) {
@@ -989,12 +982,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.app = new FlashcardApp();
     
     // Initialize statistics after a short delay to ensure everything is loaded
-    console.log('Statistics initialization disabled for debugging');
-    /*
     setTimeout(async () => {
         if (window.statistics) {
             await window.statistics.initialize();
         }
     }, 1000);
-    */
 });
