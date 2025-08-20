@@ -27,11 +27,15 @@ class I18n {
                 'settings.light': 'Light',
                 'settings.dark': 'Dark',
                 'settings.language': 'Language',
-                'settings.study': 'Study Settings',
-                'settings.study_desc': 'Study configuration options will be available in future updates.',
-                'settings.about': 'About',
-                'settings.app_version': 'App Version: 2.0',
-                'settings.powered_by': 'Powered by Supabase & SM-2 Algorithm',
+                'settings.spaced_repetition': 'How Spaced Repetition Works',
+                'settings.sm2_adaptive': '🧠 Adaptive Learning',
+                'settings.sm2_adaptive_desc': 'Cards you find difficult appear more frequently, while easy cards appear less often.',
+                'settings.sm2_intervals': '⏰ Smart Intervals',
+                'settings.sm2_intervals_desc': 'Review intervals increase exponentially: 1 day → 6 days → weeks → months.',
+                'settings.sm2_grades': '⭐ Four Grades',
+                'settings.sm2_grades_desc': '<strong>Again</strong> (restart), <strong>Hard</strong> (shorter interval), <strong>Good</strong> (normal), <strong>Easy</strong> (longer interval).',
+                'settings.sm2_retention': '💡 Long-term Memory',
+                'settings.sm2_retention_desc': 'Reviews happen just before you\'re likely to forget, maximizing retention with minimal effort.',
                 
                 // Actions
                 'actions.study_all': 'Study All Cards',
@@ -123,11 +127,15 @@ class I18n {
                 'settings.light': 'Светлая',
                 'settings.dark': 'Тёмная',
                 'settings.language': 'Язык',
-                'settings.study': 'Настройки изучения',
-                'settings.study_desc': 'Параметры изучения будут доступны в будущих обновлениях.',
-                'settings.about': 'О программе',
-                'settings.app_version': 'Версия приложения: 2.0',
-                'settings.powered_by': 'Работает на Supabase и алгоритме SM-2',
+                'settings.spaced_repetition': 'Как работает интервальное повторение',
+                'settings.sm2_adaptive': '🧠 Адаптивное обучение',
+                'settings.sm2_adaptive_desc': 'Сложные карточки появляются чаще, а лёгкие — реже.',
+                'settings.sm2_intervals': '⏰ Умные интервалы',
+                'settings.sm2_intervals_desc': 'Интервалы повторения растут экспоненциально: 1 день → 6 дней → недели → месяцы.',
+                'settings.sm2_grades': '⭐ Четыре оценки',
+                'settings.sm2_grades_desc': '<strong>Снова</strong> (сначала), <strong>Сложно</strong> (короче интервал), <strong>Хорошо</strong> (обычно), <strong>Легко</strong> (длиннее интервал).',
+                'settings.sm2_retention': '💡 Долговременная память',
+                'settings.sm2_retention_desc': 'Повторения происходят как раз перед тем, как вы забудете, максимизируя запоминание при минимальных усилиях.',
                 
                 // Actions
                 'actions.study_all': 'Изучить все карточки',
@@ -227,7 +235,13 @@ class I18n {
         elements.forEach(element => {
             const key = element.getAttribute('data-i18n');
             const translation = this.translate(key);
-            element.textContent = translation;
+            
+            // Check if translation contains HTML (has < and > characters)
+            if (translation.includes('<') && translation.includes('>')) {
+                element.innerHTML = translation;
+            } else {
+                element.textContent = translation;
+            }
         });
         
         // Update placeholders

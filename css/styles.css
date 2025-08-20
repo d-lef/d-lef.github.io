@@ -466,10 +466,37 @@ nav::-webkit-scrollbar {
     margin: 0;
 }
 
-.about-info p {
+.sm2-explanation {
+    display: grid;
+    gap: 1rem;
+}
+
+.sm2-concept {
+    padding: 1rem;
+    background: var(--input-bg);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.sm2-concept h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sm2-concept p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    margin: 0.5rem 0;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.sm2-concept strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 /* Stats */
