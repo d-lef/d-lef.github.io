@@ -19,6 +19,7 @@ class I18n {
                 'overview.overdue': 'Overdue Cards',
                 'overview.study_streak': 'Study Streak',
                 'overview.recent_activity': 'Recent Activity',
+                'overview.study_calendar': 'Study Calendar',
                 
                 // Settings
                 'settings.title': 'Settings',
@@ -119,6 +120,7 @@ class I18n {
                 'overview.overdue': 'Просрочено',
                 'overview.study_streak': 'Дни подряд',
                 'overview.recent_activity': 'Последняя активность',
+                'overview.study_calendar': 'Календарь изучения',
                 
                 // Settings
                 'settings.title': 'Настройки',

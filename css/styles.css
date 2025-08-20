@@ -1464,3 +1464,91 @@ nav::-webkit-scrollbar {
         -webkit-touch-callout: none;
     }
 }
+
+/* Compact Calendar for Overview */
+.compact-calendar-section {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+.compact-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.compact-calendar-header h3 {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.calendar-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calendar-nav-controls .calendar-title {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    min-width: 120px;
+    text-align: center;
+}
+
+.compact-study-calendar {
+    font-size: 0.8rem;
+}
+
+.compact-study-calendar .calendar-grid {
+    gap: 2px;
+}
+
+.compact-study-calendar .calendar-day {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+
+.compact-study-calendar .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.compact-study-calendar .calendar-day.header {
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+}
+
+.compact-study-calendar .calendar-day.no-study {
+    background: var(--bg-secondary);
+    color: var(--text-tertiary);
+}
+
+.compact-study-calendar .calendar-day.low-study {
+    background: #e3f2fd;
+    color: var(--primary);
+}
+
+.compact-study-calendar .calendar-day.medium-study {
+    background: var(--primary-light);
+    color: white;
+}
+
+.compact-study-calendar .calendar-day.high-study {
+    background: var(--primary);
+    color: white;
+}
+
+.compact-study-calendar .calendar-day.today {
+    border: 2px solid var(--primary);
+    font-weight: bold;
+}

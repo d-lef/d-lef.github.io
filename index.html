@@ -19,7 +19,6 @@
             <nav>
                 <button id="overview-tab" class="tab-btn active" data-i18n="nav.overview">Overview</button>
                 <button id="decks-tab" class="tab-btn" data-i18n="nav.decks">Decks</button>
-                <button id="stats-tab" class="tab-btn" data-i18n="nav.stats">Stats</button>
                 <button id="settings-tab" class="tab-btn" data-i18n="nav.settings">Settings</button>
             </nav>
         </header>
@@ -68,12 +67,21 @@
                     </div>
                 </div>
                 
-                <div class="recent-activity">
-                    <h3 data-i18n="overview.recent_activity">Recent Activity</h3>
-                    <div id="recent-decks" class="recent-decks-list">
-                        <!-- Recent decks will be populated here -->
+                <!-- Compact Study Calendar -->
+                <div class="compact-calendar-section">
+                    <div class="compact-calendar-header">
+                        <h3 data-i18n="overview.study_calendar">Study Calendar</h3>
+                        <div class="calendar-nav-controls">
+                            <button id="overview-prev-month" class="calendar-nav">‹</button>
+                            <span id="overview-current-month" class="calendar-title"></span>
+                            <button id="overview-next-month" class="calendar-nav">›</button>
+                        </div>
+                    </div>
+                    <div id="overview-study-calendar" class="compact-study-calendar">
+                        <!-- Calendar will be generated here -->
                     </div>
                 </div>
+                
             </div>
         </div>
 
@@ -85,80 +93,6 @@
             <div id="decks-list" class="decks-grid"></div>
         </div>
 
-        <!-- Stats View -->
-        <div id="stats-view" class="view">
-            <div class="stats-container">
-                <h2 data-i18n="stats.title">Study Statistics</h2>
-                
-                <!-- Quick Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3 data-i18n="stats.reviews_today">Reviews Today</h3>
-                        <div id="reviews-today" class="stat-number">0</div>
-                        <span class="stat-label" data-i18n="stats.reviews">reviews</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3 data-i18n="stats.accuracy_today">Today's Accuracy</h3>
-                        <div id="accuracy-today" class="stat-number">--</div>
-                        <span class="stat-label">%</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3 data-i18n="stats.total_cards">Total Cards</h3>
-                        <div id="total-cards" class="stat-number">0</div>
-                        <span class="stat-label" data-i18n="stats.cards">cards</span>
-                    </div>
-                </div>
-
-                <!-- Monthly Calendar -->
-                <div class="calendar-section">
-                    <div class="calendar-header">
-                        <button id="prev-month" class="calendar-nav">‹</button>
-                        <h3 id="current-month" class="calendar-title"></h3>
-                        <button id="next-month" class="calendar-nav">›</button>
-                    </div>
-                    <div id="study-calendar" class="study-calendar">
-                        <!-- Calendar will be generated here -->
-                    </div>
-                    <div class="calendar-legend">
-                        <div class="legend-item">
-                            <div class="legend-color no-study"></div>
-                            <span data-i18n="stats.no_study">No study</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color low-study"></div>
-                            <span data-i18n="stats.light_study">Light study</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color medium-study"></div>
-                            <span data-i18n="stats.medium_study">Medium study</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color high-study"></div>
-                            <span data-i18n="stats.intensive_study">Intensive study</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Weekly Summary -->
-                <div class="weekly-summary">
-                    <h3 data-i18n="stats.this_week">This Week</h3>
-                    <div class="week-stats">
-                        <div class="week-stat">
-                            <span data-i18n="stats.total_reviews">Total Reviews</span>
-                            <div id="week-reviews" class="week-number">0</div>
-                        </div>
-                        <div class="week-stat">
-                            <span data-i18n="stats.avg_accuracy">Average Accuracy</span>
-                            <div id="week-accuracy" class="week-number">--</div>
-                        </div>
-                        <div class="week-stat">
-                            <span data-i18n="stats.study_days">Study Days</span>
-                            <div id="week-days" class="week-number">0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Settings View -->
         <div id="settings-view" class="view">
@@ -191,60 +125,9 @@
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <h3 data-i18n="settings.spaced_repetition">How Spaced Repetition Works</h3>
-                    <div class="sm2-explanation">
-                        <div class="sm2-concept">
-                            <h4 data-i18n="settings.sm2_adaptive">🧠 Adaptive Learning</h4>
-                            <p data-i18n="settings.sm2_adaptive_desc">Cards you find difficult appear more frequently, while easy cards appear less often.</p>
-                        </div>
-                        <div class="sm2-concept">
-                            <h4 data-i18n="settings.sm2_intervals">⏰ Smart Intervals</h4>
-                            <p data-i18n="settings.sm2_intervals_desc">Review intervals increase exponentially: 1 day → 6 days → weeks → months.</p>
-                        </div>
-                        <div class="sm2-concept">
-                            <h4 data-i18n="settings.sm2_grades">⭐ Four Grades</h4>
-                            <p data-i18n="settings.sm2_grades_desc"><strong>Again</strong> (restart), <strong>Hard</strong> (shorter interval), <strong>Good</strong> (normal), <strong>Easy</strong> (longer interval).</p>
-                        </div>
-                        <div class="sm2-concept">
-                            <h4 data-i18n="settings.sm2_retention">💡 Long-term Memory</h4>
-                            <p data-i18n="settings.sm2_retention_desc">Reviews happen just before you're likely to forget, maximizing retention with minimal effort.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Study Mode Selection View -->
-        <div id="study-mode-view" class="view">
-            <div class="study-mode-header">
-                <button id="back-to-decks-from-mode" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
-                <h2 id="study-mode-title" data-i18n="study_mode.title">Choose Study Mode</h2>
-            </div>
-            
-            <div class="study-mode-options">
-                <div class="mode-option" id="flip-mode">
-                    <div class="mode-icon">🔄</div>
-                    <h3 data-i18n="study_mode.flip_title">Flip Cards Only</h3>
-                    <p data-i18n="study_mode.flip_desc">Traditional flashcard mode. See the front, flip to reveal answer, rate difficulty.</p>
-                    <button class="mode-select-btn" data-mode="flip" data-i18n="study_mode.start_flip">Start Flip Mode</button>
-                </div>
-                
-                <div class="mode-option" id="type-mode">
-                    <div class="mode-icon">⌨️</div>
-                    <h3 data-i18n="study_mode.type_title">Type Answer Only</h3>
-                    <p data-i18n="study_mode.type_desc">Type your answer and check if it's correct. More challenging and active recall.</p>
-                    <button class="mode-select-btn" data-mode="type" data-i18n="study_mode.start_type">Start Type Mode</button>
-                </div>
-                
-                <div class="mode-option" id="combined-mode">
-                    <div class="mode-icon">🎯</div>
-                    <h3 data-i18n="study_mode.combined_title">Combined Mode</h3>
-                    <p><strong data-i18n="study_mode.rigorous">Rigorous study:</strong> <span data-i18n="study_mode.combined_desc">Each card requires BOTH typing and flipping to pass. Best for retention!</span></p>
-                    <button class="mode-select-btn" data-mode="combined" data-i18n="study_mode.start_combined">Start Combined Mode</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Study View -->
         <div id="study-view" class="view">

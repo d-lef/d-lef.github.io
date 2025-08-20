@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v24-savecard-fix';
+const CACHE_NAME = 'flashcard-app-v25-ui-calendar-fix';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,6 +7,9 @@ const urlsToCache = [
   '/js/storage.js',
   '/js/spaced-repetition.js',
   '/js/supabase-client.js',
+  '/js/statistics.js',
+  '/js/i18n.js',
+  '/js/settings.js',
   '/manifest.json'
 ];
 

@@ -29,8 +29,11 @@ class FlashcardApp {
     setupEventListeners() {
         document.getElementById('overview-tab').addEventListener('click', () => this.showView('overview'));
         document.getElementById('decks-tab').addEventListener('click', () => this.showView('decks'));
-        document.getElementById('stats-tab').addEventListener('click', () => this.showView('stats'));
         document.getElementById('settings-tab').addEventListener('click', () => this.showView('settings'));
+        
+        // Overview calendar navigation
+        document.getElementById('overview-prev-month').addEventListener('click', () => this.navigateOverviewCalendar(-1));
+        document.getElementById('overview-next-month').addEventListener('click', () => this.navigateOverviewCalendar(1));
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
         document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardModal());
@@ -49,16 +52,7 @@ class FlashcardApp {
         
         document.getElementById('back-to-decks').addEventListener('click', () => this.showView('decks'));
         document.getElementById('back-to-decks-from-deck').addEventListener('click', () => this.showView('decks'));
-        document.getElementById('back-to-decks-from-mode').addEventListener('click', () => this.showView('decks'));
         document.getElementById('study-deck-btn').addEventListener('click', () => this.showStudyModeSelection());
-        
-        // Study mode selection - use event delegation since buttons are added dynamically
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('mode-select-btn')) {
-                const mode = e.target.dataset.mode;
-                this.startStudySessionWithMode(mode);
-            }
-        });
         
         // Typing mode event listeners
         document.getElementById('check-answer').addEventListener('click', () => this.checkTypedAnswer());
@@ -123,17 +117,11 @@ class FlashcardApp {
             case 'decks':
                 this.renderDecks();
                 break;
-            case 'stats':
-                this.updateStats();
-                break;
             case 'settings':
                 // Settings view is static, no rendering needed
                 break;
             case 'study':
                 this.renderStudyCard();
-                break;
-            case 'study-mode':
-                this.renderStudyModeView();
                 break;
             case 'deck':
                 this.renderDeckView();
@@ -199,40 +187,44 @@ class FlashcardApp {
         document.getElementById('overdue-cards-count').textContent = overdueCount;
         document.getElementById('overview-streak-count').textContent = streak;
         
-        // Render recent decks (show up to 5 most recently studied)
-        const recentDecksContainer = document.getElementById('recent-decks');
-        if (decks.length === 0) {
-            recentDecksContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No decks available. Create your first deck to get started!</p>';
-        } else {
-            // Sort by most recent activity (approximated by creation date for now)
-            const sortedDecks = [...decks].sort((a, b) => 
-                new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-            ).slice(0, 5);
-            
-            recentDecksContainer.innerHTML = sortedDecks.map(deck => {
-                const dueCardsInDeck = deck.cards.filter(card => {
-                    const cardDueDate = card.dueDate || card.due_date;
-                    return cardDueDate && cardDueDate <= today;
-                }).length;
-                
-                return `
-                    <div class="recent-deck-item" data-deck-id="${deck.id}">
-                        <div class="recent-deck-info">
-                            <div class="recent-deck-name">${this.escapeHtml(deck.name)}</div>
-                            <div class="recent-deck-stats">${deck.cards.length} cards • ${dueCardsInDeck} due</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Add click handlers for recent decks
-            document.querySelectorAll('.recent-deck-item').forEach(item => {
-                item.addEventListener('click', async (e) => {
-                    const deckId = e.currentTarget.dataset.deckId;
-                    await this.openDeck(deckId);
-                });
+        // Render compact study calendar
+        if (window.statistics) {
+            await this.renderOverviewCalendar();
+        }
+    }
+
+    async renderOverviewCalendar() {
+        // Initialize current calendar date if not set
+        if (!this.overviewCalendarDate) {
+            this.overviewCalendarDate = new Date();
+        }
+        
+        // Update month title
+        const monthElement = document.getElementById('overview-current-month');
+        if (monthElement) {
+            monthElement.textContent = this.overviewCalendarDate.toLocaleDateString('en-US', { 
+                month: 'long', 
+                year: 'numeric' 
             });
         }
+        
+        // Render calendar using the same logic as statistics module
+        const calendarContainer = document.getElementById('overview-study-calendar');
+        
+        if (window.statistics && calendarContainer) {
+            if (typeof window.statistics.renderCalendarMonth === 'function') {
+                await window.statistics.renderCalendarMonth(this.overviewCalendarDate, calendarContainer, true);
+            }
+        }
+    }
+
+    navigateOverviewCalendar(direction) {
+        if (!this.overviewCalendarDate) {
+            this.overviewCalendarDate = new Date();
+        }
+        
+        this.overviewCalendarDate.setMonth(this.overviewCalendarDate.getMonth() + direction);
+        this.renderOverviewCalendar();
     }
 
     async renderDecks() {
@@ -245,7 +237,6 @@ class FlashcardApp {
         }
         
         decksList.innerHTML = decks.map(deck => {
-            const dueCount = spacedRepetition.getDueCount(deck);
             return `
                 <div class="deck-card" data-deck-id="${deck.id}">
                     <div class="deck-actions">
@@ -255,7 +246,6 @@ class FlashcardApp {
                     <div class="deck-content">
                         <h3>${this.escapeHtml(deck.name)}</h3>
                         <div class="card-count">${deck.cards.length} cards</div>
-                        ${dueCount > 0 ? `<div class="due-count">${dueCount}</div>` : ''}
                     </div>
                 </div>
             `;
@@ -346,7 +336,8 @@ class FlashcardApp {
             return;
         }
         
-        this.showView('study-mode');
+        // Directly start combined mode instead of showing mode selection
+        this.startStudySessionWithMode('combined');
     }
     
     startStudySessionWithMode(mode = 'flip') {
@@ -582,8 +573,37 @@ class FlashcardApp {
             if (window.supabaseService) {
                 await window.supabaseService.updateReviewStats(today, isCorrect);
             }
+            
+            // Also store locally as fallback for calendar display
+            this.storeLocalReviewStat(today, isCorrect);
         } catch (error) {
             console.error('Failed to track review stat:', error);
+            // Still store locally for calendar display
+            const today = new Date().toISOString().split('T')[0];
+            const isCorrect = difficulty === 'good' || difficulty === 'easy';
+            this.storeLocalReviewStat(today, isCorrect);
+        }
+    }
+
+    storeLocalReviewStat(date, isCorrect) {
+        try {
+            const key = 'flashcard_app_review_stats';
+            let stats = JSON.parse(localStorage.getItem(key)) || {};
+            
+            if (!stats[date]) {
+                stats[date] = { reviews: 0, correct: 0, lapses: 0 };
+            }
+            
+            stats[date].reviews++;
+            if (isCorrect) {
+                stats[date].correct++;
+            } else {
+                stats[date].lapses++;
+            }
+            
+            localStorage.setItem(key, JSON.stringify(stats));
+        } catch (error) {
+            console.error('Failed to store local review stat:', error);
         }
     }
 
@@ -624,9 +644,6 @@ class FlashcardApp {
         }
     }
 
-    renderStudyModeView() {
-        // This is handled by HTML, but we can add dynamic content here if needed
-    }
     
     checkTypedAnswer() {
         const userAnswer = document.getElementById('typing-input').value.trim();
@@ -906,7 +923,7 @@ class FlashcardApp {
             return;
         }
         
-        // For study all, show mode selection
+        // For study all, directly start combined mode
         this.currentDeck = null; // Mark as study all mode
         this.studySession = {
             startTime: new Date(),
@@ -914,7 +931,7 @@ class FlashcardApp {
             isStudyAll: true
         };
         
-        this.showView('study-mode');
+        this.startStudySessionWithMode('combined');
     }
 
     async updateStats() {

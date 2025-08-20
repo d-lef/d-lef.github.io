@@ -183,21 +183,44 @@ class Statistics {
         const calendar = document.getElementById('study-calendar');
         const monthTitle = document.getElementById('current-month');
         
-        // Update month title
-        const lang = window.i18n ? window.i18n.getCurrentLanguage() : 'en';
-        const monthName = this.monthNames[lang][this.currentMonth];
-        monthTitle.textContent = `${monthName} ${this.currentYear}`;
+        // Check if elements exist (they may not if stats view was removed)
+        if (!calendar) {
+            console.warn('Study calendar element not found, skipping calendar render');
+            return;
+        }
+        
+        // Update month title if it exists
+        if (monthTitle) {
+            const lang = window.i18n ? window.i18n.getCurrentLanguage() : 'en';
+            const monthName = this.monthNames[lang][this.currentMonth];
+            monthTitle.textContent = `${monthName} ${this.currentYear}`;
+        }
         
         // Clear calendar
         calendar.innerHTML = '';
         
+        this.renderCalendarToContainer(calendar, monthStats, false);
+    }
+
+    renderCalendarToContainer(container, monthStats, isCompact = false) {
+        if (!container) return;
+        
+        // Clear container
+        container.innerHTML = '';
+        
+        // Create calendar grid
+        const calendarGrid = document.createElement('div');
+        calendarGrid.className = 'calendar-grid';
+        container.appendChild(calendarGrid);
+        
         // Add day headers
+        const lang = window.i18n ? window.i18n.getCurrentLanguage() : 'en';
         const dayNames = this.dayNames[lang];
         dayNames.forEach(day => {
             const dayHeader = document.createElement('div');
             dayHeader.className = 'calendar-day header';
             dayHeader.textContent = day;
-            calendar.appendChild(dayHeader);
+            calendarGrid.appendChild(dayHeader);
         });
         
         // Get first day of month and number of days
@@ -210,7 +233,7 @@ class Statistics {
         for (let i = 0; i < startDayOfWeek; i++) {
             const emptyDay = document.createElement('div');
             emptyDay.className = 'calendar-day other-month';
-            calendar.appendChild(emptyDay);
+            calendarGrid.appendChild(emptyDay);
         }
         
         // Add days of the month
@@ -229,7 +252,7 @@ class Statistics {
             
             // Get stats for this day
             const dateStr = new Date(this.currentYear, this.currentMonth, day).toISOString().split('T')[0];
-            const dayStat = monthStats.find(stat => stat.day === dateStr);
+            const dayStat = monthStats ? monthStats.find(stat => stat.day === dateStr) : null;
             
             // Apply study intensity class
             if (dayStat && dayStat.reviews > 0) {
@@ -247,29 +270,88 @@ class Statistics {
                 dayElement.classList.add('no-study');
             }
             
-            calendar.appendChild(dayElement);
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+
+    // New method for overview calendar
+    async renderCalendarMonth(date, container, isCompact = false) {
+        // Set internal date tracking to match the requested date
+        this.currentYear = date.getFullYear();
+        this.currentMonth = date.getMonth();
+        
+        // Get stats for the month
+        const startDate = new Date(this.currentYear, this.currentMonth, 1).toISOString().split('T')[0];
+        const endDate = new Date(this.currentYear, this.currentMonth + 1, 0).toISOString().split('T')[0];
+        
+        let monthStats = [];
+        try {
+            if (window.supabaseService) {
+                monthStats = await window.supabaseService.getReviewStats(startDate, endDate);
+            }
+        } catch (error) {
+            console.log('Could not fetch stats for calendar from Supabase:', error);
+        }
+        
+        // Fallback to local storage if Supabase fails
+        if (monthStats.length === 0) {
+            monthStats = this.getLocalReviewStats(startDate, endDate);
+        }
+        
+        // Render to the specified container
+        this.renderCalendarToContainer(container, monthStats, isCompact);
+    }
+
+    getLocalReviewStats(startDate, endDate) {
+        try {
+            const key = 'flashcard_app_review_stats';
+            const allStats = JSON.parse(localStorage.getItem(key)) || {};
+            
+            const result = [];
+            for (const [date, stats] of Object.entries(allStats)) {
+                if (date >= startDate && date <= endDate) {
+                    result.push({
+                        day: date,
+                        reviews: stats.reviews || 0,
+                        correct: stats.correct || 0,
+                        lapses: stats.lapses || 0
+                    });
+                }
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('Failed to load local review stats:', error);
+            return [];
         }
     }
 
     setupEventListeners() {
-        // Calendar navigation
-        document.getElementById('prev-month').addEventListener('click', () => {
-            this.currentMonth--;
-            if (this.currentMonth < 0) {
-                this.currentMonth = 11;
-                this.currentYear--;
-            }
-            this.refresh();
-        });
+        // Calendar navigation - check if elements exist
+        const prevBtn = document.getElementById('prev-month');
+        const nextBtn = document.getElementById('next-month');
         
-        document.getElementById('next-month').addEventListener('click', () => {
-            this.currentMonth++;
-            if (this.currentMonth > 11) {
-                this.currentMonth = 0;
-                this.currentYear++;
-            }
-            this.refresh();
-        });
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                this.currentMonth--;
+                if (this.currentMonth < 0) {
+                    this.currentMonth = 11;
+                    this.currentYear--;
+                }
+                this.refresh();
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.currentMonth++;
+                if (this.currentMonth > 11) {
+                    this.currentMonth = 0;
+                    this.currentYear++;
+                }
+                this.refresh();
+            });
+        }
     }
 
     async refresh() {
