@@ -264,7 +264,7 @@ class FlashcardApp {
         // Add click handler for opening decks (but not when clicking action buttons)
         document.querySelectorAll('.deck-card .deck-content').forEach(content => {
             content.addEventListener('click', async (e) => {
-                const deckId = e.closest('.deck-card').dataset.deckId;
+                const deckId = e.target.closest('.deck-card').dataset.deckId;
                 await this.openDeck(deckId);
             });
         });
