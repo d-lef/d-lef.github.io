@@ -50,7 +50,7 @@ class FlashcardApp {
         document.getElementById('good-btn').addEventListener('click', () => this.answerCard('good'));
         document.getElementById('easy-btn').addEventListener('click', () => this.answerCard('easy'));
         
-        document.getElementById('back-to-decks').addEventListener('click', () => this.showView('decks'));
+        // Back to decks button was removed from study view for mobile UX
         document.getElementById('back-to-decks-from-deck').addEventListener('click', () => this.showView('decks'));
         document.getElementById('study-deck-btn').addEventListener('click', () => this.showStudyModeSelection());
         
@@ -58,19 +58,25 @@ class FlashcardApp {
         document.getElementById('add-test-data-btn').addEventListener('click', () => this.addTestData());
         document.getElementById('erase-all-data-btn').addEventListener('click', () => this.eraseAllData());
         
-        // Typing mode event listeners
-        document.getElementById('check-answer').addEventListener('click', () => this.checkTypedAnswer());
+        // Typing mode event listeners - handled dynamically in renderTypingInterface
         document.getElementById('typing-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                this.checkTypedAnswer();
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Enter key pressed, button text:', document.getElementById('check-answer')?.textContent);
+                // Only check if button still says "Check Answer"
+                const checkBtn = document.getElementById('check-answer');
+                if (checkBtn && checkBtn.textContent.trim() === 'Check Answer') {
+                    console.log('Triggering check answer via Enter');
+                    this.checkTypedAnswer();
+                } else if (checkBtn && checkBtn.textContent.trim() === 'Continue') {
+                    console.log('Triggering continue via Enter');
+                    checkBtn.click();
+                }
             }
         });
         
-        // Typing mode difficulty buttons
-        document.getElementById('again-btn-typing').addEventListener('click', () => this.answerCard('again'));
-        document.getElementById('hard-btn-typing').addEventListener('click', () => this.answerCard('hard'));
-        document.getElementById('good-btn-typing').addEventListener('click', () => this.answerCard('good'));
-        document.getElementById('easy-btn-typing').addEventListener('click', () => this.answerCard('easy'));
+        // Typing mode difficulty buttons were removed - now using inline feedback with continue button
 
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
@@ -390,8 +396,6 @@ class FlashcardApp {
         const progress = ((this.currentCardIndex + 1) / this.currentStudyCards.length) * 100;
         
         document.getElementById('progress-fill').style.width = `${progress}%`;
-        document.getElementById('card-counter').textContent = 
-            `${this.currentCardIndex + 1}/${this.currentStudyCards.length}`;
         
         // Show appropriate interface based on study mode
         if (this.studyMode === 'type') {
@@ -471,8 +475,26 @@ class FlashcardApp {
             
             document.getElementById('typing-front').textContent = card.front;
             document.getElementById('typing-input').value = '';
-            document.getElementById('answer-result').style.display = 'none';
+            document.getElementById('inline-result').style.display = 'none';
             document.getElementById('typing-input').focus();
+            
+            // Reset check answer button
+            const checkBtn = document.getElementById('check-answer');
+            checkBtn.textContent = 'Check Answer';
+            // Clear all event handlers
+            checkBtn.onclick = null;
+            checkBtn.onmousedown = null;
+            checkBtn.ontouchstart = null;
+            // Remove all event listeners by cloning
+            const newBtn = checkBtn.cloneNode(true);
+            checkBtn.parentNode.replaceChild(newBtn, checkBtn);
+            // Add single clean event listener
+            document.getElementById('check-answer').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Check answer button clicked');
+                this.checkTypedAnswer();
+            });
             
             this.currentAnswer = card.back;
             
@@ -526,14 +548,12 @@ class FlashcardApp {
         // Hide combined progress indicator (no longer needed)
         document.getElementById('combined-progress').style.display = 'none';
         
-        // Update progress counter and progress bar
+        // Update progress bar
         const completedPairs = this.combinedPairs.filter(p => p.completed).length;
         const totalPairs = this.combinedPairs.length;
         const progress = totalPairs > 0 ? (completedPairs / totalPairs) * 100 : 0;
         
         document.getElementById('progress-fill').style.width = `${progress}%`;
-        document.getElementById('card-counter').textContent = 
-            `${completedPairs + 1}/${totalPairs} (${mode})`;
         
         if (mode === 'type') {
             this.renderTypingInterface(card);
@@ -608,7 +628,7 @@ class FlashcardApp {
             // Reset interfaces for next card
             if (this.studyMode === 'type') {
                 document.querySelector('.typing-input-area').style.display = 'flex';
-                document.getElementById('answer-result').style.display = 'none';
+                document.getElementById('inline-result').style.display = 'none';
             }
             this.renderStudyCard();
         }
@@ -688,15 +708,18 @@ class FlashcardApp {
         } else {
             // Reset typing interface
             document.querySelector('.typing-input-area').style.display = 'flex';
-            document.getElementById('answer-result').style.display = 'none';
+            document.getElementById('inline-result').style.display = 'none';
             this.renderStudyCard();
         }
     }
 
     
     checkTypedAnswer() {
+        console.log('checkTypedAnswer called');
         const userAnswer = document.getElementById('typing-input').value.trim();
         const correctAnswer = this.currentAnswer;
+        
+        console.log('User answer:', userAnswer, 'Correct answer:', correctAnswer);
         
         if (!userAnswer) {
             alert('Please type an answer first!');
@@ -704,6 +727,7 @@ class FlashcardApp {
         }
         
         const result = this.compareAnswers(userAnswer, correctAnswer);
+        console.log('Comparison result:', result);
         
         // Automatically assign difficulty based on typing accuracy
         let difficulty;
@@ -714,6 +738,8 @@ class FlashcardApp {
         } else {
             difficulty = 'again';
         }
+        
+        console.log('Assigned difficulty:', difficulty);
         
         // Show brief feedback before automatically proceeding
         this.showTypingFeedback(result, userAnswer, correctAnswer, difficulty);
@@ -785,96 +811,81 @@ class FlashcardApp {
     }
     
     showTypingFeedback(result, userAnswer, correctAnswer, difficulty) {
-        // Show visual feedback with proceed button
-        const answerResult = document.getElementById('answer-result');
-        const resultStatus = document.getElementById('result-status');
-        const yourAnswerElement = document.querySelector('.your-answer');
-        const correctAnswerElement = document.querySelector('.correct-answer');
-        const correctAnswerText = document.getElementById('correct-answer-text');
-        const difficultyButtons = answerResult.querySelector('.difficulty-buttons');
+        console.log('showTypingFeedback called with:', { result, userAnswer, correctAnswer, difficulty });
+        
+        // Show inline feedback in the typing interface
+        const inlineResult = document.getElementById('inline-result');
+        const inlineStatus = document.getElementById('inline-status');
+        const inlineCorrectAnswer = document.getElementById('inline-correct-answer');
+        const checkBtn = document.getElementById('check-answer');
+        
+        console.log('Elements found:', { 
+            inlineResult: !!inlineResult, 
+            inlineStatus: !!inlineStatus, 
+            inlineCorrectAnswer: !!inlineCorrectAnswer, 
+            checkBtn: !!checkBtn 
+        });
+        
+        if (!inlineResult || !inlineStatus || !inlineCorrectAnswer || !checkBtn) {
+            console.error('Missing required elements for inline feedback');
+            return;
+        }
         
         // Set feedback text and color
         if (result === 'correct') {
-            resultStatus.textContent = '✅ Correct!';
-            resultStatus.style.color = '#2ed573';
-            // Hide answer comparison when correct
-            yourAnswerElement.style.display = 'none';
-            correctAnswerElement.style.display = 'none';
+            inlineStatus.textContent = '✅ Correct!';
+            inlineStatus.style.color = '#2ed573';
+            inlineCorrectAnswer.style.display = 'none';
         } else {
             if (result === 'partial') {
-                resultStatus.textContent = '⚠️ Close! (Minor mistakes)';
-                resultStatus.style.color = '#ffa502';
+                inlineStatus.textContent = '⚠️ Close! (Minor mistakes)';
+                inlineStatus.style.color = '#ffa502';
             } else {
-                resultStatus.textContent = '❌ Incorrect';
-                resultStatus.style.color = '#ff3838';
+                inlineStatus.textContent = '❌ Incorrect';
+                inlineStatus.style.color = '#ff3838';
             }
-            // Show only correct answer when incorrect
-            yourAnswerElement.style.display = 'none';
-            correctAnswerElement.style.display = 'block';
-            correctAnswerText.textContent = correctAnswer;
+            // Show correct answer inline
+            inlineCorrectAnswer.textContent = correctAnswer;
+            inlineCorrectAnswer.style.display = 'block';
         }
         
-        // Replace difficulty buttons with a proceed button
-        if (difficultyButtons) {
-            difficultyButtons.innerHTML = `
-                <button id="proceed-btn" class="primary-btn" style="width: 100%; padding: 12px; font-size: 16px;">
-                    Continue
-                </button>
-            `;
-            difficultyButtons.style.display = 'block';
+        // Show the inline result
+        inlineResult.style.display = 'block';
+        console.log('Inline result should now be visible');
+        
+        // Replace check button with continue button
+        const originalCheckBtn = document.getElementById('check-answer');
+        originalCheckBtn.textContent = 'Continue';
+        
+        // Clear all event handlers completely
+        originalCheckBtn.onclick = null;
+        originalCheckBtn.onmousedown = null;
+        originalCheckBtn.ontouchstart = null;
+        
+        // Clone to remove all event listeners
+        const continueBtn = originalCheckBtn.cloneNode(true);
+        originalCheckBtn.parentNode.replaceChild(continueBtn, originalCheckBtn);
+        
+        // Add only the continue click handler
+        continueBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Continue button clicked by user');
             
-            // Add click handler for proceed button
-            document.getElementById('proceed-btn').addEventListener('click', () => {
-                answerResult.style.display = 'none';
-                answerResult.classList.remove('showing');
-                
-                // Automatically answer with calculated difficulty
-                if (this.studyMode === 'combined') {
-                    this.handleCombinedAnswer(difficulty);
-                } else {
-                    this.answerCard(difficulty);
-                }
-            });
-        }
+            // Hide inline result
+            inlineResult.style.display = 'none';
+            
+            // Automatically answer with calculated difficulty
+            if (this.studyMode === 'combined') {
+                this.handleCombinedAnswer(difficulty);
+            } else {
+                this.answerCard(difficulty);
+            }
+        });
         
-        // Show result and wait for user to click continue
-        answerResult.style.display = 'block';
-        answerResult.classList.add('showing');
+        console.log('showTypingFeedback completed successfully');
     }
     
-    showAnswerResult(result, userAnswer, correctAnswer) {
-        const resultElement = document.getElementById('result-status');
-        const yourAnswerElement = document.getElementById('your-answer-text');
-        const correctAnswerElement = document.getElementById('correct-answer-text');
-        
-        resultElement.className = `result-status ${result}`;
-        
-        switch (result) {
-            case 'correct':
-                resultElement.textContent = '✅ Correct!';
-                break;
-            case 'partial':
-                resultElement.textContent = '🟡 Partially Correct';
-                break;
-            case 'incorrect':
-                resultElement.textContent = '❌ Incorrect';
-                break;
-        }
-        
-        yourAnswerElement.textContent = userAnswer;
-        correctAnswerElement.textContent = correctAnswer;
-        
-        document.getElementById('answer-result').style.display = 'block';
-        
-        // Hide input area
-        document.querySelector('.typing-input-area').style.display = 'none';
-        
-        // In combined mode, we handle completion differently
-        if (this.studyMode === 'combined') {
-            // Show difficulty buttons immediately for typing in combined mode
-            document.querySelector('.difficulty-buttons').style.display = 'grid';
-        }
-    }
     
     
     finishStudySession() {

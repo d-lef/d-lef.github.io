@@ -140,11 +140,9 @@
         <!-- Study View -->
         <div id="study-view" class="view">
             <div class="study-header">
-                <button id="back-to-decks" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
                 <div id="progress-bar">
                     <div id="progress-fill"></div>
                 </div>
-                <span id="card-counter">1/10</span>
             </div>
             
             <!-- Combined Mode Progress -->
@@ -183,31 +181,16 @@
             <div id="typing-interface" class="typing-interface" style="display: none;">
                 <div class="typing-question">
                     <div id="typing-front" class="typing-text"></div>
+                    <!-- Inline result display -->
+                    <div id="inline-result" class="inline-result" style="display: none;">
+                        <div class="result-divider"></div>
+                        <div id="inline-status" class="inline-status"></div>
+                        <div id="inline-correct-answer" class="inline-correct-answer" style="display: none;"></div>
+                    </div>
                 </div>
                 <div class="typing-input-area">
                     <input type="text" id="typing-input" data-i18n-placeholder="study.type_placeholder" placeholder="Type your answer..." autocomplete="off">
                     <button id="check-answer" class="check-btn" data-i18n="study.check_answer">Check Answer</button>
-                </div>
-                <div id="answer-result" class="answer-result" style="display: none;">
-                    <div class="result-header">
-                        <div id="result-status" class="result-status"></div>
-                    </div>
-                    <div class="answer-comparison">
-                        <div class="your-answer">
-                            <strong data-i18n="study.your_answer">Your answer:</strong>
-                            <div id="your-answer-text"></div>
-                        </div>
-                        <div class="correct-answer">
-                            <strong data-i18n="study.correct_answer">Correct answer:</strong>
-                            <div id="correct-answer-text"></div>
-                        </div>
-                    </div>
-                    <div class="difficulty-buttons">
-                        <button id="again-btn-typing" class="diff-btn again" data-i18n="difficulty.again">Again</button>
-                        <button id="hard-btn-typing" class="diff-btn hard" data-i18n="difficulty.hard">Hard</button>
-                        <button id="good-btn-typing" class="diff-btn good" data-i18n="difficulty.good">Good</button>
-                        <button id="easy-btn-typing" class="diff-btn easy" data-i18n="difficulty.easy">Easy</button>
-                    </div>
                 </div>
             </div>
             

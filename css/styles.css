@@ -791,13 +791,12 @@ nav::-webkit-scrollbar {
 }
 
 #progress-bar {
-    flex: 1;
+    width: 100%;
     height: 12px;
     background: var(--border-color);
     border-radius: 6px;
     overflow: hidden;
-    margin: 0 1rem;
-    min-width: 100px;
+    margin: 0;
 }
 
 #progress-fill {
@@ -1167,10 +1166,7 @@ nav::-webkit-scrollbar {
     padding: 2rem;
     box-shadow: 0 8px 30px var(--shadow);
     margin-bottom: 2rem;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
 }
 
 .typing-text {
@@ -1259,6 +1255,56 @@ nav::-webkit-scrollbar {
 .check-btn:hover {
     background: #27ae60;
     transform: translateY(-1px);
+}
+
+.check-btn:active {
+    transform: translateY(1px);
+}
+
+/* Inline result display for typing interface */
+.inline-result {
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.3s ease-in-out;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: block;
+}
+
+.result-divider {
+    height: 2px;
+    background: linear-gradient(to right, var(--border-color), var(--primary-color), var(--border-color));
+    margin: 1rem 0;
+    border-radius: 1px;
+}
+
+.inline-status {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.inline-correct-answer {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.4;
+    clear: both;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inline-correct-answer::before {
+    content: "Correct answer:";
+    display: block;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
 }
 
 .answer-result {
