@@ -27,7 +27,6 @@
         <div id="overview-view" class="view active">
             <div class="overview-container">
                 <div class="overview-header">
-                    <h2 data-i18n="overview.title">Study Overview</h2>
                     <button id="study-all-btn" class="primary-btn large-btn">
                         📚 <span data-i18n="actions.study_all">Study All Cards</span>
                     </button>
@@ -70,7 +69,6 @@
                 <!-- Compact Study Calendar -->
                 <div class="compact-calendar-section">
                     <div class="compact-calendar-header">
-                        <h3 data-i18n="overview.study_calendar">Study Calendar</h3>
                         <div class="calendar-nav-controls">
                             <button id="overview-prev-month" class="calendar-nav">‹</button>
                             <span id="overview-current-month" class="calendar-title"></span>
@@ -97,8 +95,6 @@
         <!-- Settings View -->
         <div id="settings-view" class="view">
             <div class="settings-container">
-                <h2 data-i18n="settings.title">Settings</h2>
-                
                 <div class="settings-section">
                     <h3 data-i18n="settings.appearance">Appearance</h3>
                     <div class="setting-row">
@@ -186,6 +182,10 @@
                         <div class="result-divider"></div>
                         <div id="inline-status" class="inline-status"></div>
                         <div id="inline-correct-answer" class="inline-correct-answer" style="display: none;"></div>
+                        <div id="inline-user-answer" class="inline-user-answer" style="display: none;"></div>
+                        <div id="continue-button-container" class="continue-button-container" style="display: none;">
+                            <button id="continue-typing" class="primary-btn">Continue</button>
+                        </div>
                     </div>
                 </div>
                 <div class="typing-input-area">

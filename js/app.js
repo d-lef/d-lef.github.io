@@ -45,6 +45,21 @@ class FlashcardApp {
         document.getElementById('cancel-card').addEventListener('click', () => this.hideNewCardModal());
         
         document.getElementById('flip-card').addEventListener('click', () => this.flipCard());
+        
+        // Add click handler to the flashcard itself for tapping to flip
+        document.getElementById('flashcard').addEventListener('click', (e) => {
+            console.log('Flashcard clicked, studyMode:', this.studyMode, 'isCardFlipped:', this.isCardFlipped);
+            
+            // Only flip if we're in flip mode (or flip phase of combined) and card isn't flipped yet
+            // Also prevent flipping when clicking on difficulty buttons
+            const isFlipMode = this.studyMode === 'flip' || 
+                              (this.studyMode === 'combined' && this.getCurrentCombinedMode() === 'flip');
+            
+            if (isFlipMode && !this.isCardFlipped && !e.target.closest('.difficulty-buttons')) {
+                console.log('Flipping card via tap');
+                this.flipCard();
+            }
+        });
         document.getElementById('again-btn').addEventListener('click', () => this.answerCard('again'));
         document.getElementById('hard-btn').addEventListener('click', () => this.answerCard('hard'));
         document.getElementById('good-btn').addEventListener('click', () => this.answerCard('good'));
@@ -154,7 +169,7 @@ class FlashcardApp {
         let dueCount = 0;
         let overdueCount = 0;
         let totalCards = 0;
-        const today = new Date().toISOString().split('T')[0];
+        const today = this.getLocalDateString();
         
         decks.forEach(deck => {
             totalCards += deck.cards.length;
@@ -442,7 +457,7 @@ class FlashcardApp {
         this.transitionToInterface('flip', () => {
             document.getElementById('flashcard').style.display = 'block';
             document.getElementById('typing-interface').style.display = 'none';
-            document.querySelector('.study-actions').style.display = 'block';
+            document.querySelector('.study-actions').style.display = 'none'; // Hide flip button area
             
             // Always hide combined progress (we removed the step-by-step progress)
             document.getElementById('combined-progress').style.display = 'none';
@@ -451,7 +466,7 @@ class FlashcardApp {
             document.getElementById('card-back').textContent = card.back;
             
             document.getElementById('flashcard').classList.remove('flipped');
-            document.getElementById('flip-card').style.display = 'block';
+            document.getElementById('flip-card').style.display = 'none'; // Hide flip button
             document.querySelector('.difficulty-buttons').style.display = 'none';
             
             this.isCardFlipped = false;
@@ -509,23 +524,29 @@ class FlashcardApp {
         this.combinedPairs = [];
         this.combinedCardStates = new Map();
         
-        // Create pairs for each card: (card, "type") and (card, "flip")
+        // Create ONE pair per card with random mode selection
         this.currentStudyCards.forEach(card => {
-            this.combinedPairs.push({ card: card, mode: 'type', completed: false });
-            this.combinedPairs.push({ card: card, mode: 'flip', completed: false });
+            // Randomly choose either 'type' or 'flip' for this card this session
+            const randomMode = Math.random() < 0.5 ? 'type' : 'flip';
+            this.combinedPairs.push({ 
+                card: card, 
+                mode: randomMode, 
+                completed: false,
+                needsReshuffle: false
+            });
             
             // Track completion state for each card
             this.combinedCardStates.set(card.id, {
-                typeCompleted: false,
-                flipCompleted: false,
-                bothCompleted: false
+                currentMode: randomMode,
+                completed: false,
+                failed: false
             });
         });
         
         // Shuffle the pairs
         this.shuffleArray(this.combinedPairs);
         
-        console.log('Combined pairs created:', this.combinedPairs.length);
+        console.log('Combined pairs created:', this.combinedPairs.length, 'cards with random modes');
     }
     
     shuffleArray(array) {
@@ -583,22 +604,41 @@ class FlashcardApp {
         const currentPair = this.combinedPairs[this.currentCardIndex];
         const card = currentPair.card;
         const mode = currentPair.mode;
-        
-        // Mark this pair as completed
-        currentPair.completed = true;
-        
-        // Update card state tracking
         const cardState = this.combinedCardStates.get(card.id);
-        if (mode === 'type') {
-            cardState.typeCompleted = true;
-        } else {
-            cardState.flipCompleted = true;
-        }
         
-        // Check if both modes are completed for this card
-        if (cardState.typeCompleted && cardState.flipCompleted && !cardState.bothCompleted) {
-            cardState.bothCompleted = true;
-            // Only now update the card with spaced repetition
+        // Check if this is a failure (Again or typing failure)
+        const isFailed = difficulty === 'again' || 
+                        (mode === 'type' && (difficulty === 'hard' || difficulty === 'again'));
+        
+        if (isFailed) {
+            // Mark as failed and reshuffle back into the deck
+            cardState.failed = true;
+            currentPair.needsReshuffle = true;
+            
+            // Create a new pair for this card and add it back to the deck
+            const newRandomMode = Math.random() < 0.5 ? 'type' : 'flip';
+            const newPair = {
+                card: card,
+                mode: newRandomMode,
+                completed: false,
+                needsReshuffle: false
+            };
+            
+            // Insert the new pair at a random position in the remaining cards
+            const remainingCards = this.combinedPairs.length - this.currentCardIndex - 1;
+            const insertPosition = this.currentCardIndex + 1 + Math.floor(Math.random() * Math.max(1, remainingCards));
+            this.combinedPairs.splice(insertPosition, 0, newPair);
+            
+            // Update card state for the new attempt
+            cardState.currentMode = newRandomMode;
+            cardState.failed = false;
+            
+            console.log(`Card "${card.front}" failed, reshuffled as ${newRandomMode} mode at position ${insertPosition}`);
+        } else {
+            // Success - mark as completed and update with spaced repetition
+            currentPair.completed = true;
+            cardState.completed = true;
+            
             const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
             await this.updateCardInStorage(updatedCard);
             
@@ -606,6 +646,8 @@ class FlashcardApp {
             await this.trackReviewStat(difficulty);
             
             this.studySession.cardsStudied++;
+            
+            console.log(`Card "${card.front}" completed successfully in ${mode} mode`);
         }
         
         this.moveToNextPair();
@@ -634,9 +676,17 @@ class FlashcardApp {
         }
     }
     
+    // Helper function to get local date string (YYYY-MM-DD)
+    getLocalDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     async trackReviewStat(difficulty) {
         try {
-            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            const today = this.getLocalDateString(); // YYYY-MM-DD format
             const isCorrect = difficulty === 'good' || difficulty === 'easy';
             
             if (window.supabaseService) {
@@ -648,7 +698,7 @@ class FlashcardApp {
         } catch (error) {
             console.error('Failed to track review stat:', error);
             // Still store locally for calendar display
-            const today = new Date().toISOString().split('T')[0];
+            const today = this.getLocalDateString();
             const isCorrect = difficulty === 'good' || difficulty === 'easy';
             this.storeLocalReviewStat(today, isCorrect);
         }
@@ -813,10 +863,15 @@ class FlashcardApp {
     showTypingFeedback(result, userAnswer, correctAnswer, difficulty) {
         console.log('showTypingFeedback called with:', { result, userAnswer, correctAnswer, difficulty });
         
+        // Hide the typing input area
+        document.querySelector('.typing-input-area').style.display = 'none';
+        
         // Show inline feedback in the typing interface
         const inlineResult = document.getElementById('inline-result');
         const inlineStatus = document.getElementById('inline-status');
         const inlineCorrectAnswer = document.getElementById('inline-correct-answer');
+        const inlineUserAnswer = document.getElementById('inline-user-answer');
+        const continueContainer = document.getElementById('continue-button-container');
         const checkBtn = document.getElementById('check-answer');
         
         console.log('Elements found:', { 
@@ -826,10 +881,14 @@ class FlashcardApp {
             checkBtn: !!checkBtn 
         });
         
-        if (!inlineResult || !inlineStatus || !inlineCorrectAnswer || !checkBtn) {
+        if (!inlineResult || !inlineStatus || !inlineCorrectAnswer || !inlineUserAnswer || !continueContainer) {
             console.error('Missing required elements for inline feedback');
             return;
         }
+        
+        // Always show the user's answer
+        inlineUserAnswer.textContent = userAnswer || '(no answer)';
+        inlineUserAnswer.style.display = 'block';
         
         // Set feedback text and color
         if (result === 'correct') {
@@ -849,31 +908,27 @@ class FlashcardApp {
             inlineCorrectAnswer.style.display = 'block';
         }
         
-        // Show the inline result
+        // Show the inline result and continue button
         inlineResult.style.display = 'block';
+        continueContainer.style.display = 'block';
         console.log('Inline result should now be visible');
         
-        // Replace check button with continue button
-        const originalCheckBtn = document.getElementById('check-answer');
-        originalCheckBtn.textContent = 'Continue';
+        // Add continue button click handler
+        const continueBtn = document.getElementById('continue-typing');
+        // Remove any existing listeners
+        const newContinueBtn = continueBtn.cloneNode(true);
+        continueBtn.parentNode.replaceChild(newContinueBtn, continueBtn);
         
-        // Clear all event handlers completely
-        originalCheckBtn.onclick = null;
-        originalCheckBtn.onmousedown = null;
-        originalCheckBtn.ontouchstart = null;
-        
-        // Clone to remove all event listeners
-        const continueBtn = originalCheckBtn.cloneNode(true);
-        originalCheckBtn.parentNode.replaceChild(continueBtn, originalCheckBtn);
-        
-        // Add only the continue click handler
-        continueBtn.addEventListener('click', (e) => {
+        document.getElementById('continue-typing').addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             console.log('Continue button clicked by user');
             
-            // Hide inline result
+            // Hide inline result and show typing input again for next card
             inlineResult.style.display = 'none';
+            continueContainer.style.display = 'none';
+            inlineUserAnswer.style.display = 'none';
+            document.querySelector('.typing-input-area').style.display = 'flex';
             
             // Automatically answer with calculated difficulty
             if (this.studyMode === 'combined') {
@@ -1030,7 +1085,7 @@ class FlashcardApp {
                     interval: 1,
                     reps: 0,
                     lapses: 0,
-                    due_date: new Date().toISOString().split('T')[0],
+                    due_date: this.getLocalDateString(),
                     reviewCount: 0,
                     isNew: true
                 };

@@ -17,13 +17,13 @@ class Statistics {
     async loadStats() {
         try {
             // Get current month's data
-            const startDate = new Date(this.currentYear, this.currentMonth, 1).toISOString().split('T')[0];
-            const endDate = new Date(this.currentYear, this.currentMonth + 1, 0).toISOString().split('T')[0];
+            const startDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth, 1));
+            const endDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth + 1, 0));
             
             const reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
             
             // Get today's stats
-            const today = new Date().toISOString().split('T')[0];
+            const today = this.getLocalDateString();
             const todayStats = reviewStats.find(stat => stat.day === today) || 
                              { reviews: 0, correct: 0, lapses: 0 };
             
@@ -56,6 +56,14 @@ class Statistics {
         }
     }
 
+    // Helper function to get local date string (YYYY-MM-DD)
+    getLocalDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     calculateWeekStats(reviewStats) {
         const today = new Date();
         const startOfWeek = new Date(today);
@@ -68,7 +76,7 @@ class Statistics {
         for (let i = 0; i < 7; i++) {
             const date = new Date(startOfWeek);
             date.setDate(startOfWeek.getDate() + i);
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = this.getLocalDateString(date);
             
             const dayStat = reviewStats.find(stat => stat.day === dateStr);
             if (dayStat && dayStat.reviews > 0) {
@@ -94,8 +102,8 @@ class Statistics {
             const yearAgo = new Date(today);
             yearAgo.setDate(today.getDate() - 365);
             
-            const startDate = yearAgo.toISOString().split('T')[0];
-            const endDate = today.toISOString().split('T')[0];
+            const startDate = this.getLocalDateString(yearAgo);
+            const endDate = this.getLocalDateString(today);
             
             const reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
             
@@ -111,7 +119,7 @@ class Statistics {
             const currentDate = new Date(today);
             
             while (currentDate >= yearAgo) {
-                const dateStr = currentDate.toISOString().split('T')[0];
+                const dateStr = this.getLocalDateString(currentDate);
                 if (studyDays.has(dateStr)) {
                     streak++;
                     currentDate.setDate(currentDate.getDate() - 1);
@@ -251,7 +259,7 @@ class Statistics {
             }
             
             // Get stats for this day
-            const dateStr = new Date(this.currentYear, this.currentMonth, day).toISOString().split('T')[0];
+            const dateStr = this.getLocalDateString(new Date(this.currentYear, this.currentMonth, day));
             const dayStat = monthStats ? monthStats.find(stat => stat.day === dateStr) : null;
             
             // Apply study intensity class
@@ -281,8 +289,8 @@ class Statistics {
         this.currentMonth = date.getMonth();
         
         // Get stats for the month
-        const startDate = new Date(this.currentYear, this.currentMonth, 1).toISOString().split('T')[0];
-        const endDate = new Date(this.currentYear, this.currentMonth + 1, 0).toISOString().split('T')[0];
+        const startDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth, 1));
+        const endDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth + 1, 0));
         
         let monthStats = [];
         try {
