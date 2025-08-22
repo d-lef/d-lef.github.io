@@ -1177,10 +1177,22 @@ class FlashcardApp {
             // Clear local storage
             localStorage.clear();
             
+            // Clear in-memory storage cache
+            if (window.storage) {
+                window.storage.decks = [];
+                window.storage.isInitialized = false;
+            }
+            
+            // Reset current app state
+            this.currentDeck = null;
+            this.currentStudyCards = [];
+            this.currentCardIndex = 0;
+            this.studySession = null;
+            
             alert('All data has been erased successfully!');
             
             // Refresh the current view
-            this.renderOverview();
+            await this.renderOverview();
             this.renderDecks();
         } catch (error) {
             console.error('Failed to erase data:', error);

@@ -481,38 +481,73 @@ class SupabaseService {
 
     async clearAllData() {
         try {
+            console.log('Starting to clear all Supabase data...');
+            
             // Delete all cards first (due to foreign key constraints)
-            const { error: cardsError } = await this.client
+            const { data: cardsData, error: cardsError } = await this.client
                 .from('cards')
                 .delete()
-                .neq('id', 'dummy'); // This will delete all cards since no card has id 'dummy'
+                .gte('id', ''); // This will match all records since all IDs are non-empty strings
             
             if (cardsError) {
                 console.error('Failed to delete cards:', cardsError);
-                throw cardsError;
+                // Don't throw immediately, try a different approach
+                console.log('Trying alternative delete method for cards...');
+                const { error: cardsError2 } = await this.client
+                    .from('cards')
+                    .delete()
+                    .not('id', 'is', null);
+                
+                if (cardsError2) {
+                    console.error('Alternative cards delete also failed:', cardsError2);
+                    throw cardsError2;
+                }
             }
+            console.log('Cards deleted successfully');
             
             // Delete all decks
-            const { error: decksError } = await this.client
+            const { data: decksData, error: decksError } = await this.client
                 .from('decks')
                 .delete()
-                .neq('id', 'dummy'); // This will delete all decks since no deck has id 'dummy'
+                .gte('id', ''); // This will match all records since all IDs are non-empty strings
             
             if (decksError) {
                 console.error('Failed to delete decks:', decksError);
-                throw decksError;
+                // Try alternative approach
+                console.log('Trying alternative delete method for decks...');
+                const { error: decksError2 } = await this.client
+                    .from('decks')
+                    .delete()
+                    .not('id', 'is', null);
+                
+                if (decksError2) {
+                    console.error('Alternative decks delete also failed:', decksError2);
+                    throw decksError2;
+                }
             }
+            console.log('Decks deleted successfully');
             
             // Delete all review stats
-            const { error: statsError } = await this.client
+            const { data: statsData, error: statsError } = await this.client
                 .from('review_stats')
                 .delete()
-                .neq('user_id', 'dummy'); // This will delete all stats since no user has id 'dummy'
+                .gte('day', ''); // This will match all records since all days are non-empty strings
             
             if (statsError) {
                 console.error('Failed to delete review stats:', statsError);
-                throw statsError;
+                // Try alternative approach
+                console.log('Trying alternative delete method for review stats...');
+                const { error: statsError2 } = await this.client
+                    .from('review_stats')
+                    .delete()
+                    .not('day', 'is', null);
+                
+                if (statsError2) {
+                    console.error('Alternative stats delete also failed:', statsError2);
+                    throw statsError2;
+                }
             }
+            console.log('Review stats deleted successfully');
             
             console.log('All Supabase data cleared successfully');
             return true;
