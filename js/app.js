@@ -1197,7 +1197,8 @@ class FlashcardApp {
                 dueDate: this.getLocalDateString(),
                 lastReviewed: null,
                 createdAt: new Date().toISOString(),
-                card_type: this.selectedCardType // Add the card type
+                card_type: this.selectedCardType, // Add the card type
+                isNew: true // Mark as new for Supabase sync
             };
             
             console.log('saveNewCard: Created newCard:', newCard);
