@@ -1,3 +1,6 @@
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 /* CSS Variables for Theming */
 :root {
     /* Light theme */
@@ -14,6 +17,31 @@
     --shadow-hover: rgba(0, 0, 0, 0.15);
     --input-bg: white;
     --modal-bg: rgba(0, 0, 0, 0.5);
+    
+    /* Additional theme colors */
+    --danger-color: #ff4757;
+    --danger-hover: #ff3742;
+    --success-color: #2ed573;
+    --success-hover: #26d065;
+    --warning-color: #ffa502;
+    --info-color: #1e90ff;
+    --blue-light: #e3f2fd;
+    --blue-text: #1976d2;
+    --blue-hover: #bbdefb;
+    --blue-text-hover: #1565c0;
+    --blue-medium: #2196f3;
+    --green-color: #4caf50;
+    --green-border: #388e3c;
+    --green-dark: #2e7d32;
+    --primary-alpha-light: var(--primary-alpha-light);
+    --primary-alpha-medium: var(--primary-alpha-medium);
+    --primary-alpha-strong: var(--primary-alpha-strong);
+    --primary-alpha-hover: var(--primary-alpha-hover);
+    --primary-border-light: var(--primary-border-light);
+    --primary-border-medium: rgba(66, 133, 244, 0.5);
+    --primary-border-strong: rgba(66, 133, 244, 0.8);
+    --gray-light: #ddd;
+    --dark-overlay: rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] {
@@ -31,6 +59,31 @@
     --shadow-hover: rgba(0, 0, 0, 0.4);
     --input-bg: #485a6b;
     --modal-bg: rgba(0, 0, 0, 0.7);
+    
+    /* Additional dark theme colors */
+    --danger-color: #ff4757;
+    --danger-hover: #ff3742;
+    --success-color: #2ed573;
+    --success-hover: #26d065;
+    --warning-color: #ffa502;
+    --info-color: #1e90ff;
+    --blue-light: #1e3a5f;
+    --blue-text: #64b5f6;
+    --blue-hover: #2e5984;
+    --blue-text-hover: #42a5f5;
+    --blue-medium: #1976d2;
+    --green-color: #388e3c;
+    --green-border: #2e7d32;
+    --green-dark: #1b5e20;
+    --primary-alpha-light: rgba(82, 148, 255, 0.1);
+    --primary-alpha-medium: rgba(82, 148, 255, 0.2);
+    --primary-alpha-strong: var(--primary-alpha-strong);
+    --primary-alpha-hover: var(--primary-alpha-hover);
+    --primary-border-light: rgba(82, 148, 255, 0.2);
+    --primary-border-medium: rgba(82, 148, 255, 0.5);
+    --primary-border-strong: rgba(82, 148, 255, 0.8);
+    --gray-light: #556983;
+    --dark-overlay: rgba(0, 0, 0, 0.7);
 }
 
 /* Reset and base styles */
@@ -38,6 +91,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
 }
 
 html {
@@ -69,7 +123,7 @@ body::-webkit-scrollbar,
 }
 
 body {
-    font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
     background: var(--surface-color);
     color: var(--text-primary);
     min-height: 100vh;
@@ -90,6 +144,12 @@ input, textarea, button, [contenteditable] {
     user-select: auto;
     /* Prevent zoom on iOS when focusing inputs */
     font-size: 16px;
+    font-family: inherit;
+}
+
+/* Ensure all text elements use the correct font */
+h1, h2, h3, h4, h5, h6, p, span, div, label, button, input, textarea, select, option {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
 }
 
 /* Prevent double-tap zoom on buttons and interactive elements */
@@ -314,7 +374,7 @@ nav::-webkit-scrollbar {
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+    box-shadow: 0 2px 10px var(--primary-alpha-strong);
 }
 
 
@@ -378,7 +438,7 @@ nav::-webkit-scrollbar {
     position: absolute;
     top: 1rem;
     right: 3rem;
-    background: #ff4757;
+    background: var(--danger-color);
     color: white;
     border-radius: 12px;
     padding: 0.25rem 0.5rem;
@@ -428,7 +488,7 @@ nav::-webkit-scrollbar {
 .large-btn {
     font-size: 1.1rem;
     padding: 1rem 2rem;
-    box-shadow: 0 4px 20px rgba(66, 133, 244, 0.4);
+    box-shadow: 0 4px 20px var(--primary-alpha-hover);
 }
 
 .insights-grid {
@@ -714,18 +774,24 @@ nav::-webkit-scrollbar {
 }
 
 .calendar-day.low-study {
-    background: #e3f2fd;
-    color: #1976d2;
+    background: var(--blue-light);
+    color: var(--blue-text);
 }
 
 .calendar-day.medium-study {
-    background: #bbdefb;
-    color: #1565c0;
+    background: var(--blue-hover);
+    color: var(--blue-text-hover);
 }
 
 .calendar-day.high-study {
-    background: #2196f3;
+    background: var(--blue-medium);
     color: white;
+}
+
+.calendar-day.complete-study {
+    background: var(--green-color);
+    color: white;
+    border: 2px solid var(--green-border);
 }
 
 [data-theme="dark"] .calendar-day.low-study {
@@ -739,8 +805,14 @@ nav::-webkit-scrollbar {
 }
 
 [data-theme="dark"] .calendar-day.high-study {
-    background: #1976d2;
+    background: var(--blue-medium);
     color: white;
+}
+
+[data-theme="dark"] .calendar-day.complete-study {
+    background: var(--green-border);
+    color: white;
+    border: 2px solid var(--green-dark);
 }
 
 
@@ -770,15 +842,15 @@ nav::-webkit-scrollbar {
 }
 
 .legend-color.low-study {
-    background: #e3f2fd;
+    background: var(--blue-light);
 }
 
 .legend-color.medium-study {
-    background: #bbdefb;
+    background: var(--blue-hover);
 }
 
 .legend-color.high-study {
-    background: #2196f3;
+    background: var(--blue-medium);
 }
 
 [data-theme="dark"] .legend-color.low-study {
@@ -790,7 +862,7 @@ nav::-webkit-scrollbar {
 }
 
 [data-theme="dark"] .legend-color.high-study {
-    background: #1976d2;
+    background: var(--blue-medium);
 }
 
 /* Weekly Summary */
@@ -932,22 +1004,22 @@ nav::-webkit-scrollbar {
 }
 
 .diff-btn.again {
-    background: #ff4757;
+    background: var(--danger-color);
     color: white;
 }
 
 .diff-btn.hard {
-    background: #ffa502;
+    background: var(--warning-color);
     color: white;
 }
 
 .diff-btn.good {
-    background: #2ed573;
+    background: var(--success-color);
     color: white;
 }
 
 .diff-btn.easy {
-    background: #1e90ff;
+    background: var(--info-color);
     color: white;
 }
 
@@ -972,14 +1044,28 @@ nav::-webkit-scrollbar {
 
 /* Deck view */
 .deck-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 1rem;
     background: var(--card-bg);
     padding: 1rem;
     border-radius: 12px;
     box-shadow: 0 2px 10px var(--shadow);
     margin-bottom: 2rem;
+}
+
+.deck-action-bar {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.deck-action-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-width: auto;
+    width: auto;
 }
 
 #deck-title {
@@ -1067,7 +1153,7 @@ nav::-webkit-scrollbar {
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px var(--dark-overlay);
 }
 
 .modal-content h3 {
@@ -1094,7 +1180,7 @@ nav::-webkit-scrollbar {
 .modal-content textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+    box-shadow: 0 0 0 2px var(--primary-border-light);
 }
 
 .card-form label {
@@ -1250,11 +1336,11 @@ nav::-webkit-scrollbar {
 
 #typing-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+    box-shadow: 0 0 0 2px var(--primary-border-light);
 }
 
 .check-btn {
-    background: #2ed573;
+    background: var(--success-color);
     color: white;
     border: none;
     padding: 1rem 1.5rem;
@@ -1376,17 +1462,17 @@ nav::-webkit-scrollbar {
 }
 
 .result-status.correct {
-    background: #2ed573;
+    background: var(--success-color);
     color: white;
 }
 
 .result-status.incorrect {
-    background: #ff4757;
+    background: var(--danger-color);
     color: white;
 }
 
 .result-status.partial {
-    background: #ffa502;
+    background: var(--warning-color);
     color: white;
 }
 
@@ -1460,17 +1546,17 @@ nav::-webkit-scrollbar {
     font-size: 0.8rem;
     font-weight: bold;
     color: white;
-    background: #ddd;
+    background: var(--gray-light);
     transition: all 0.3s ease;
 }
 
 .step-status.active {
-    background: #ffa502;
+    background: var(--warning-color);
     animation: pulse 2s infinite;
 }
 
 .step-status.completed {
-    background: #2ed573;
+    background: var(--success-color);
 }
 
 .step-arrow {
@@ -1563,9 +1649,21 @@ nav::-webkit-scrollbar {
     }
     
     .deck-header {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .deck-action-bar {
+        gap: 0.5rem;
+    }
+    
+    .deck-action-btn {
+        width: auto;
+        min-width: auto;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
     }
     
     .modal-actions {
@@ -1752,18 +1850,24 @@ nav::-webkit-scrollbar {
 }
 
 .compact-study-calendar .calendar-day.low-study {
-    background: rgba(66, 133, 244, 0.3);
+    background: var(--primary-alpha-strong);
     border: 1px solid rgba(66, 133, 244, 0.5);
 }
 
 .compact-study-calendar .calendar-day.medium-study {
-    background: rgba(66, 133, 244, 0.6);
+    background: var(--primary-alpha-hover);
     border: 1px solid rgba(66, 133, 244, 0.8);
 }
 
 .compact-study-calendar .calendar-day.high-study {
     background: var(--primary-color);
     border: 1px solid var(--primary-color);
+}
+
+.compact-study-calendar .calendar-day.complete-study {
+    background: var(--green-color);
+    border: 2px solid var(--green-border);
+    color: white;
 }
 
 .compact-study-calendar .calendar-day.today {
@@ -1777,11 +1881,587 @@ nav::-webkit-scrollbar {
 
 /* Dark theme calendar adjustments */
 [data-theme="dark"] .compact-study-calendar .calendar-day.low-study {
-    background: rgba(82, 148, 255, 0.3);
+    background: var(--primary-alpha-strong);
     border: 1px solid rgba(82, 148, 255, 0.5);
 }
 
 [data-theme="dark"] .compact-study-calendar .calendar-day.medium-study {
-    background: rgba(82, 148, 255, 0.6);
+    background: var(--primary-alpha-hover);
     border: 1px solid rgba(82, 148, 255, 0.8);
+}
+
+/* Card Statistics Modal */
+.card-stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stat-item {
+    background: var(--surface-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Make card content clickable without hover effect */
+.card-item-content {
+    cursor: pointer;
+}
+
+/* Mobile responsive adjustments for stats modal */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+    }
+    
+    .stat-value {
+        font-size: 1.1rem;
+    }
+}
+
+/* Card Type Selection View */
+.card-type-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.card-type-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.card-type-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.card-type-tile {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 4px 20px var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-type-tile:hover:not(.disabled) {
+    /* Remove animation, keep simple hover state */
+}
+
+.card-type-tile.selected {
+    border-color: var(--primary-color);
+    background: var(--primary-alpha-light);
+}
+
+[data-theme="dark"] .card-type-tile.selected {
+    background: rgba(82, 148, 255, 0.1);
+}
+
+.card-type-tile.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.card-type-tile.disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+.tile-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.card-type-tile h3 {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.card-type-tile:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 30px var(--shadow-hover), 0 0 0 2px var(--primary-alpha-strong);
+}
+
+/* Card Form View */
+.card-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.card-form-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.card-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card-form-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px var(--shadow);
+}
+
+/* Make new card form inputs match modal styling exactly */
+.card-form-content input,
+.card-form-content textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
+
+.card-form-content input:focus,
+.card-form-content textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-border-light);
+}
+
+.card-form-content .card-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+
+.card-form-actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.large-btn {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px var(--primary-alpha-hover);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .card-type-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        max-width: 300px;
+    }
+    
+    .card-type-tile {
+        padding: 1rem 0.5rem;
+    }
+    
+    .tile-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .card-type-tile h3 {
+        font-size: 0.8rem;
+    }
+    
+    .card-form-content {
+        padding: 1.5rem;
+    }
+    
+    .card-type-header,
+    .card-form-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* Edit Card View */
+.edit-card-container {
+    max-width: 600px;
+    margin: 2rem auto 0;
+}
+
+.edit-card-content {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    position: relative;
+}
+
+.edit-card-back-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+/* Back button positioning in verb preview - position relative to container */
+.verb-preview-container .edit-card-back-btn {
+    top: 2rem;
+    left: 2rem;
+    z-index: 10;
+}
+
+.edit-card-back-btn:hover {
+    background: var(--primary-alpha-medium);
+}
+
+/* Card Type Toggle */
+.card-type-toggle-section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+.edit-card-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.edit-toggle-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.edit-toggle-label.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.edit-card-toggle-container .toggle {
+    margin: 0;
+}
+
+/* Edit card form inputs match modal styling exactly */
+.edit-card-content input,
+.edit-card-content textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
+
+.edit-card-content input:focus,
+.edit-card-content textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-border-light);
+}
+
+.edit-card-content .card-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.edit-card-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.edit-card-actions .delete-btn,
+.edit-card-actions .primary-btn {
+    width: 120px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+.delete-btn {
+    background: var(--danger-color);
+    color: white;
+    border: 1px solid var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+/* Mobile responsive for edit card */
+@media (max-width: 768px) {
+    .edit-card-content {
+        padding: 1.5rem;
+    }
+    
+    .card-type-toggle-section {
+        justify-content: center;
+    }
+    
+    .edit-card-toggle-container {
+        gap: 0.75rem;
+    }
+    
+    .edit-card-actions .delete-btn,
+    .edit-card-actions .primary-btn {
+        width: 100px;
+        font-size: 0.85rem;
+    }
+    
+    .edit-card-actions {
+        gap: 0.75rem;
+    }
+    
+    .edit-card-container {
+        margin: 1rem auto 0;
+    }
+    
+    .edit-card-back-btn {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Irregular Verbs UI */
+.irregular-verbs-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.irregular-verbs-search {
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+#irregular-verb-search {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    outline: none;
+    font-family: inherit;
+    background: var(--card-bg);
+    transition: all 0.2s ease;
+}
+
+#irregular-verb-search:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-alpha-medium);
+}
+
+.verb-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.verb-suggestion {
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.verb-suggestion:last-child {
+    border-bottom: none;
+}
+
+.verb-suggestion:hover {
+    background: var(--input-bg);
+}
+
+.verb-suggestion.selected {
+    background: var(--primary-color);
+    color: white;
+}
+
+.verb-preview-container {
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.verb-forms-display {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+
+.verb-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.verb-form:first-child {
+    margin-top: 0;
+}
+
+.verb-form:last-child {
+    border-bottom: none;
+}
+
+.verb-form label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 150px;
+}
+
+.verb-value {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.verb-value.translation {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.preview-actions {
+    text-align: center;
+}
+
+/* Mobile responsive for irregular verbs */
+@media (max-width: 768px) {
+    .irregular-verbs-header {
+        padding: 1rem 1.5rem;
+        gap: 0.75rem;
+    }
+    
+    .irregular-verbs-search,
+    .verb-preview-container {
+        padding: 1.5rem;
+    }
+    
+    #irregular-verb-search {
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .verb-forms-display {
+        padding: 1.5rem;
+    }
+    
+    .verb-form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        text-align: left;
+    }
+    
+    .verb-form label {
+        min-width: unset;
+        font-size: 0.9rem;
+    }
+    
+    .verb-value {
+        text-align: left;
+        font-size: 1rem;
+    }
 }

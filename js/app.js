@@ -11,6 +11,7 @@ class FlashcardApp {
         this.currentAnswer = '';
         this.combinedPairs = []; // array of {card, mode, completed} objects
         this.combinedCardStates = new Map(); // tracks completion per card
+        this.selectedCardType = 'flip_type'; // Default card type
         
         this.initializeApp();
     }
@@ -24,6 +25,9 @@ class FlashcardApp {
         if (window.i18n) {
             window.i18n.updatePageTranslations();
         }
+        
+        // Populate irregular verbs table (one-time setup)
+        this.initializeIrregularVerbs();
     }
 
     setupEventListeners() {
@@ -36,13 +40,14 @@ class FlashcardApp {
         document.getElementById('overview-next-month').addEventListener('click', () => this.navigateOverviewCalendar(1));
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
-        document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardModal());
+        document.getElementById('new-card-btn').addEventListener('click', () => this.showCardTypeSelection());
         document.getElementById('study-all-btn').addEventListener('click', () => this.startStudyAllSession());
         
         document.getElementById('create-deck').addEventListener('click', () => this.createDeck());
         document.getElementById('cancel-deck').addEventListener('click', () => this.hideNewDeckModal());
         document.getElementById('save-card').addEventListener('click', () => this.saveCard());
         document.getElementById('cancel-card').addEventListener('click', () => this.hideNewCardModal());
+        document.getElementById('close-stats').addEventListener('click', () => this.hideCardStatsModal());
         
         document.getElementById('flip-card').addEventListener('click', () => this.flipCard());
         
@@ -69,10 +74,6 @@ class FlashcardApp {
         document.getElementById('back-to-decks-from-deck').addEventListener('click', () => this.showView('decks'));
         document.getElementById('study-deck-btn').addEventListener('click', () => this.showStudyModeSelection());
         
-        // Testing tools
-        document.getElementById('add-test-data-btn').addEventListener('click', () => this.addTestData());
-        document.getElementById('erase-all-data-btn').addEventListener('click', () => this.eraseAllData());
-        
         // Typing mode event listeners - handled dynamically in renderTypingInterface
         document.getElementById('typing-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -97,6 +98,7 @@ class FlashcardApp {
             if (e.target.classList.contains('modal')) {
                 this.hideNewDeckModal();
                 this.hideNewCardModal();
+                this.hideCardStatsModal();
             }
         });
 
@@ -125,6 +127,21 @@ class FlashcardApp {
                 }
             }
         });
+
+        // Card creation flow event listeners
+        document.getElementById('back-to-deck-from-card-type').addEventListener('click', () => this.showView('deck'));
+        document.getElementById('back-to-card-type').addEventListener('click', () => this.showCardTypeSelection());
+        document.getElementById('save-new-card').addEventListener('click', () => this.saveNewCard());
+        
+        // Edit card flow event listeners
+        document.getElementById('back-to-deck-from-edit').addEventListener('click', () => this.showView('deck'));
+        document.getElementById('save-edited-card').addEventListener('click', () => this.saveEditedCard());
+        document.getElementById('delete-card').addEventListener('click', () => this.deleteCurrentCard());
+        
+        // Card type selection event listeners (will be added dynamically in renderCardTypeSelection)
+        
+        // Irregular verbs event listeners
+        this.setupIrregularVerbsEventListeners();
     }
 
     showView(viewName) {
@@ -150,6 +167,21 @@ class FlashcardApp {
                 break;
             case 'deck':
                 this.renderDeckView();
+                break;
+            case 'card-type':
+                this.renderCardTypeSelection();
+                break;
+            case 'card-form':
+                this.renderCardForm();
+                break;
+            case 'edit-card':
+                this.renderEditCard();
+                break;
+            case 'irregular-verbs':
+                this.renderIrregularVerbsView();
+                break;
+            case 'irregular-verb-preview':
+                // Preview is handled by selectVerb method
                 break;
         }
     }
@@ -323,7 +355,7 @@ class FlashcardApp {
         
         cardsList.innerHTML = this.currentDeck.cards.map(card => `
             <div class="card-item">
-                <div class="card-item-content">
+                <div class="card-item-content" data-card-id="${card.id}">
                     <div class="card-item-front">${this.escapeHtml(card.front)}</div>
                     <div class="card-item-back">${this.escapeHtml(card.back)}</div>
                 </div>
@@ -333,6 +365,14 @@ class FlashcardApp {
                 </div>
             </div>
         `).join('');
+        
+        // Add click handler for card content to show statistics
+        document.querySelectorAll('.card-item-content').forEach(content => {
+            content.addEventListener('click', (e) => {
+                const cardId = e.target.closest('.card-item-content').dataset.cardId;
+                this.showCardStats(cardId);
+            });
+        });
         
         // Add event listeners for card management buttons
         document.querySelectorAll('.card-edit-btn').forEach(btn => {
@@ -524,20 +564,29 @@ class FlashcardApp {
         this.combinedPairs = [];
         this.combinedCardStates = new Map();
         
-        // Create ONE pair per card with random mode selection
+        // Create ONE pair per card with mode selection based on card type
         this.currentStudyCards.forEach(card => {
-            // Randomly choose either 'type' or 'flip' for this card this session
-            const randomMode = Math.random() < 0.5 ? 'type' : 'flip';
+            let selectedMode;
+            
+            const cardType = card.card_type || 'flip_type'; // Default to flip_type for existing cards
+            
+            if (cardType === 'flip') {
+                // Flip-only cards always use flip mode
+                selectedMode = 'flip';
+            } else {
+                // flip_type cards randomly choose between flip and type
+                selectedMode = Math.random() < 0.5 ? 'type' : 'flip';
+            }
             this.combinedPairs.push({ 
                 card: card, 
-                mode: randomMode, 
+                mode: selectedMode, 
                 completed: false,
                 needsReshuffle: false
             });
             
             // Track completion state for each card
             this.combinedCardStates.set(card.id, {
-                currentMode: randomMode,
+                currentMode: selectedMode,
                 completed: false,
                 failed: false
             });
@@ -546,7 +595,7 @@ class FlashcardApp {
         // Shuffle the pairs
         this.shuffleArray(this.combinedPairs);
         
-        console.log('Combined pairs created:', this.combinedPairs.length, 'cards with random modes');
+        console.log('Combined pairs created:', this.combinedPairs.length, 'cards with modes based on card types');
     }
     
     shuffleArray(array) {
@@ -689,12 +738,15 @@ class FlashcardApp {
             const today = this.getLocalDateString(); // YYYY-MM-DD format
             const isCorrect = difficulty === 'good' || difficulty === 'easy';
             
+            // Check if all due cards are now completed after this review
+            const allDueCompleted = await this.checkAllDueCompleted();
+            
             if (window.supabaseService) {
-                await window.supabaseService.updateReviewStats(today, isCorrect);
+                await window.supabaseService.updateReviewStats(today, isCorrect, allDueCompleted);
             }
             
             // Also store locally as fallback for calendar display
-            this.storeLocalReviewStat(today, isCorrect);
+            this.storeLocalReviewStat(today, isCorrect, allDueCompleted);
         } catch (error) {
             console.error('Failed to track review stat:', error);
             // Still store locally for calendar display
@@ -704,7 +756,7 @@ class FlashcardApp {
         }
     }
 
-    storeLocalReviewStat(date, isCorrect) {
+    storeLocalReviewStat(date, isCorrect, allDueCompleted = null) {
         try {
             const key = 'flashcard_app_review_stats';
             let stats = JSON.parse(localStorage.getItem(key)) || {};
@@ -718,6 +770,11 @@ class FlashcardApp {
                 stats[date].correct++;
             } else {
                 stats[date].lapses++;
+            }
+            
+            // Update all_due_completed if provided
+            if (allDueCompleted !== null) {
+                stats[date].all_due_completed = allDueCompleted;
             }
             
             localStorage.setItem(key, JSON.stringify(stats));
@@ -1039,17 +1096,224 @@ class FlashcardApp {
         this.editingCard = null;
     }
 
+    showCardTypeSelection() {
+        if (!this.currentDeck) return;
+        this.showView('card-type');
+    }
+
+    renderCardTypeSelection() {
+        // Update selection state
+        document.querySelectorAll('.card-type-tile').forEach(tile => {
+            tile.classList.remove('selected');
+            if (tile.dataset.type === this.selectedCardType) {
+                tile.classList.add('selected');
+            }
+        });
+        
+        // Add event listeners to tiles (re-add in case of dynamic content)
+        document.querySelectorAll('.card-type-tile:not(.disabled)').forEach(tile => {
+            tile.addEventListener('click', () => this.selectCardType(tile.dataset.type));
+            tile.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.selectCardType(tile.dataset.type);
+                }
+            });
+        });
+    }
+
+    selectCardType(cardType) {
+        this.selectedCardType = cardType;
+        
+        if (cardType === 'irregular_verbs') {
+            this.showView('irregular-verbs');
+        } else {
+            this.showView('card-form');
+        }
+    }
+
+    renderCardForm() {
+        // Clear form fields
+        document.getElementById('card-form-front-input').value = '';
+        document.getElementById('card-form-back-input').value = '';
+        
+        // Focus on first input
+        document.getElementById('card-form-front-input').focus();
+    }
+
+    async saveNewCard() {
+        try {
+            console.log('saveNewCard: Starting card creation');
+            const front = document.getElementById('card-form-front-input').value.trim();
+            const back = document.getElementById('card-form-back-input').value.trim();
+            
+            console.log('saveNewCard: Front/Back values:', { front, back });
+            
+            if (!front || !back) {
+                alert('Please fill in both front and back of the card');
+                return;
+            }
+
+            console.log('saveNewCard: About to create newCard object');
+            console.log('saveNewCard: this.selectedCardType =', this.selectedCardType);
+            console.log('saveNewCard: this.currentDeck =', this.currentDeck);
+            console.log('saveNewCard: storage =', storage);
+
+            const newCard = {
+                id: storage.generateUUID(),
+                front: front,
+                back: back,
+                ease: 2.5,
+                interval: 1,
+                reps: 0,
+                lapses: 0,
+                dueDate: this.getLocalDateString(),
+                lastReviewed: null,
+                createdAt: new Date().toISOString(),
+                card_type: this.selectedCardType // Add the card type
+            };
+            
+            console.log('saveNewCard: Created newCard:', newCard);
+
+            console.log('saveNewCard: About to push to currentDeck.cards');
+            this.currentDeck.cards.push(newCard);
+            console.log('saveNewCard: Pushed to deck, total cards now:', this.currentDeck.cards.length);
+            
+            console.log('saveNewCard: About to call storage.saveDeck');
+            await storage.saveDeck(this.currentDeck);
+            console.log('saveNewCard: storage.saveDeck completed');
+            
+            // Go back to deck view
+            console.log('saveNewCard: About to show deck view');
+            this.showView('deck');
+            this.renderDeckView();
+            console.log('saveNewCard: Completed successfully');
+        } catch (error) {
+            console.error('saveNewCard: Error occurred:', error);
+            console.error('saveNewCard: Error stack:', error.stack);
+        }
+    }
+
+    showCardStats(cardId) {
+        const card = this.currentDeck.cards.find(c => c.id === cardId);
+        if (!card) return;
+
+        // Populate statistics
+        document.getElementById('stats-repetitions').textContent = card.reps || card.repetitions || 0;
+        document.getElementById('stats-lapses').textContent = card.lapses || 0;
+
+        // Format due date
+        const dueDate = card.dueDate || card.due_date;
+        if (dueDate) {
+            const formattedDate = new Date(dueDate).toLocaleDateString();
+            document.getElementById('stats-due-date').textContent = formattedDate;
+        } else {
+            document.getElementById('stats-due-date').textContent = 'Not scheduled';
+        }
+
+        // Show modal
+        document.getElementById('card-stats-modal').classList.add('active');
+    }
+
+    hideCardStatsModal() {
+        document.getElementById('card-stats-modal').classList.remove('active');
+    }
+
     editCard(cardId) {
         const card = this.currentDeck.cards.find(c => c.id === cardId);
         if (!card) return;
         
         this.editingCard = card;
-        document.getElementById('card-modal-title').textContent = 'Edit Card';
-        document.getElementById('save-card').textContent = 'Save';
-        document.getElementById('card-front-input').value = card.front;
-        document.getElementById('card-back-input').value = card.back;
-        document.getElementById('new-card-modal').classList.add('active');
-        document.getElementById('card-front-input').focus();
+        this.showView('edit-card');
+    }
+
+    renderEditCard() {
+        if (!this.editingCard) return;
+        
+        // Set form values
+        document.getElementById('edit-card-front-input').value = this.editingCard.front;
+        document.getElementById('edit-card-back-input').value = this.editingCard.back;
+        
+        // Set card type toggle (checkbox: unchecked = flip, checked = flip_type)
+        const cardType = this.editingCard.card_type || 'flip_type';
+        const toggle = document.getElementById('edit-card-type-toggle');
+        toggle.checked = cardType === 'flip_type';
+        
+        // Update visual feedback
+        this.updateToggleLabels(cardType === 'flip_type');
+        
+        // Add event listener for toggle changes
+        toggle.addEventListener('change', () => {
+            this.updateToggleLabels(toggle.checked);
+        });
+        
+        // Add click handlers for labels
+        document.getElementById('flip-label').addEventListener('click', () => {
+            toggle.checked = false;
+            this.updateToggleLabels(false);
+        });
+        
+        document.getElementById('flip-type-label').addEventListener('click', () => {
+            toggle.checked = true;
+            this.updateToggleLabels(true);
+        });
+        
+        // Focus on first input
+        document.getElementById('edit-card-front-input').focus();
+    }
+
+    updateToggleLabels(isFlipType) {
+        const flipLabel = document.getElementById('flip-label');
+        const flipTypeLabel = document.getElementById('flip-type-label');
+        
+        if (isFlipType) {
+            flipLabel.classList.remove('active');
+            flipTypeLabel.classList.add('active');
+        } else {
+            flipLabel.classList.add('active');
+            flipTypeLabel.classList.remove('active');
+        }
+    }
+
+    async saveEditedCard() {
+        const front = document.getElementById('edit-card-front-input').value.trim();
+        const back = document.getElementById('edit-card-back-input').value.trim();
+        
+        if (!front || !back) {
+            alert('Please fill in both front and back of the card');
+            return;
+        }
+
+        // Get selected card type from toggle (unchecked = flip, checked = flip_type)
+        const selectedType = document.getElementById('edit-card-type-toggle').checked ? 'flip_type' : 'flip';
+
+        // Update the card
+        this.editingCard.front = front;
+        this.editingCard.back = back;
+        this.editingCard.card_type = selectedType;
+        
+        await this.saveDecks();
+        
+        // Go back to deck view
+        this.showView('deck');
+        this.renderDeckView();
+        this.editingCard = null;
+    }
+
+    async deleteCurrentCard() {
+        if (!this.editingCard || !this.currentDeck) return;
+        
+        if (!confirm('Are you sure you want to delete this card?')) return;
+        
+        // Remove card from deck
+        this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== this.editingCard.id);
+        
+        await this.saveDecks();
+        
+        // Go back to deck view
+        this.showView('deck');
+        this.renderDeckView();
+        this.editingCard = null;
     }
 
     async saveCard() {
@@ -1218,99 +1482,318 @@ class FlashcardApp {
         return div.innerHTML;
     }
 
-    async eraseAllData() {
-        if (!confirm('Are you sure you want to erase ALL data?\n\nThis will delete all decks and cards permanently. This action cannot be undone.')) {
-            return;
-        }
-        
+
+    async initializeIrregularVerbs() {
         try {
-            // Clear Supabase data
-            if (window.supabaseService) {
-                await window.supabaseService.clearAllData();
+            // Check if irregular verbs are already populated
+            const existingVerbs = await storage.searchIrregularVerbs('a'); // Search for verbs starting with 'a'
+            if (existingVerbs.length === 0) {
+                console.log('Populating irregular verbs table...');
+                const result = await storage.populateIrregularVerbs();
+                if (result) {
+                    console.log('Irregular verbs table populated successfully');
+                } else {
+                    console.log('Irregular verbs already exist or failed to populate');
+                }
+            } else {
+                console.log('Irregular verbs already populated');
             }
-            
-            // Clear local storage
-            localStorage.clear();
-            
-            // Clear in-memory storage cache
-            if (window.storage) {
-                window.storage.decks = [];
-                window.storage.isInitialized = false;
-            }
-            
-            // Reset current app state
-            this.currentDeck = null;
-            this.currentStudyCards = [];
-            this.currentCardIndex = 0;
-            this.studySession = null;
-            
-            alert('All data has been erased successfully!');
-            
-            // Refresh the current view
-            await this.renderOverview();
-            this.renderDecks();
         } catch (error) {
-            console.error('Failed to erase data:', error);
-            alert('Failed to erase data. Please try again.');
+            console.error('Failed to initialize irregular verbs:', error);
         }
     }
 
-    async addTestData() {
-        if (!confirm('Add test data?\n\nThis will create 2 decks with 10 cards each for testing purposes.')) {
+    setupIrregularVerbsEventListeners() {
+        // Search functionality
+        const searchInput = document.getElementById('irregular-verb-search');
+        const suggestionsContainer = document.getElementById('verb-suggestions');
+        let currentVerbs = [];
+        let selectedIndex = -1;
+
+        if (searchInput && suggestionsContainer) {
+            // Search input handler with debouncing
+            let searchTimeout;
+            searchInput.addEventListener('input', async (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length === 0) {
+                    suggestionsContainer.style.display = 'none';
+                    currentVerbs = [];
+                    selectedIndex = -1;
+                    return;
+                }
+
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        const verbs = await storage.searchIrregularVerbs(query);
+                        currentVerbs = verbs;
+                        selectedIndex = -1;
+                        this.renderVerbSuggestions(verbs, suggestionsContainer);
+                    } catch (error) {
+                        console.error('Error searching irregular verbs:', error);
+                        suggestionsContainer.style.display = 'none';
+                    }
+                }, 300);
+            });
+
+            // Keyboard navigation
+            searchInput.addEventListener('keydown', (e) => {
+                if (currentVerbs.length === 0) return;
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, currentVerbs.length - 1);
+                        this.updateSuggestionSelection(suggestionsContainer, selectedIndex);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        this.updateSuggestionSelection(suggestionsContainer, selectedIndex);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0) {
+                            this.selectVerb(currentVerbs[selectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        suggestionsContainer.style.display = 'none';
+                        selectedIndex = -1;
+                        break;
+                }
+            });
+
+            // Click outside to hide suggestions
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                    selectedIndex = -1;
+                }
+            });
+        }
+
+        // Navigation buttons
+        const backToCardTypeBtn = document.getElementById('back-to-card-type-from-irregular');
+        if (backToCardTypeBtn) {
+            backToCardTypeBtn.addEventListener('click', () => {
+                this.showView('card-type');
+            });
+        }
+
+        const backToSearchBtn = document.getElementById('back-to-irregular-search');
+        if (backToSearchBtn) {
+            backToSearchBtn.addEventListener('click', () => {
+                this.showView('irregular-verbs');
+            });
+        }
+
+        // Save cards button
+        const saveCardsBtn = document.getElementById('save-irregular-verb-cards');
+        if (saveCardsBtn) {
+            saveCardsBtn.addEventListener('click', () => {
+                this.saveIrregularVerbCards();
+            });
+        }
+    }
+
+    renderVerbSuggestions(verbs, container) {
+        if (verbs.length === 0) {
+            container.style.display = 'none';
             return;
         }
+
+        container.innerHTML = '';
+        verbs.forEach((verb, index) => {
+            const suggestion = document.createElement('div');
+            suggestion.className = 'verb-suggestion';
+            suggestion.innerHTML = `
+                <strong>${verb.infinitive}</strong> - ${verb.simple_past} - ${verb.past_participle}
+                <br><small style="color: var(--text-secondary); margin-top: 2px;">${verb.translation_ru}</small>
+            `;
+            suggestion.addEventListener('click', () => {
+                this.selectVerb(verb);
+            });
+            container.appendChild(suggestion);
+        });
+
+        container.style.display = 'block';
+    }
+
+    updateSuggestionSelection(container, selectedIndex) {
+        const suggestions = container.querySelectorAll('.verb-suggestion');
+        suggestions.forEach((suggestion, index) => {
+            suggestion.classList.toggle('selected', index === selectedIndex);
+        });
+    }
+
+    selectVerb(verb) {
+        this.selectedVerb = verb;
+        this.showVerbPreview(verb);
+        this.showView('irregular-verb-preview');
         
+        // Hide suggestions
+        const suggestionsContainer = document.getElementById('verb-suggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none';
+        }
+    }
+
+    showVerbPreview(verb) {
+        console.log('Showing verb preview for:', verb);
+        
+        const infinitiveEl = document.getElementById('preview-infinitive');
+        const pastSimpleEl = document.getElementById('preview-past-simple');
+        const pastParticipleEl = document.getElementById('preview-past-participle');
+        const translationEl = document.getElementById('preview-translation');
+        
+        console.log('Elements found:', {
+            infinitive: !!infinitiveEl,
+            pastSimple: !!pastSimpleEl,
+            pastParticiple: !!pastParticipleEl,
+            translation: !!translationEl
+        });
+        
+        if (infinitiveEl) infinitiveEl.textContent = verb.infinitive;
+        if (pastSimpleEl) pastSimpleEl.textContent = verb.simple_past;
+        if (pastParticipleEl) pastParticipleEl.textContent = verb.past_participle;
+        if (translationEl) translationEl.textContent = verb.translation_ru;
+        
+        // Log the back button position
+        const backBtn = document.getElementById('back-to-irregular-search');
+        if (backBtn) {
+            const rect = backBtn.getBoundingClientRect();
+            console.log('Back button position:', { top: rect.top, left: rect.left, bottom: rect.bottom });
+        }
+        
+        // Log first verb form position
+        const firstVerbForm = document.querySelector('.verb-form:first-child');
+        if (firstVerbForm) {
+            const rect = firstVerbForm.getBoundingClientRect();
+            console.log('First verb form position:', { top: rect.top, left: rect.left });
+        }
+    }
+
+    async saveIrregularVerbCards() {
+        if (!this.selectedVerb || !this.currentDeck) {
+            alert('No deck selected. Please select a deck first.');
+            return;
+        }
+
         try {
-            // Create test deck 1: Basic Spanish
-            const spanishDeck = {
-                id: storage.generateUUID(),
-                name: 'Basic Spanish',
-                cards: [
-                    { id: storage.generateUUID(), front: 'Hello', back: 'Hola', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Goodbye', back: 'Adiós', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Please', back: 'Por favor', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Thank you', back: 'Gracias', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Yes', back: 'Sí', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'No', back: 'No', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Water', back: 'Agua', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Food', back: 'Comida', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'House', back: 'Casa', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'Cat', back: 'Gato', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true }
-                ],
-                createdAt: new Date().toISOString()
-            };
-
-            // Create test deck 2: Programming Terms
-            const programmingDeck = {
-                id: storage.generateUUID(),
-                name: 'Programming Terms',
-                cards: [
-                    { id: storage.generateUUID(), front: 'What is a variable?', back: 'A container for storing data values', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is a function?', back: 'A reusable block of code that performs a specific task', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is an array?', back: 'An ordered list of elements', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is a loop?', back: 'A control structure that repeats a block of code', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is debugging?', back: 'The process of finding and fixing errors in code', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is an API?', back: 'Application Programming Interface - a set of protocols for building software', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is Git?', back: 'A version control system for tracking changes in files', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is HTML?', back: 'HyperText Markup Language - the structure of web pages', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is CSS?', back: 'Cascading Style Sheets - used for styling web pages', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true },
-                    { id: storage.generateUUID(), front: 'What is JavaScript?', back: 'A programming language for web development', createdAt: new Date().toISOString(), ease: 2.5, interval: 1, reps: 0, lapses: 0, due_date: new Date().toISOString().split('T')[0], reviewCount: 0, isNew: true }
-                ],
-                createdAt: new Date().toISOString()
-            };
-
-            // Save both decks
-            await storage.saveDeck(spanishDeck);
-            await storage.saveDeck(programmingDeck);
-
-            alert('Test data added successfully!\n\n2 decks created:\n- Basic Spanish (10 cards)\n- Programming Terms (10 cards)');
+            const verb = this.selectedVerb;
             
-            // Refresh the decks view
-            this.renderDecks();
+            // Generate 3 cards from the irregular verb
+            const cards = [
+                {
+                    id: storage.generateUUID(),
+                    front: `to ${verb.infinitive.toLowerCase()}`,
+                    back: `${verb.translation_ru} (infinitive)`,
+                    createdAt: new Date().toISOString(),
+                    ease: 2.5,
+                    interval: 1,
+                    reps: 0,
+                    lapses: 0,
+                    due_date: new Date().toISOString().split('T')[0],
+                    reviewCount: 0,
+                    isNew: true
+                },
+                {
+                    id: storage.generateUUID(),
+                    front: verb.simple_past.toLowerCase(),
+                    back: `${verb.translation_ru} (past simple)`,
+                    createdAt: new Date().toISOString(),
+                    ease: 2.5,
+                    interval: 1,
+                    reps: 0,
+                    lapses: 0,
+                    due_date: new Date().toISOString().split('T')[0],
+                    reviewCount: 0,
+                    isNew: true
+                },
+                {
+                    id: storage.generateUUID(),
+                    front: verb.past_participle.toLowerCase(),
+                    back: `${verb.translation_ru} (past participle)`,
+                    createdAt: new Date().toISOString(),
+                    ease: 2.5,
+                    interval: 1,
+                    reps: 0,
+                    lapses: 0,
+                    due_date: new Date().toISOString().split('T')[0],
+                    reviewCount: 0,
+                    isNew: true
+                }
+            ];
+
+            // Add cards to current deck
+            this.currentDeck.cards.push(...cards);
+            await storage.saveDeck(this.currentDeck);
+
+            // Refresh decks
+            this.renderDeckView();
             this.renderOverview();
+
+            // Navigate back to deck view
+            this.showView('deck');
         } catch (error) {
-            console.error('Failed to add test data:', error);
-            alert('Failed to add test data. Please try again.');
+            console.error('Error saving irregular verb cards:', error);
+            alert('Failed to save cards. Please try again.');
+        }
+    }
+
+    renderIrregularVerbsView() {
+        // Clear the search input
+        const searchInput = document.getElementById('irregular-verb-search');
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+        }
+
+        // Hide suggestions
+        const suggestionsContainer = document.getElementById('verb-suggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none';
+        }
+    }
+
+    // Check if all due cards (due today + overdue) have been completed
+    async checkAllDueCompleted() {
+        try {
+            const decks = await storage.loadDecks();
+            const today = this.getLocalDateString();
+            
+            // Count all due cards (due today + overdue)
+            let totalDueCards = 0;
+            let completedDueCards = 0;
+            
+            decks.forEach(deck => {
+                deck.cards.forEach(card => {
+                    const cardDueDate = card.dueDate || card.due_date;
+                    if (cardDueDate && cardDueDate <= today) {
+                        totalDueCards++;
+                        
+                        // Check if card was reviewed today (has lastReviewed date = today)
+                        const lastReviewed = card.lastReviewed || card.last_reviewed;
+                        if (lastReviewed) {
+                            const reviewedDate = lastReviewed.split('T')[0]; // Extract date part
+                            if (reviewedDate === today) {
+                                completedDueCards++;
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // All due cards completed if we have due cards and all are completed
+            const allCompleted = totalDueCards > 0 && completedDueCards >= totalDueCards;
+            console.log(`Due cards check: ${completedDueCards}/${totalDueCards} completed, all due completed: ${allCompleted}`);
+            
+            return allCompleted;
+        } catch (error) {
+            console.error('Failed to check due cards completion:', error);
+            return false;
         }
     }
 }

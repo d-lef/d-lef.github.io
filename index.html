@@ -4,10 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Flashcard App</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/styles.css?v=20250820c">
+    <link rel="stylesheet" href="css/styles.css?v=20250823l">
     <meta name="theme-color" content="#4285f4">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%234285f4'/%3E%3Ctext x='96' y='110' font-family='Arial' font-size='80' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    
+    <!-- Mobile web app support -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Flashcards">
+    
+    <!-- Apple touch icons for various sizes -->
+    <link rel="apple-touch-icon" sizes="57x57" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 57 57'%3E%3Crect width='57' height='57' fill='%234285f4' rx='8'/%3E%3Ctext x='28.5' y='35' font-family='Arial' font-size='24' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="60x60" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%234285f4' rx='8'/%3E%3Ctext x='30' y='37' font-family='Arial' font-size='26' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="72x72" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Crect width='72' height='72' fill='%234285f4' rx='10'/%3E%3Ctext x='36' y='44' font-family='Arial' font-size='30' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="76x76" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 76 76'%3E%3Crect width='76' height='76' fill='%234285f4' rx='10'/%3E%3Ctext x='38' y='46' font-family='Arial' font-size='32' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="114x114" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 114 114'%3E%3Crect width='114' height='114' fill='%234285f4' rx='15'/%3E%3Ctext x='57' y='70' font-family='Arial' font-size='48' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%234285f4' rx='15'/%3E%3Ctext x='60' y='73' font-family='Arial' font-size='50' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="144x144" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'%3E%3Crect width='144' height='144' fill='%234285f4' rx='18'/%3E%3Ctext x='72' y='88' font-family='Arial' font-size='60' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 152 152'%3E%3Crect width='152' height='152' fill='%234285f4' rx='18'/%3E%3Ctext x='76' y='92' font-family='Arial' font-size='64' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%234285f4' rx='22'/%3E%3Ctext x='90' y='110' font-family='Arial' font-size='75' text-anchor='middle' fill='white'%3E📚%3C/text%3E%3C/svg%3E">
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        /* Immediate font fallback to prevent layout shift */
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -27,7 +52,7 @@
         <div id="overview-view" class="view active">
             <div class="overview-container">
                 <div class="overview-header">
-                    <button id="study-all-btn" class="primary-btn large-btn">
+                    <button id="study-all-btn" class="primary-btn">
                         📚 <span data-i18n="actions.study_all">Study All Cards</span>
                     </button>
                 </div>
@@ -121,13 +146,6 @@
                     </div>
                 </div>
 
-                <div class="settings-section">
-                    <h3>Testing Tools</h3>
-                    <div class="setting-row">
-                        <button id="add-test-data-btn" class="primary-btn" style="margin-right: 10px;">Add Test Data (2 decks + 20 cards)</button>
-                        <button id="erase-all-data-btn" class="secondary-btn" style="background-color: #ff6b6b; color: white;">Erase All Data</button>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -199,16 +217,146 @@
             </div>
         </div>
 
+        <!-- Card Type Selection View -->
+        <div id="card-type-view" class="view">
+            <div class="card-type-header">
+                <button id="back-to-deck-from-card-type" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <h2 data-i18n="card_type.select_type">Select Card Type</h2>
+            </div>
+            
+            <div class="card-type-options">
+                <div class="card-type-tile" data-type="flip" tabindex="0">
+                    <div class="tile-icon">🔄</div>
+                    <h3 data-i18n="card_type.flip">Flip Cards</h3>
+                </div>
+                
+                <div class="card-type-tile selected" data-type="flip_type" tabindex="0">
+                    <div class="tile-icon">⌨️</div>
+                    <h3 data-i18n="card_type.flip_type">Flip + Type</h3>
+                </div>
+                
+                <div class="card-type-tile" data-type="irregular_verbs" tabindex="0">
+                    <div class="tile-icon">📝</div>
+                    <h3 data-i18n="card_type.irregular_verbs">Irregular Verbs</h3>
+                </div>
+                
+                <div class="card-type-tile disabled" data-type="placeholder">
+                    <div class="tile-icon">✨</div>
+                    <h3 data-i18n="card_type.coming_soon">Coming Soon</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Creation Form View -->
+        <div id="card-form-view" class="view">
+            <div class="card-form-header">
+                <button id="back-to-card-type" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <h2 id="card-form-title" data-i18n="modal.create_card">Create New Card</h2>
+            </div>
+            
+            <div class="card-form-container">
+                <div class="card-form-content">
+                    <div class="card-form">
+                        <label for="card-form-front-input" data-i18n="modal.front">Front:</label>
+                        <textarea id="card-form-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
+                        
+                        <label for="card-form-back-input" data-i18n="modal.back">Back:</label>
+                        <textarea id="card-form-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="card-form-actions">
+                        <button id="save-new-card" class="primary-btn large-btn" data-i18n="actions.create">Create Card</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Card View -->
+        <div id="edit-card-view" class="view">
+            <div class="edit-card-container">
+                <div class="edit-card-content">
+                    <button id="back-to-deck-from-edit" class="back-btn edit-card-back-btn">← <span data-i18n="actions.back">Back</span></button>
+                    
+                    <div class="card-type-toggle-section">
+                        <div class="edit-card-toggle-container">
+                            <span class="edit-toggle-label left" id="flip-label" data-i18n="card_type.flip_only">Flip Only</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="edit-card-type-toggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="edit-toggle-label right" id="flip-type-label" data-i18n="card_type.flip_and_type">Flip + Type</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-form">
+                        <label for="edit-card-front-input" data-i18n="modal.front">Front:</label>
+                        <textarea id="edit-card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
+                        
+                        <label for="edit-card-back-input" data-i18n="modal.back">Back:</label>
+                        <textarea id="edit-card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="edit-card-actions">
+                        <button id="delete-card" class="secondary-btn delete-btn" data-i18n="actions.delete">Delete Card</button>
+                        <button id="save-edited-card" class="primary-btn" data-i18n="actions.save">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Irregular Verbs Selection View -->
+        <div id="irregular-verbs-view" class="view">
+            <div class="irregular-verbs-header">
+                <button id="back-to-card-type-from-irregular" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <h2 data-i18n="card_type.irregular_verbs">Irregular Verbs</h2>
+            </div>
+            
+            <div class="irregular-verbs-search">
+                <div class="search-container">
+                    <input type="text" id="irregular-verb-search" data-i18n-placeholder="irregular_verbs.search_placeholder" placeholder="Type infinitive (e.g., 'go', 'take')..." autocomplete="off">
+                    <div id="verb-suggestions" class="verb-suggestions"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Irregular Verb Preview View -->
+        <div id="irregular-verb-preview-view" class="view">
+            <div class="verb-preview-container">
+                <button id="back-to-irregular-search" class="back-btn edit-card-back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <div class="verb-forms-display">
+                    <div class="verb-form">
+                        <label data-i18n="irregular_verbs.infinitive">Infinitive:</label>
+                        <div id="preview-infinitive" class="verb-value"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="irregular_verbs.past_simple">Past Simple:</label>
+                        <div id="preview-past-simple" class="verb-value"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="irregular_verbs.past_participle">Past Participle:</label>
+                        <div id="preview-past-participle" class="verb-value"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="irregular_verbs.translation">Translation:</label>
+                        <div id="preview-translation" class="verb-value translation"></div>
+                    </div>
+                </div>
+                
+                <div class="preview-actions">
+                    <button id="save-irregular-verb-cards" class="primary-btn large-btn" data-i18n="irregular_verbs.create_cards">Create 3 Cards</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Deck Management View -->
         <div id="deck-view" class="view">
             <div class="deck-header">
                 <button id="back-to-decks-from-deck" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
                 <h2 id="deck-title"></h2>
-                <button id="study-deck-btn" class="primary-btn" data-i18n="actions.study">Study</button>
-            </div>
-            
-            <div class="action-bar">
-                <button id="new-card-btn" class="primary-btn">+ <span data-i18n="actions.new_card">New Card</span></button>
+                <div class="deck-action-bar">
+                    <button id="study-deck-btn" class="deck-action-btn primary-btn" data-i18n="actions.study">Study</button>
+                    <button id="new-card-btn" class="deck-action-btn primary-btn">+ <span data-i18n="actions.new_card">New Card</span></button>
+                </div>
             </div>
             
             <div id="cards-list" class="cards-list"></div>
@@ -244,14 +392,40 @@
         </div>
     </div>
 
+    <!-- Card Statistics Modal -->
+    <div id="card-stats-modal" class="modal">
+        <div class="modal-content">
+            <h3 data-i18n="card_stats.title">Card Statistics</h3>
+            <div class="card-stats-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="card_stats.successful_reviews">Successful Reviews So Far</div>
+                        <div class="stat-value" id="stats-repetitions">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="card_stats.failed_reviews">Failed Reviews So Far</div>
+                        <div class="stat-value" id="stats-lapses">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" data-i18n="card_stats.next_due_date">Next Due Date</div>
+                        <div class="stat-value" id="stats-due-date" data-i18n="card_stats.not_scheduled">Not scheduled</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="close-stats" class="secondary-btn" data-i18n="card_stats.close">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-client.js?v=20250820g"></script>
-    <script src="js/storage.js?v=20250820c"></script>
+    <script src="js/supabase-client.js?v=20250823a"></script>
+    <script src="js/storage.js?v=20250823a"></script>
     <script src="js/spaced-repetition.js?v=20250820c"></script>
     <script src="js/i18n.js?v=20250820c"></script>
     <script src="js/settings.js?v=20250820c"></script>
     <script src="js/statistics.js?v=20250820c"></script>
-    <script src="js/app.js?v=20250820h"></script>
+    <script src="js/app.js?v=20250823o"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');

@@ -46,6 +46,22 @@ class I18n {
                 'actions.study': 'Study',
                 'actions.cancel': 'Cancel',
                 'actions.create': 'Create',
+                'actions.select': 'Select',
+                'actions.save': 'Save',
+                'actions.delete': 'Delete',
+                
+                // Card Types
+                'card_type.select_type': 'Select Card Type',
+                'card_type.flip': 'Flip Cards',
+                'card_type.flip_description': 'Traditional flashcard study with front/back card flipping',
+                'card_type.flip_type': 'Flip + Type',
+                'card_type.flip_type_description': 'Active recall by typing answers plus card review',
+                'card_type.irregular_verbs': 'Irregular Verbs',
+                'card_type.irregular_verbs_description': 'Specialized templates for verb conjugation practice',
+                'card_type.coming_soon': 'Coming Soon',
+                'card_type.card_behavior': 'Card Behavior',
+                'card_type.flip_only': 'Flip Only',
+                'card_type.flip_and_type': 'Flip + Type',
                 
                 // Stats
                 'stats.title': 'Study Statistics',
@@ -97,10 +113,28 @@ class I18n {
                 'modal.create_deck': 'Create New Deck',
                 'modal.deck_name': 'Deck name',
                 'modal.create_card': 'Create New Card',
+                'modal.edit_card': 'Edit Card',
                 'modal.front': 'Front:',
                 'modal.back': 'Back:',
                 'modal.front_placeholder': 'Enter front side text',
-                'modal.back_placeholder': 'Enter back side text'
+                'modal.back_placeholder': 'Enter back side text',
+                
+                // Irregular Verbs
+                'irregular_verbs.preview': 'Verb Preview',
+                'irregular_verbs.infinitive': 'Infinitive',
+                'irregular_verbs.past_simple': 'Past Simple',
+                'irregular_verbs.past_participle': 'Past Participle',
+                'irregular_verbs.translation': 'Translation',
+                'irregular_verbs.create_cards': 'Create 3 Cards',
+                'irregular_verbs.search_placeholder': 'Type infinitive (e.g., \'go\', \'take\')...',
+                
+                // Card Statistics Modal
+                'card_stats.title': 'Card Statistics',
+                'card_stats.successful_reviews': 'Successful Reviews So Far',
+                'card_stats.failed_reviews': 'Failed Reviews So Far',
+                'card_stats.next_due_date': 'Next Due Date',
+                'card_stats.not_scheduled': 'Not scheduled',
+                'card_stats.close': 'Close'
             },
             
             ru: {
@@ -147,6 +181,22 @@ class I18n {
                 'actions.study': 'Изучать',
                 'actions.cancel': 'Отмена',
                 'actions.create': 'Создать',
+                'actions.select': 'Выбрать',
+                'actions.save': 'Сохранить',
+                'actions.delete': 'Удалить',
+                
+                // Card Types
+                'card_type.select_type': 'Выберите тип карточки',
+                'card_type.flip': 'Карточки с переворотом',
+                'card_type.flip_description': 'Традиционное изучение карточек с переворотом лицевой и обратной стороны',
+                'card_type.flip_type': 'Переворот + Печать',
+                'card_type.flip_type_description': 'Активное воспроизведение через набор ответов плюс просмотр карточки',
+                'card_type.irregular_verbs': 'Неправильные глаголы',
+                'card_type.irregular_verbs_description': 'Специальные шаблоны для изучения спряжения глаголов',
+                'card_type.coming_soon': 'Скоро',
+                'card_type.card_behavior': 'Поведение карточки',
+                'card_type.flip_only': 'Только переворот',
+                'card_type.flip_and_type': 'Переворот + Печать',
                 
                 // Stats
                 'stats.title': 'Статистика изучения',
@@ -198,10 +248,28 @@ class I18n {
                 'modal.create_deck': 'Создать новую колоду',
                 'modal.deck_name': 'Название колоды',
                 'modal.create_card': 'Создать новую карточку',
+                'modal.edit_card': 'Редактировать карточку',
                 'modal.front': 'Лицевая сторона:',
                 'modal.back': 'Обратная сторона:',
                 'modal.front_placeholder': 'Введите текст лицевой стороны',
-                'modal.back_placeholder': 'Введите текст обратной стороны'
+                'modal.back_placeholder': 'Введите текст обратной стороны',
+                
+                // Irregular Verbs
+                'irregular_verbs.preview': 'Предварительный просмотр глагола',
+                'irregular_verbs.infinitive': 'Инфинитив',
+                'irregular_verbs.past_simple': 'Прошедшее время',
+                'irregular_verbs.past_participle': 'Причастие прошедшего времени',
+                'irregular_verbs.translation': 'Перевод',
+                'irregular_verbs.create_cards': 'Создать 3 карточки',
+                'irregular_verbs.search_placeholder': 'Введите инфинитив (например, \'go\', \'take\')...',
+                
+                // Card Statistics Modal
+                'card_stats.title': 'Статистика карточки',
+                'card_stats.successful_reviews': 'Успешных повторений',
+                'card_stats.failed_reviews': 'Неудачных повторений',
+                'card_stats.next_due_date': 'Следующий срок повторения',
+                'card_stats.not_scheduled': 'Не запланировано',
+                'card_stats.close': 'Закрыть'
             }
         };
         

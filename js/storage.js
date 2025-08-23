@@ -194,6 +194,19 @@ class Storage {
         }
         return false;
     }
+
+    // Irregular verbs methods
+    async populateIrregularVerbs() {
+        return await window.supabaseService.populateIrregularVerbs();
+    }
+
+    async searchIrregularVerbs(query) {
+        return await window.supabaseService.searchIrregularVerbs(query);
+    }
+
+    async getIrregularVerb(id) {
+        return await window.supabaseService.getIrregularVerb(id);
+    }
 }
 
 // Initialize storage

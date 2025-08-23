@@ -10,6 +10,7 @@ A progressive web application (PWA) for studying flashcards using the scientific
   - **Flip Mode**: Traditional flashcard study with front/back card flipping
   - **Type Mode**: Active recall by typing answers
   - **Combined Mode**: Requires both typing and reviewing for maximum retention
+  - **Irregular Verbs**: Specialized English irregular verb learning with auto-complete search
 - **Smart Scheduling**: Cards appear based on difficulty and previous performance
 - **Progress Tracking**: Visual progress bars and study session statistics
 
@@ -31,6 +32,7 @@ A progressive web application (PWA) for studying flashcards using the scientific
 - **Offline Support**: Full functionality without internet connection
 - **Local Storage Backup**: Automatic localStorage fallback
 - **Data Import/Export**: Testing tools for sample data generation
+- **Irregular Verbs Database**: Pre-populated English irregular verbs with Russian translations
 
 ## Technical Architecture
 
@@ -107,6 +109,28 @@ flashcard_app_for_dasha/
     └── supabase-client.js  # Cloud database integration
 ```
 
+## Irregular Verbs Feature
+
+The app includes a specialized irregular verbs learning system:
+
+### 🔍 Smart Search
+- **Auto-complete Search**: Real-time suggestions as you type
+- **Keyboard Navigation**: Arrow keys and Enter to select verbs
+- **Comprehensive Database**: 200+ English irregular verbs with Russian translations
+
+### 📖 Verb Learning
+- **Three Card Types Generated**:
+  - Infinitive form (with "to" prefix) → Translation + form type
+  - Past simple form → Translation + form type  
+  - Past participle form → Translation + form type
+- **Integrated Learning**: Cards added directly to selected deck using spaced repetition
+- **Preview Mode**: Review verb forms before generating cards
+
+### 🗃️ Database Integration
+- **Supabase Backend**: Irregular verbs stored in `irregular_verbs` table
+- **Automatic Population**: Database auto-populated on first use
+- **Efficient Search**: Indexed search across all verb forms and translations
+
 ## Spaced Repetition Algorithm (SM-2)
 
 The app implements the SuperMemo SM-2 algorithm for optimal learning:
@@ -164,7 +188,11 @@ The app implements the SuperMemo SM-2 algorithm for optimal learning:
 - Modify CSS custom properties in `:root` for theme changes
 
 ### Database Setup
-- Configure Supabase project with `decks`, `cards`, and `review_stats` tables
+- Configure Supabase project with required tables:
+  - `decks`: User-created flashcard decks
+  - `cards`: Individual flashcards within decks
+  - `review_stats`: Daily study statistics and streaks
+  - `irregular_verbs`: Pre-populated English irregular verbs database
 - Update credentials in `supabase-client.js`
 - Tables auto-created through application usage
 
