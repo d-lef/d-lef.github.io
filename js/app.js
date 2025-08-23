@@ -152,6 +152,9 @@ class FlashcardApp {
         const tabBtn = document.getElementById(`${viewName}-tab`);
         if (tabBtn) tabBtn.classList.add('active');
         
+        // Manage scrolling behavior for mobile
+        this.manageScrolling(viewName);
+        
         switch (viewName) {
             case 'overview':
                 this.renderOverview();
@@ -183,6 +186,30 @@ class FlashcardApp {
             case 'irregular-verb-preview':
                 // Preview is handled by selectVerb method
                 break;
+        }
+    }
+
+    manageScrolling(viewName) {
+        // Only apply scroll management on mobile devices
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                const activeView = document.getElementById(`${viewName}-view`);
+                const viewContent = activeView.querySelector('.overview-container, .decks-grid, .settings-container') || activeView;
+                
+                // Check if content height exceeds available viewport height
+                const headerHeight = document.querySelector('header').offsetHeight;
+                const availableHeight = window.innerHeight - headerHeight - 40; // 40px for padding
+                const contentHeight = viewContent.scrollHeight;
+                
+                // Only prevent body scrolling if content fits in the available space
+                if (contentHeight <= availableHeight && (viewName === 'overview' || viewName === 'settings')) {
+                    document.body.classList.add('no-scroll');
+                } else {
+                    document.body.classList.remove('no-scroll');
+                }
+            }, 100); // Small delay to ensure content is rendered
+        } else {
+            document.body.classList.remove('no-scroll');
         }
     }
 

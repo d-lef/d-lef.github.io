@@ -1736,6 +1736,23 @@ nav::-webkit-scrollbar {
     }
 }
 
+/* Prevent unnecessary scrolling on mobile when content fits */
+@media (max-width: 768px) {
+    /* Only prevent body scrolling when content fits in viewport */
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+    
+    /* Ensure views can still scroll their content when needed */
+    .view {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 /* Card Transition Animations */
 @keyframes slideInFromRight {
     from {
