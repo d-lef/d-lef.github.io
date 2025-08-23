@@ -2327,7 +2327,8 @@ nav::-webkit-scrollbar {
     border-radius: 12px;
     outline: none;
     font-family: inherit;
-    background: var(--card-bg);
+    background: var(--input-bg);
+    color: var(--text-primary);
     transition: all 0.2s ease;
 }
 
@@ -2356,6 +2357,7 @@ nav::-webkit-scrollbar {
     cursor: pointer;
     transition: background-color 0.1s ease;
     border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .verb-suggestion:last-child {

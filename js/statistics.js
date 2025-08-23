@@ -107,10 +107,10 @@ class Statistics {
             
             const reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
             
-            // Create a set of study days
-            const studyDays = new Set(
+            // Create a set of complete study days (where all due cards were studied)
+            const completeStudyDays = new Set(
                 reviewStats
-                    .filter(stat => stat.reviews > 0)
+                    .filter(stat => stat.all_due_completed === true)
                     .map(stat => stat.day)
             );
             
@@ -120,7 +120,7 @@ class Statistics {
             
             while (currentDate >= yearAgo) {
                 const dateStr = this.getLocalDateString(currentDate);
-                if (studyDays.has(dateStr)) {
+                if (completeStudyDays.has(dateStr)) {
                     streak++;
                     currentDate.setDate(currentDate.getDate() - 1);
                 } else {
@@ -183,8 +183,10 @@ class Statistics {
             }
         }
         
-        // Update calendar
-        this.renderCalendar(stats.month);
+        // Update calendar if it exists
+        if (document.getElementById('study-calendar')) {
+            this.renderCalendar(stats.month);
+        }
     }
 
     renderCalendar(monthStats) {
@@ -262,20 +264,40 @@ class Statistics {
             const dateStr = this.getLocalDateString(new Date(this.currentYear, this.currentMonth, day));
             const dayStat = monthStats ? monthStats.find(stat => stat.day === dateStr) : null;
             
-            // Apply study intensity class
-            if (dayStat && dayStat.reviews > 0) {
+            // Debug logging
+            if (dayStat) {
+                console.log(`Calendar day ${dateStr}:`, dayStat);
+            }
+            
+            // Only color days where ALL due cards were completed
+            if (dayStat && dayStat.all_due_completed === true) {
+                let appliedClass = '';
+                
+                // Apply intensity based on number of reviews for complete study days
                 if (dayStat.reviews >= 50) {
                     dayElement.classList.add('high-study');
+                    appliedClass = 'high-study';
                 } else if (dayStat.reviews >= 20) {
                     dayElement.classList.add('medium-study');
+                    appliedClass = 'medium-study';
                 } else {
-                    dayElement.classList.add('low-study');
+                    dayElement.classList.add('complete-study');
+                    appliedClass = 'complete-study';
                 }
                 
+                console.log(`Day ${dateStr} applied class: ${appliedClass} (reviews: ${dayStat.reviews}, all_due_completed: ${dayStat.all_due_completed})`);
+                
                 // Add tooltip with stats
-                dayElement.title = `${dayStat.reviews} reviews, ${Math.round((dayStat.correct / dayStat.reviews) * 100)}% accuracy`;
+                dayElement.title = `${dayStat.reviews} reviews, ${Math.round((dayStat.correct / dayStat.reviews) * 100)}% accuracy (All due completed)`;
             } else {
+                // No color for incomplete study days or days with no study
                 dayElement.classList.add('no-study');
+                
+                // Add tooltip for incomplete study days
+                if (dayStat && dayStat.reviews > 0) {
+                    dayElement.title = `${dayStat.reviews} reviews, ${Math.round((dayStat.correct / dayStat.reviews) * 100)}% accuracy (Incomplete - not all due cards studied)`;
+                    console.log(`Day ${dateStr} - incomplete study (reviews: ${dayStat.reviews}, all_due_completed: ${dayStat.all_due_completed})`);
+                }
             }
             
             calendarGrid.appendChild(dayElement);
@@ -322,7 +344,8 @@ class Statistics {
                         day: date,
                         reviews: stats.reviews || 0,
                         correct: stats.correct || 0,
-                        lapses: stats.lapses || 0
+                        lapses: stats.lapses || 0,
+                        all_due_completed: stats.all_due_completed || null
                     });
                 }
             }
