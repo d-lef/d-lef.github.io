@@ -496,37 +496,45 @@ nav::-webkit-scrollbar {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .insight-card {
     background: var(--card-bg);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 1rem;
     box-shadow: 0 4px 20px var(--shadow);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     transition: transform 0.2s ease;
+    min-width: 0;
+    width: 100%;
 }
 
 
 .insight-icon {
-    font-size: 2rem;
-    width: 3rem;
-    height: 3rem;
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--input-bg);
-    border-radius: 12px;
+    border-radius: 10px;
+    flex-shrink: 0;
 }
 
 .insight-content {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .insight-number {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
     margin-bottom: 0.25rem;
@@ -534,8 +542,10 @@ nav::-webkit-scrollbar {
 
 .insight-label {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
+    line-height: 1.2;
+    text-align: left;
 }
 
 .recent-activity {
@@ -1578,6 +1588,9 @@ nav::-webkit-scrollbar {
     
     .insights-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        max-width: 100%;
+        margin-bottom: 1.5rem;
     }
     
     .stats-grid {
@@ -1597,12 +1610,38 @@ nav::-webkit-scrollbar {
         font-size: 1.5rem;
     }
     
+    .insight-card {
+        padding: 0.75rem;
+        gap: 0.5rem;
+        min-height: 80px;
+    }
+    
+    .insight-icon {
+        font-size: 1.25rem;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 8px;
+    }
+    
     .insight-number {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
     }
     
     .insight-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        line-height: 1.1;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
+    .insight-content {
+        min-width: 0;
+        max-width: 100%;
+    }
+    
+    .compact-calendar-section {
+        padding: 1rem;
+        margin-top: 1.5rem;
     }
     
     .recent-deck-name {
@@ -1783,6 +1822,9 @@ nav::-webkit-scrollbar {
     padding: 1.5rem;
     margin-top: 2rem;
     box-shadow: 0 4px 20px var(--shadow);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .compact-calendar-header {
