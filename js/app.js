@@ -202,7 +202,7 @@ class FlashcardApp {
                 const contentHeight = viewContent.scrollHeight;
                 
                 // Only prevent body scrolling if content fits in the available space
-                if (contentHeight <= availableHeight && (viewName === 'overview' || viewName === 'settings')) {
+                if (contentHeight <= availableHeight && (viewName === 'overview' || viewName === 'settings' || viewName === 'decks')) {
                     document.body.classList.add('no-scroll');
                 } else {
                     document.body.classList.remove('no-scroll');
@@ -1380,6 +1380,7 @@ class FlashcardApp {
                     reviewCount: 0,
                     isNew: true
                 };
+                console.log('Creating new card:', newCard);
                 this.currentDeck.cards.push(newCard);
             }
             

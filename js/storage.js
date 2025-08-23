@@ -119,6 +119,12 @@ class Storage {
             this.saveToLocalStorage('decks', this.decks);
             
             // Sync to Supabase
+            console.log('About to save deck to Supabase:', { 
+                deckName: deck.name, 
+                isNew, 
+                cardCount: deck.cards?.length || 0,
+                newCards: deck.cards?.filter(c => c.isNew).length || 0
+            });
             await window.supabaseService.saveDeck(deck, isNew);
             
             console.log(`Deck ${isNew ? 'created' : 'updated'}:`, deck.name);
