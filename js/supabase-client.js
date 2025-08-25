@@ -351,7 +351,7 @@ class SupabaseService {
                         await this.deleteCard(operation.data.cardId);
                         break;
                     case 'updateReviewStats':
-                        await this.executeUpdateReviewStats(operation.data.date, operation.data.isCorrect, operation.data.allDueCompleted);
+                        await this.executeUpdateReviewStats(operation.data.date, operation.data.isCorrect, operation.data.allDueCompleted, operation.data.isFirstReviewToday);
                         break;
                 }
             } catch (error) {
@@ -376,10 +376,10 @@ class SupabaseService {
         }
     }
 
-    async updateReviewStats(date, isCorrect, allDueCompleted = null) {
+    async updateReviewStats(date, isCorrect, allDueCompleted = null, isFirstReviewToday = true) {
         const operation = {
             type: 'updateReviewStats',
-            data: { date, isCorrect, allDueCompleted },
+            data: { date, isCorrect, allDueCompleted, isFirstReviewToday },
             timestamp: Date.now()
         };
 
@@ -389,7 +389,7 @@ class SupabaseService {
         }
 
         try {
-            return await this.executeUpdateReviewStats(date, isCorrect, allDueCompleted);
+            return await this.executeUpdateReviewStats(date, isCorrect, allDueCompleted, isFirstReviewToday);
         } catch (error) {
             console.error('Failed to update review stats:', error);
             this.addToSyncQueue(operation);
@@ -397,13 +397,13 @@ class SupabaseService {
         }
     }
 
-    async executeUpdateReviewStats(date, isCorrect, allDueCompleted = null) {
+    async executeUpdateReviewStats(date, isCorrect, allDueCompleted = null, isFirstReviewToday = true) {
         console.log('Updating review stats for:', { date, isCorrect, allDueCompleted });
         
         // Prepare the stats object
         const statsUpdate = {
             day: date,
-            reviews: 1,
+            reviews: isFirstReviewToday ? 1 : 0, // Only count first review of each card
             correct: isCorrect ? 1 : 0,
             lapses: isCorrect ? 0 : 1
         };
@@ -440,7 +440,7 @@ class SupabaseService {
             // Update with incremented values
             const newStats = {
                 day: date,
-                reviews: (current?.reviews || 0) + 1,
+                reviews: (current?.reviews || 0) + (isFirstReviewToday ? 1 : 0), // Only count first review of each card
                 correct: (current?.correct || 0) + (isCorrect ? 1 : 0),
                 lapses: (current?.lapses || 0) + (isCorrect ? 0 : 1)
             };

@@ -422,9 +422,9 @@ class FlashcardApp {
     showStudyModeSelection() {
         if (!this.currentDeck) return;
         
-        const studyCards = spacedRepetition.getCardsForStudy(this.currentDeck);
-        if (studyCards.length === 0) {
-            alert('No cards to study right now!');
+        // For deck study, include ALL cards regardless of schedule
+        if (this.currentDeck.cards.length === 0) {
+            alert('No cards in this deck to study!');
             return;
         }
         
@@ -440,13 +440,14 @@ class FlashcardApp {
             this.currentCardIndex = 0;
             this.isCardFlipped = false;
         } else {
-            // Single deck mode
+            // Single deck mode - study ALL cards in deck regardless of schedule
             if (!this.currentDeck) return;
             
-            this.currentStudyCards = spacedRepetition.getCardsForStudy(this.currentDeck);
+            // Use all cards from the deck, not just due cards
+            this.currentStudyCards = [...this.currentDeck.cards];
             
             if (this.currentStudyCards.length === 0) {
-                alert('No cards to study right now!');
+                alert('No cards in this deck to study!');
                 return;
             }
             
@@ -576,6 +577,23 @@ class FlashcardApp {
                 e.stopPropagation();
                 console.log('Check answer button clicked');
                 this.checkTypedAnswer();
+            });
+            
+            // Set up "I don't remember" button
+            const dontRememberBtn = document.getElementById('dont-remember');
+            // Clear all event handlers
+            dontRememberBtn.onclick = null;
+            dontRememberBtn.onmousedown = null;
+            dontRememberBtn.ontouchstart = null;
+            // Remove all event listeners by cloning
+            const newDontRememberBtn = dontRememberBtn.cloneNode(true);
+            dontRememberBtn.parentNode.replaceChild(newDontRememberBtn, dontRememberBtn);
+            // Add single clean event listener
+            document.getElementById('dont-remember').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Dont remember button clicked');
+                this.handleDontRemember();
             });
             
             this.currentAnswer = card.back;
@@ -719,7 +737,7 @@ class FlashcardApp {
             await this.updateCardInStorage(updatedCard);
             
             // Track review stats
-            await this.trackReviewStat(difficulty);
+            await this.trackReviewStat(difficulty, card.id);
             
             this.studySession.cardsStudied++;
             
@@ -760,16 +778,33 @@ class FlashcardApp {
         return `${year}-${month}-${day}`;
     }
 
-    async trackReviewStat(difficulty) {
+    async trackReviewStat(difficulty, cardId) {
         try {
             const today = this.getLocalDateString(); // YYYY-MM-DD format
             const isCorrect = difficulty === 'good' || difficulty === 'easy';
             
-            // Check if all due cards are now completed after this review
-            const allDueCompleted = await this.checkAllDueCompleted();
+            // Initialize daily reviewed cards tracker if needed
+            if (!this.reviewedCardsToday) {
+                this.reviewedCardsToday = new Set();
+            }
+            
+            // Reset tracker if it's a new day
+            if (this.lastReviewDate !== today) {
+                this.reviewedCardsToday.clear();
+                this.lastReviewDate = today;
+            }
+            
+            // Check if this is the first time reviewing this card today
+            const isFirstReviewToday = !this.reviewedCardsToday.has(cardId);
+            this.reviewedCardsToday.add(cardId);
+            
+            // Only check all_due_completed for "Study All Cards" sessions (scheduled reviews)
+            // Individual deck study shouldn't affect calendar coloring or streaks
+            const isScheduledStudy = this.studySession && this.studySession.isStudyAll;
+            const allDueCompleted = isScheduledStudy ? await this.checkAllDueCompleted() : null;
             
             if (window.supabaseService) {
-                await window.supabaseService.updateReviewStats(today, isCorrect, allDueCompleted);
+                await window.supabaseService.updateReviewStats(today, isCorrect, allDueCompleted, isFirstReviewToday);
             }
             
             // Also store locally as fallback for calendar display
@@ -879,6 +914,14 @@ class FlashcardApp {
         this.showTypingFeedback(result, userAnswer, correctAnswer, difficulty);
     }
     
+    handleDontRemember() {
+        console.log('handleDontRemember called');
+        const correctAnswer = this.currentAnswer;
+        
+        // Show the correct answer immediately with "again" difficulty
+        this.showTypingFeedback('dont-remember', '', correctAnswer, 'again');
+    }
+    
     compareAnswers(userAnswer, correctAnswer) {
         const user = userAnswer.toLowerCase().trim();
         const correct = correctAnswer.toLowerCase().trim();
@@ -979,6 +1022,14 @@ class FlashcardApp {
             inlineStatus.textContent = '✅ Correct!';
             inlineStatus.style.color = '#2ed573';
             inlineCorrectAnswer.style.display = 'none';
+        } else if (result === 'dont-remember') {
+            inlineStatus.textContent = '💭 That\'s okay, here\'s the answer:';
+            inlineStatus.style.color = '#ffa502';
+            // Hide user answer since they didn't provide one
+            inlineUserAnswer.style.display = 'none';
+            // Show correct answer inline
+            inlineCorrectAnswer.textContent = correctAnswer;
+            inlineCorrectAnswer.style.display = 'block';
         } else {
             if (result === 'partial') {
                 inlineStatus.textContent = '⚠️ Close! (Minor mistakes)';
@@ -1028,28 +1079,34 @@ class FlashcardApp {
     
     
     finishStudySession() {
-        const stats = storage.loadStats();
-        const today = new Date().toDateString();
-        const lastStudyDate = stats.lastStudyDate ? new Date(stats.lastStudyDate).toDateString() : null;
-        
-        let newStreak = stats.streak;
-        if (lastStudyDate === today) {
-            // Already studied today, don't change streak
-        } else if (lastStudyDate === new Date(Date.now() - 86400000).toDateString()) {
-            // Studied yesterday, increment streak
-            newStreak++;
-        } else if (lastStudyDate === null || lastStudyDate !== today) {
-            // First time or broke streak, start new streak
-            newStreak = 1;
+        if (this.studySession && this.studySession.isStudyAll) {
+            // Only update streaks for "Study All Cards" sessions, not individual deck study
+            const stats = storage.loadStats();
+            const today = new Date().toDateString();
+            const lastStudyDate = stats.lastStudyDate ? new Date(stats.lastStudyDate).toDateString() : null;
+            
+            let newStreak = stats.streak;
+            if (lastStudyDate === today) {
+                // Already studied today, don't change streak
+            } else if (lastStudyDate === new Date(Date.now() - 86400000).toDateString()) {
+                // Studied yesterday, increment streak
+                newStreak++;
+            } else if (lastStudyDate === null || lastStudyDate !== today) {
+                // First time or broke streak, start new streak
+                newStreak = 1;
+            }
+            
+            storage.updateStats({
+                streak: newStreak,
+                cardsStudiedToday: (lastStudyDate === today ? stats.cardsStudiedToday : 0) + this.studySession.cardsStudied,
+                lastStudyDate: new Date().toISOString()
+            });
+            
+            alert(`Study session complete!\n\nCards studied: ${this.studySession.cardsStudied}\nCurrent streak: ${newStreak} days`);
+        } else {
+            // Individual deck study - no streak update, just show completion message
+            alert(`Deck study complete!\n\nCards reviewed: ${this.studySession.cardsStudied}`);
         }
-        
-        storage.updateStats({
-            streak: newStreak,
-            cardsStudiedToday: (lastStudyDate === today ? stats.cardsStudiedToday : 0) + this.studySession.cardsStudied,
-            lastStudyDate: new Date().toISOString()
-        });
-        
-        alert(`Study session complete!\n\nCards studied: ${this.studySession.cardsStudied}\nCurrent streak: ${newStreak} days`);
         
         this.showView('decks');
     }
@@ -1715,12 +1772,12 @@ class FlashcardApp {
         try {
             const verb = this.selectedVerb;
             
-            // Generate 3 cards from the irregular verb
+            // Generate 3 cards from the irregular verb (Russian -> English)
             const cards = [
                 {
                     id: storage.generateUUID(),
-                    front: `to ${verb.infinitive.toLowerCase()}`,
-                    back: `${verb.translation_ru} (infinitive)`,
+                    front: `${verb.translation_ru} (infinitive)`,
+                    back: `to ${verb.infinitive.toLowerCase()}`,
                     createdAt: new Date().toISOString(),
                     ease: 2.5,
                     interval: 1,
@@ -1732,8 +1789,8 @@ class FlashcardApp {
                 },
                 {
                     id: storage.generateUUID(),
-                    front: verb.simple_past.toLowerCase(),
-                    back: `${verb.translation_ru} (past simple)`,
+                    front: `${verb.translation_ru} (past simple)`,
+                    back: verb.simple_past.toLowerCase(),
                     createdAt: new Date().toISOString(),
                     ease: 2.5,
                     interval: 1,
@@ -1745,8 +1802,8 @@ class FlashcardApp {
                 },
                 {
                     id: storage.generateUUID(),
-                    front: verb.past_participle.toLowerCase(),
-                    back: `${verb.translation_ru} (past participle)`,
+                    front: `${verb.translation_ru} (past participle)`,
+                    back: verb.past_participle.toLowerCase(),
                     createdAt: new Date().toISOString(),
                     ease: 2.5,
                     interval: 1,

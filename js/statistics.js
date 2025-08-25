@@ -114,10 +114,35 @@ class Statistics {
                     .map(stat => stat.day)
             );
             
-            // Calculate streak
+            // Calculate streak with grace period for today
             let streak = 0;
             const currentDate = new Date(today);
+            const todayStr = this.getLocalDateString(currentDate);
             
+            // Special handling for today - give users until end of day
+            let startFromYesterday = false;
+            if (completeStudyDays.has(todayStr)) {
+                // Today is already completed, count it
+                streak++;
+                currentDate.setDate(currentDate.getDate() - 1);
+            } else {
+                // Today not completed yet - check if yesterday was completed
+                const yesterday = new Date(currentDate);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = this.getLocalDateString(yesterday);
+                
+                if (completeStudyDays.has(yesterdayStr)) {
+                    // Yesterday was completed, so user still has today to maintain streak
+                    // Start counting from yesterday's streak and give them today
+                    startFromYesterday = true;
+                    currentDate.setDate(currentDate.getDate() - 1); // Start from yesterday
+                } else {
+                    // Yesterday wasn't completed either, streak is broken
+                    return 0;
+                }
+            }
+            
+            // Count consecutive complete days going backward
             while (currentDate >= yearAgo) {
                 const dateStr = this.getLocalDateString(currentDate);
                 if (completeStudyDays.has(dateStr)) {
