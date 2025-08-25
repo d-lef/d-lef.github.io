@@ -1319,8 +1319,10 @@ class FlashcardApp {
         this.editingCard.front = front;
         this.editingCard.back = back;
         this.editingCard.card_type = selectedType;
+        this.editingCard.updatedAt = new Date().toISOString();
+        this.editingCard.isModified = true;
         
-        await this.saveDecks();
+        await storage.saveDeck(this.currentDeck);
         
         // Go back to deck view
         this.showView('deck');
@@ -1336,7 +1338,7 @@ class FlashcardApp {
         // Remove card from deck
         this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== this.editingCard.id);
         
-        await this.saveDecks();
+        await storage.saveDeck(this.currentDeck);
         
         // Go back to deck view
         this.showView('deck');
