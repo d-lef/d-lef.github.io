@@ -26,6 +26,9 @@ class FlashcardApp {
             window.i18n.updatePageTranslations();
         }
         
+        // Initialize notification system
+        this.initializeNotifications();
+        
         // Populate irregular verbs table (one-time setup)
         this.initializeIrregularVerbs();
     }
@@ -142,6 +145,9 @@ class FlashcardApp {
         
         // Irregular verbs event listeners
         this.setupIrregularVerbsEventListeners();
+        
+        // Notification settings event listeners
+        this.setupNotificationEventListeners();
     }
 
     showView(viewName) {
@@ -1882,6 +1888,186 @@ class FlashcardApp {
         } catch (error) {
             console.error('Failed to check due cards completion:', error);
             return false;
+        }
+    }
+
+    // Notification System Methods
+    async initializeNotifications() {
+        if (typeof NotificationManager !== 'undefined' && window.i18n) {
+            this.notificationManager = new NotificationManager(window.i18n);
+            await this.loadNotificationSettings();
+            console.log('Notification system initialized');
+        } else {
+            console.log('Notification system not available');
+        }
+    }
+
+    setupNotificationEventListeners() {
+        // Enable/disable notifications toggle
+        const notificationsToggle = document.getElementById('notifications-toggle');
+        if (notificationsToggle) {
+            notificationsToggle.addEventListener('change', async () => {
+                const enabled = notificationsToggle.checked;
+                await this.updateNotificationSettings({ enabled });
+            });
+        }
+
+        // Reminder time change
+        const reminderTimeInput = document.getElementById('reminder-time');
+        if (reminderTimeInput) {
+            reminderTimeInput.addEventListener('change', async () => {
+                const time = reminderTimeInput.value;
+                await this.updateNotificationSettings({ dailyReminderTime: time });
+            });
+        }
+
+        // Streak reminders toggle
+        const streakRemindersToggle = document.getElementById('streak-reminders-toggle');
+        if (streakRemindersToggle) {
+            streakRemindersToggle.addEventListener('change', async () => {
+                const streakReminders = streakRemindersToggle.checked;
+                await this.updateNotificationSettings({ streakReminders });
+            });
+        }
+
+        // Listen for service worker messages (notification clicks)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
+                    this.handleNotificationClick(event.data);
+                }
+            });
+        }
+    }
+
+    async loadNotificationSettings() {
+        if (!this.notificationManager) return;
+
+        const settings = this.notificationManager.loadSettings();
+        
+        // Update UI elements
+        const notificationsToggle = document.getElementById('notifications-toggle');
+        const reminderTimeInput = document.getElementById('reminder-time');
+        const streakRemindersToggle = document.getElementById('streak-reminders-toggle');
+        const reminderTimeRow = document.getElementById('reminder-time-row');
+        const notificationStatus = document.getElementById('notification-status');
+
+        if (notificationsToggle) {
+            notificationsToggle.checked = settings.enabled;
+        }
+        
+        if (reminderTimeInput) {
+            reminderTimeInput.value = settings.dailyReminderTime;
+        }
+        
+        if (streakRemindersToggle) {
+            streakRemindersToggle.checked = settings.streakReminders;
+        }
+
+        // Update UI state
+        if (reminderTimeRow) {
+            reminderTimeRow.classList.toggle('enabled', settings.enabled);
+        }
+
+        // Update permission status
+        this.updateNotificationStatus();
+
+        // Initialize with current settings
+        if (settings.enabled) {
+            await this.notificationManager.initialize(settings);
+        }
+    }
+
+    async updateNotificationSettings(changes) {
+        if (!this.notificationManager) return;
+
+        const currentSettings = this.notificationManager.loadSettings();
+        const newSettings = { ...currentSettings, ...changes };
+
+        // Save settings
+        this.notificationManager.saveSettings(newSettings);
+
+        // Update UI state
+        const reminderTimeRow = document.getElementById('reminder-time-row');
+        if (reminderTimeRow) {
+            reminderTimeRow.classList.toggle('enabled', newSettings.enabled);
+        }
+
+        // Re-initialize notification system with new settings
+        if (newSettings.enabled) {
+            const hasPermission = await this.notificationManager.requestPermission();
+            if (hasPermission) {
+                await this.notificationManager.initialize(newSettings);
+            } else {
+                // Permission denied, disable notifications
+                newSettings.enabled = false;
+                this.notificationManager.saveSettings(newSettings);
+                const notificationsToggle = document.getElementById('notifications-toggle');
+                if (notificationsToggle) {
+                    notificationsToggle.checked = false;
+                }
+            }
+        } else {
+            // Disabled, clear all reminders
+            this.notificationManager.clearAllReminders();
+        }
+
+        // Update status display
+        this.updateNotificationStatus();
+    }
+
+    updateNotificationStatus() {
+        if (!this.notificationManager) return;
+
+        const statusElement = document.getElementById('notification-status');
+        if (!statusElement) return;
+
+        const permissionStatus = this.notificationManager.getPermissionStatus();
+        const settings = this.notificationManager.loadSettings();
+
+        // Clear previous classes
+        statusElement.className = 'notification-status';
+        
+        let statusKey;
+        let statusClass;
+
+        if (permissionStatus === 'unsupported') {
+            statusKey = 'settings.notification_unsupported';
+            statusClass = 'unsupported';
+        } else if (permissionStatus === 'denied') {
+            statusKey = 'settings.notification_permission_denied';
+            statusClass = 'permission-denied';
+        } else if (permissionStatus === 'granted' && settings.enabled) {
+            statusKey = 'settings.notification_permission_granted';
+            statusClass = 'permission-granted';
+        } else {
+            statusKey = 'settings.notification_permission_needed';
+            statusClass = 'permission-needed';
+        }
+
+        statusElement.classList.add(statusClass);
+        statusElement.setAttribute('data-i18n', statusKey);
+        
+        // Update text immediately if i18n is available
+        if (window.i18n) {
+            const text = window.i18n.translate(statusKey);
+            statusElement.textContent = text;
+        }
+    }
+
+    handleNotificationClick(data) {
+        console.log('Handling notification click:', data);
+        
+        // Navigate to appropriate view based on notification
+        switch (data.notificationType) {
+            case 'dailyReminder':
+            case 'streakRisk':
+            case 'lastChance':
+                this.showView('overview');
+                break;
+            default:
+                // Default to overview
+                this.showView('overview');
         }
     }
 }
