@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v26-notifications';
+const CACHE_NAME = 'flashcard-app-v30-clean';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,7 +10,6 @@ const urlsToCache = [
   '/js/statistics.js',
   '/js/i18n.js',
   '/js/settings.js',
-  '/js/notifications.js',
   '/manifest.json'
 ];
 
@@ -55,94 +54,3 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Handle notification clicks
-self.addEventListener('notificationclick', event => {
-  console.log('Notification clicked:', event.notification.tag, event.action);
-  
-  event.notification.close();
-
-  const notificationData = event.notification.data || {};
-  let urlToOpen = '/';
-
-  // Handle different actions
-  if (event.action === 'study') {
-    // Open app to study/overview page
-    urlToOpen = '/?view=overview&from=notification';
-  } else if (event.action === 'later') {
-    // Just close notification - no action needed
-    return;
-  } else {
-    // Default click - open app to appropriate view based on notification type
-    switch (notificationData.type) {
-      case 'dailyReminder':
-      case 'streakRisk':
-      case 'lastChance':
-        urlToOpen = '/?view=overview&from=notification';
-        break;
-      default:
-        urlToOpen = '/';
-    }
-  }
-
-  // Focus existing window or open new one
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then(clientList => {
-        // Try to focus existing window
-        for (let client of clientList) {
-          if (client.url.includes(self.location.origin)) {
-            client.focus();
-            // Navigate to the appropriate page
-            client.postMessage({
-              type: 'NOTIFICATION_CLICK',
-              action: event.action,
-              notificationType: notificationData.type,
-              url: urlToOpen
-            });
-            return;
-          }
-        }
-        
-        // No existing window found, open new one
-        return clients.openWindow(urlToOpen);
-      })
-  );
-});
-
-// Handle notification close
-self.addEventListener('notificationclose', event => {
-  console.log('Notification closed:', event.notification.tag);
-  
-  // Track notification dismissal for analytics if needed
-  const notificationData = event.notification.data || {};
-  if (notificationData.type) {
-    console.log(`User dismissed ${notificationData.type} notification`);
-  }
-});
-
-// Handle messages from main app
-self.addEventListener('message', event => {
-  console.log('Service worker received message:', event.data);
-  
-  if (event.data && event.data.type) {
-    switch (event.data.type) {
-      case 'SHOW_NOTIFICATION':
-        // Show notification requested from main app
-        const { title, options } = event.data.payload;
-        self.registration.showNotification(title, {
-          icon: '/icon-192.png',
-          badge: '/icon-192.png',
-          ...options
-        });
-        break;
-        
-      case 'SKIP_WAITING':
-        // Force service worker update
-        self.skipWaiting();
-        break;
-        
-      default:
-        console.log('Unknown message type:', event.data.type);
-    }
-  }
-});
