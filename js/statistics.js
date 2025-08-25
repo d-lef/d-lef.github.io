@@ -9,8 +9,8 @@ class Statistics {
                  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
         };
         this.dayNames = {
-            en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+            en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            ru: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
         };
     }
 
@@ -67,7 +67,10 @@ class Statistics {
     calculateWeekStats(reviewStats) {
         const today = new Date();
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
+        // Calculate Monday as start of week (Sunday=0 -> Monday start = -6, Monday=1 -> Monday start = 0)
+        const dayOfWeek = today.getDay();
+        const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(today.getDate() - daysFromMonday);
         
         let totalReviews = 0;
         let totalCorrect = 0;
@@ -262,7 +265,8 @@ class Statistics {
         const firstDay = new Date(this.currentYear, this.currentMonth, 1);
         const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
         const daysInMonth = lastDay.getDate();
-        const startDayOfWeek = firstDay.getDay();
+        // Convert Sunday=0 to Monday=0 (Sunday becomes 6, Monday becomes 0)
+        const startDayOfWeek = (firstDay.getDay() + 6) % 7;
         
         // Add empty cells for days before month starts
         for (let i = 0; i < startDayOfWeek; i++) {
