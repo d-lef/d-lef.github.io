@@ -31,6 +31,9 @@ class FlashcardApp {
         
         // Populate irregular verbs table (one-time setup)
         this.initializeIrregularVerbs();
+        
+        // Populate phrasal verbs table (one-time setup)
+        this.initializePhrasalVerbs();
     }
 
     setupEventListeners() {
@@ -146,6 +149,9 @@ class FlashcardApp {
         // Irregular verbs event listeners
         this.setupIrregularVerbsEventListeners();
         
+        // Phrasal verbs event listeners
+        this.setupPhrasalVerbsEventListeners();
+        
         // Notification settings event listeners
         this.setupNotificationEventListeners();
     }
@@ -191,6 +197,12 @@ class FlashcardApp {
                 break;
             case 'irregular-verb-preview':
                 // Preview is handled by selectVerb method
+                break;
+            case 'phrasal-verbs':
+                this.renderPhrasalVerbsView();
+                break;
+            case 'phrasal-verb-preview':
+                // Preview is handled by selectPhrasalVerb method
                 break;
         }
     }
@@ -1217,6 +1229,8 @@ class FlashcardApp {
         
         if (cardType === 'irregular_verbs') {
             this.showView('irregular-verbs');
+        } else if (cardType === 'phrasal_verbs') {
+            this.showView('phrasal-verbs');
         } else {
             this.showView('card-form');
         }
@@ -1692,6 +1706,101 @@ class FlashcardApp {
         }
     }
 
+    setupPhrasalVerbsEventListeners() {
+        // Search functionality
+        const searchInput = document.getElementById('phrasal-verb-search');
+        const suggestionsContainer = document.getElementById('phrasal-suggestions');
+        let currentVerbs = [];
+        let selectedIndex = -1;
+
+        if (searchInput && suggestionsContainer) {
+            // Search input handler with debouncing
+            let searchTimeout;
+            searchInput.addEventListener('input', async (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length === 0) {
+                    suggestionsContainer.style.display = 'none';
+                    currentVerbs = [];
+                    selectedIndex = -1;
+                    return;
+                }
+
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        const verbs = await storage.searchPhrasalVerbs(query);
+                        currentVerbs = verbs;
+                        selectedIndex = -1;
+                        this.renderPhrasalVerbSuggestions(verbs, suggestionsContainer);
+                    } catch (error) {
+                        console.error('Error searching phrasal verbs:', error);
+                        suggestionsContainer.style.display = 'none';
+                    }
+                }, 300);
+            });
+
+            // Keyboard navigation
+            searchInput.addEventListener('keydown', (e) => {
+                if (currentVerbs.length === 0) return;
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, currentVerbs.length - 1);
+                        this.updateSuggestionSelection(suggestionsContainer, selectedIndex);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        this.updateSuggestionSelection(suggestionsContainer, selectedIndex);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0) {
+                            this.selectPhrasalVerb(currentVerbs[selectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        suggestionsContainer.style.display = 'none';
+                        selectedIndex = -1;
+                        break;
+                }
+            });
+
+            // Click outside to hide suggestions
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                    selectedIndex = -1;
+                }
+            });
+        }
+
+        // Navigation buttons
+        const backToCardTypeBtn = document.getElementById('back-to-card-type-from-phrasal');
+        if (backToCardTypeBtn) {
+            backToCardTypeBtn.addEventListener('click', () => {
+                this.showView('card-type');
+            });
+        }
+
+        const backToSearchBtn = document.getElementById('back-to-phrasal-search');
+        if (backToSearchBtn) {
+            backToSearchBtn.addEventListener('click', () => {
+                this.showView('phrasal-verbs');
+            });
+        }
+
+        // Save card button
+        const saveCardBtn = document.getElementById('save-phrasal-verb-card');
+        if (saveCardBtn) {
+            saveCardBtn.addEventListener('click', () => {
+                this.savePhrasalVerbCard();
+            });
+        }
+    }
+
     renderVerbSuggestions(verbs, container) {
         if (verbs.length === 0) {
             container.style.display = 'none';
@@ -2068,6 +2177,146 @@ class FlashcardApp {
             default:
                 // Default to overview
                 this.showView('overview');
+        }
+    }
+
+    renderPhrasalVerbsView() {
+        // Clear the search input
+        const searchInput = document.getElementById('phrasal-verb-search');
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+        }
+
+        // Hide suggestions
+        const suggestionsContainer = document.getElementById('phrasal-suggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none';
+        }
+    }
+
+    renderPhrasalVerbSuggestions(verbs, container) {
+        if (verbs.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.innerHTML = '';
+        verbs.forEach((verb, index) => {
+            const suggestion = document.createElement('div');
+            suggestion.className = 'verb-suggestion';
+            suggestion.innerHTML = `
+                <strong>${verb.full_expression}</strong>
+                <br><small style="color: var(--text-secondary); margin-top: 2px;">${verb.translation}</small>
+            `;
+            suggestion.addEventListener('click', () => {
+                this.selectPhrasalVerb(verb);
+            });
+            container.appendChild(suggestion);
+        });
+
+        container.style.display = 'block';
+    }
+
+    selectPhrasalVerb(verb) {
+        this.selectedPhrasalVerb = verb;
+        this.showPhrasalVerbPreview(verb);
+        this.showView('phrasal-verb-preview');
+        
+        // Hide suggestions
+        const suggestionsContainer = document.getElementById('phrasal-suggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none';
+        }
+    }
+
+    showPhrasalVerbPreview(verb) {
+        console.log('Showing phrasal verb preview for:', verb);
+        
+        const infinitiveEl = document.getElementById('phrasal-preview-infinitive');
+        const fullExpressionEl = document.getElementById('phrasal-preview-full-expression');
+        const translationEl = document.getElementById('phrasal-preview-translation');
+        const typeEl = document.getElementById('phrasal-preview-type');
+        
+        console.log('Elements found:', {
+            infinitive: !!infinitiveEl,
+            fullExpression: !!fullExpressionEl,
+            translation: !!translationEl,
+            type: !!typeEl
+        });
+        
+        if (infinitiveEl) infinitiveEl.textContent = verb.infinitive;
+        if (fullExpressionEl) fullExpressionEl.textContent = verb.full_expression;
+        if (translationEl) translationEl.textContent = verb.translation;
+        if (typeEl) typeEl.textContent = verb.type;
+        
+        // Log the back button position
+        const backBtn = document.getElementById('back-to-phrasal-search');
+        if (backBtn) {
+            const rect = backBtn.getBoundingClientRect();
+            console.log('Back button position:', { top: rect.top, left: rect.left, bottom: rect.bottom });
+        }
+        
+        // Log first verb form position
+        const firstVerbForm = document.querySelector('.verb-form:first-child');
+        if (firstVerbForm) {
+            const rect = firstVerbForm.getBoundingClientRect();
+            console.log('First verb form position:', { top: rect.top, left: rect.left });
+        }
+    }
+
+    async savePhrasalVerbCard() {
+        try {
+            if (!this.selectedPhrasalVerb || !this.currentDeck) {
+                console.error('Missing selected phrasal verb or current deck');
+                return;
+            }
+
+            const verb = this.selectedPhrasalVerb;
+            
+            // Generate 1 card from the phrasal verb (Russian -> English)
+            const card = {
+                id: storage.generateUUID(),
+                front: verb.translation,
+                back: `to ${verb.full_expression}`,
+                createdAt: new Date().toISOString(),
+                ease: 2.5,
+                interval: 1,
+                reps: 0,
+                lapses: 0,
+                due_date: new Date().toISOString().split('T')[0],
+                reviewCount: 0,
+                isNew: true
+            };
+
+            // Add card to current deck
+            this.currentDeck.cards.push(card);
+            await storage.saveDeck(this.currentDeck);
+
+            // Refresh decks
+            this.renderDeckView();
+            this.renderOverview();
+
+            // Navigate back to deck view
+            this.showView('deck');
+        } catch (error) {
+            console.error('Error saving phrasal verb card:', error);
+            alert('Failed to save card. Please try again.');
+        }
+    }
+
+    async initializePhrasalVerbs() {
+        try {
+            // Check if phrasal verbs are already populated
+            const existingVerbs = await storage.getPhrasalVerbsCount();
+            if (existingVerbs === 0) {
+                console.log('Populating phrasal verbs table...');
+                await storage.populatePhrasalVerbs();
+            } else {
+                console.log(`Phrasal verbs already populated: ${existingVerbs} verbs`);
+            }
+        } catch (error) {
+            console.error('Failed to initialize phrasal verbs:', error);
         }
     }
 }

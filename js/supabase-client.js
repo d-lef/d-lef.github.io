@@ -779,6 +779,132 @@ class SupabaseService {
             return null;
         }
     }
+
+    // Phrasal verbs methods
+    async populatePhrasalVerbs() {
+        try {
+            // Check if table already has data
+            const { count } = await this.client
+                .from('verbs_governance')
+                .select('*', { count: 'exact', head: true });
+
+            if (count > 0) {
+                console.log('Phrasal verbs table already populated');
+                return true;
+            }
+
+            // Sample phrasal verbs data - you should replace this with your actual data
+            const phrasalVerbs = [
+                {
+                    infinitive: 'look',
+                    particle: 'up',
+                    preposition: null,
+                    full_expression: 'look up',
+                    translation: 'искать (в словаре, справочнике)',
+                    type: 'phrasal'
+                },
+                {
+                    infinitive: 'give',
+                    particle: 'up',
+                    preposition: null,
+                    full_expression: 'give up',
+                    translation: 'сдаваться, отказываться',
+                    type: 'phrasal'
+                },
+                {
+                    infinitive: 'put',
+                    particle: 'on',
+                    preposition: null,
+                    full_expression: 'put on',
+                    translation: 'надевать',
+                    type: 'phrasal'
+                },
+                {
+                    infinitive: 'take',
+                    particle: 'off',
+                    preposition: null,
+                    full_expression: 'take off',
+                    translation: 'снимать, взлетать',
+                    type: 'phrasal'
+                },
+                {
+                    infinitive: 'get',
+                    particle: null,
+                    preposition: 'along with',
+                    full_expression: 'get along with',
+                    translation: 'ладить с кем-то',
+                    type: 'prepositional'
+                }
+                // Add more phrasal verbs here
+            ];
+
+            const { error } = await this.client
+                .from('verbs_governance')
+                .insert(phrasalVerbs);
+
+            if (error) throw error;
+
+            console.log(`Populated ${phrasalVerbs.length} phrasal verbs`);
+            return true;
+        } catch (error) {
+            console.error('Error populating phrasal verbs:', error);
+            return false;
+        }
+    }
+
+    async searchPhrasalVerbs(searchTerm) {
+        try {
+            if (!searchTerm || searchTerm.length < 1) {
+                return [];
+            }
+
+            const { data, error } = await this.client
+                .from('verbs_governance')
+                .select('*')
+                .or(`infinitive.ilike.%${searchTerm}%,full_expression.ilike.%${searchTerm}%,translation.ilike.%${searchTerm}%`)
+                .order('full_expression')
+                .limit(10);
+
+            if (error) throw error;
+
+            return data || [];
+        } catch (error) {
+            console.error('Error searching phrasal verbs:', error);
+            return [];
+        }
+    }
+
+    async getPhrasalVerbsCount() {
+        try {
+            const { count, error } = await this.client
+                .from('verbs_governance')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) throw error;
+
+            return count || 0;
+        } catch (error) {
+            console.error('Error getting phrasal verbs count:', error);
+            return 0;
+        }
+    }
+
+    async getPhrasalVerb(id) {
+        try {
+            const { data, error } = await this.client
+                .from('verbs_governance')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+
+            return data;
+        } catch (error) {
+            console.error('Error getting phrasal verb:', error);
+            return null;
+        }
+    }
 }
 
 // Initialize Supabase service

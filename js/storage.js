@@ -213,6 +213,23 @@ class Storage {
     async getIrregularVerb(id) {
         return await window.supabaseService.getIrregularVerb(id);
     }
+
+    // Phrasal verbs methods
+    async populatePhrasalVerbs() {
+        return await window.supabaseService.populatePhrasalVerbs();
+    }
+
+    async searchPhrasalVerbs(query) {
+        return await window.supabaseService.searchPhrasalVerbs(query);
+    }
+
+    async getPhrasalVerbsCount() {
+        return await window.supabaseService.getPhrasalVerbsCount();
+    }
+
+    async getPhrasalVerb(id) {
+        return await window.supabaseService.getPhrasalVerb(id);
+    }
 }
 
 // Initialize storage

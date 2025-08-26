@@ -1,0 +1,1882 @@
+[
+  {
+    "infinitive": "account for",
+    "particle": null,
+    "preposition": "for something",
+    "full_expression": "account for something",
+    "translation": "объяснять что-то, давать отчёт, быть причиной",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "add up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "add up",
+    "translation": "сходиться, иметь смысл",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "add up to",
+    "particle": "up",
+    "preposition": "to something",
+    "full_expression": "add up to something",
+    "translation": "сводиться к чему-либо, означать",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "agree with",
+    "particle": null,
+    "preposition": "with someone/something",
+    "full_expression": "agree with someone/something",
+    "translation": "соглашаться с кем-то/чем-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "aim at",
+    "particle": null,
+    "preposition": "at someone/something",
+    "full_expression": "aim at someone/something",
+    "translation": "целиться в, быть нацеленным на",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "ask for",
+    "particle": null,
+    "preposition": "for someone/something",
+    "full_expression": "ask for someone/something",
+    "translation": "просить кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "back away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "back away",
+    "translation": "отступать, пятиться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "back down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "back down",
+    "translation": "отступать, уступать в споре",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "back up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "back up someone/something",
+    "translation": "поддерживать; создавать резервную копию",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "belong to",
+    "particle": null,
+    "preposition": "to someone/something",
+    "full_expression": "belong to someone/something",
+    "translation": "принадлежать кому-то/чему-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "blow up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "blow up something",
+    "translation": "взрывать; надувать; выходить из себя",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "break down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "break down",
+    "translation": "сломаться (о технике); расстроиться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "break in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "break in",
+    "translation": "вламываться; вмешиваться в разговор",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "break into",
+    "particle": null,
+    "preposition": "into something",
+    "full_expression": "break into something",
+    "translation": "вламываться куда-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "break up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "break up",
+    "translation": "расставаться (об отношениях); распадаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "bring about",
+    "particle": "about",
+    "preposition": null,
+    "full_expression": "bring about something",
+    "translation": "вызывать, быть причиной чего-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "bring up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "bring up someone/something",
+    "translation": "воспитывать; поднять тему",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "call for",
+    "particle": null,
+    "preposition": "for something",
+    "full_expression": "call for something",
+    "translation": "требовать, призывать к чему-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "call off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "call off something",
+    "translation": "отменять что-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "calm down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "calm down",
+    "translation": "успокаиваться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "care for",
+    "particle": null,
+    "preposition": "for someone/something",
+    "full_expression": "care for someone/something",
+    "translation": "заботиться, ухаживать; любить",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "carry on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "carry on",
+    "translation": "продолжать (делать что-то)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "carry out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "carry out something",
+    "translation": "выполнять, осуществлять (план, приказ)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "catch up with",
+    "particle": "up",
+    "preposition": "with someone",
+    "full_expression": "catch up with someone",
+    "translation": "догнать кого-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "check in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "check in",
+    "translation": "регистрироваться (в отеле, на рейс)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "check out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "check out something",
+    "translation": "проверить, заценить; выписаться из отеля",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "cheer up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "cheer up",
+    "translation": "взбодриться, не вешать нос",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "come across",
+    "particle": "across",
+    "preposition": null,
+    "full_expression": "come across someone/something",
+    "translation": "случайно натолкнуться на кого-то/что-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "come forward",
+    "particle": "forward",
+    "preposition": null,
+    "full_expression": "come forward",
+    "translation": "выходить вперед, предлагать помощь или информацию",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "come from",
+    "particle": null,
+    "preposition": "from a place",
+    "full_expression": "come from a place",
+    "translation": "быть родом из",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "come up with",
+    "particle": "up",
+    "preposition": "with something",
+    "full_expression": "come up with something",
+    "translation": "придумать, предложить (идею, план)",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "concentrate on",
+    "particle": null,
+    "preposition": "on something",
+    "full_expression": "concentrate on something",
+    "translation": "сконцентрироваться на чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "consist of",
+    "particle": null,
+    "preposition": "of something",
+    "full_expression": "consist of something",
+    "translation": "состоять из чего-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "count on",
+    "particle": null,
+    "preposition": "on someone/something",
+    "full_expression": "count on someone/something",
+    "translation": "рассчитывать на кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "cross out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "cross out something",
+    "translation": "вычеркивать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "cut down on",
+    "particle": "down",
+    "preposition": "on something",
+    "full_expression": "cut down on something",
+    "translation": "сократить потребление чего-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "cut off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "cut off something",
+    "translation": "отрезать, прерывать (связь, снабжение)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "deal with",
+    "particle": null,
+    "preposition": "with someone/something",
+    "full_expression": "deal with someone/something",
+    "translation": "иметь дело с, справляться с",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "depend on",
+    "particle": null,
+    "preposition": "on someone/something",
+    "full_expression": "depend on someone/something",
+    "translation": "зависеть от кого-то/чего-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "do without",
+    "particle": "without",
+    "preposition": null,
+    "full_expression": "do without something",
+    "translation": "обходиться без чего-либо",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "dress up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "dress up",
+    "translation": "наряжаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "drop off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "drop off someone/something",
+    "translation": "высаживать (из машины), завозить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "drop out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "drop out",
+    "translation": "бросить (учебу, соревнование)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "eat out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "eat out",
+    "translation": "есть вне дома (в ресторане, кафе)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "end up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "end up",
+    "translation": "оказаться в итоге, закончить чем-либо",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "fall apart",
+    "particle": "apart",
+    "preposition": null,
+    "full_expression": "fall apart",
+    "translation": "разваливаться на части",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "fall behind",
+    "particle": "behind",
+    "preposition": null,
+    "full_expression": "fall behind",
+    "translation": "отставать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "fall for",
+    "particle": null,
+    "preposition": "for someone/something",
+    "full_expression": "fall for someone/something",
+    "translation": "влюбиться; попасться на уловку",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "fall out with",
+    "particle": "out",
+    "preposition": "with someone",
+    "full_expression": "fall out with someone",
+    "translation": "поссориться с кем-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "figure out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "figure out something",
+    "translation": "выяснить, понять, разобраться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "fill in/out",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "fill in/out a form",
+    "translation": "заполнить (форму, анкету)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "find out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "find out something",
+    "translation": "узнать, выяснить что-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "focus on",
+    "particle": null,
+    "preposition": "on something",
+    "full_expression": "focus on something",
+    "translation": "сосредоточиться на чем-либо",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "get along with",
+    "particle": "along",
+    "preposition": "with someone",
+    "full_expression": "get along with someone",
+    "translation": "ладить с кем-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "get away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "get away",
+    "translation": "удрать, сбежать, выбраться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get away with",
+    "particle": "away",
+    "preposition": "with something",
+    "full_expression": "get away with something",
+    "translation": "избежать наказания за что-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "get back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "get back",
+    "translation": "вернуться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get by",
+    "particle": "by",
+    "preposition": null,
+    "full_expression": "get by",
+    "translation": "сводить концы с концами, выживать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get in/into",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "get in a car",
+    "translation": "садиться в (машину)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "get off a bus",
+    "translation": "выходить из (транспорта)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "get on a bus",
+    "translation": "садиться в (транспорт)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get over",
+    "particle": "over",
+    "preposition": null,
+    "full_expression": "get over something",
+    "translation": "преодолеть, оправиться от (болезни, расставания)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get rid of",
+    "particle": "rid",
+    "preposition": "of something",
+    "full_expression": "get rid of something",
+    "translation": "избавиться от чего-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "get together",
+    "particle": "together",
+    "preposition": null,
+    "full_expression": "get together",
+    "translation": "собираться вместе",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "get up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "get up",
+    "translation": "вставать, просыпаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "give up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "give up something",
+    "translation": "сдаваться, бросать (привычку)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go against",
+    "particle": null,
+    "preposition": "against someone/something",
+    "full_expression": "go against someone/something",
+    "translation": "противоречить, идти против",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "go ahead",
+    "particle": "ahead",
+    "preposition": null,
+    "full_expression": "go ahead",
+    "translation": "продолжать, начинать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "go on",
+    "translation": "продолжаться, происходить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "go out",
+    "translation": "выходить (гулять, развлекаться)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go through",
+    "particle": "through",
+    "preposition": null,
+    "full_expression": "go through something",
+    "translation": "пройти через (трудности); просмотреть",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "grow up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "grow up",
+    "translation": "расти, взрослеть",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hand in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "hand in something",
+    "translation": "сдавать (работу, задание)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hand out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "hand out something",
+    "translation": "раздавать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hang on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "hang on",
+    "translation": "подождать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hang out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "hang out",
+    "translation": "проводить время, тусоваться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hang up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "hang up",
+    "translation": "повесить трубку",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hear about",
+    "particle": null,
+    "preposition": "about something",
+    "full_expression": "hear about something",
+    "translation": "слышать о чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "hear from",
+    "particle": null,
+    "preposition": "from someone",
+    "full_expression": "hear from someone",
+    "translation": "получить известие от кого-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "help out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "help out",
+    "translation": "помогать, выручать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hold on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "hold on",
+    "translation": "подождать; держаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "hurry up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "hurry up",
+    "translation": "торопиться, спешить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "insist on",
+    "particle": null,
+    "preposition": "on something",
+    "full_expression": "insist on something",
+    "translation": "настаивать на чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "keep on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "keep on doing something",
+    "translation": "продолжать делать что-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "keep up with",
+    "particle": "up",
+    "preposition": "with someone/something",
+    "full_expression": "keep up with someone/something",
+    "translation": "успевать за, не отставать от",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "laugh at",
+    "particle": null,
+    "preposition": "at someone/something",
+    "full_expression": "laugh at someone/something",
+    "translation": "смеяться над кем-то/чем-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "let down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "let someone down",
+    "translation": "подводить, разочаровывать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "lie down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "lie down",
+    "translation": "лечь, прилечь",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "listen to",
+    "particle": null,
+    "preposition": "to someone/something",
+    "full_expression": "listen to someone/something",
+    "translation": "слушать кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "live on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "live on something",
+    "translation": "жить на (какие-то средства)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "log in/on",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "log in/on",
+    "translation": "входить в систему, авторизоваться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "log out/off",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "log out/off",
+    "translation": "выходить из системы",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "look after",
+    "particle": null,
+    "preposition": "after someone/something",
+    "full_expression": "look after someone/something",
+    "translation": "ухаживать, заботиться о ком-то/чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "look for",
+    "particle": null,
+    "preposition": "for someone/something",
+    "full_expression": "look for someone/something",
+    "translation": "искать кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "look forward to",
+    "particle": "forward",
+    "preposition": "to something",
+    "full_expression": "look forward to something",
+    "translation": "ждать с нетерпением чего-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "look into",
+    "particle": null,
+    "preposition": "into something",
+    "full_expression": "look into something",
+    "translation": "расследовать, изучать что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "look out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "look out!",
+    "translation": "осторожно!",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "look up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "look up something",
+    "translation": "искать (в словаре, справочнике)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "look up to",
+    "particle": "up",
+    "preposition": "to someone",
+    "full_expression": "look up to someone",
+    "translation": "уважать, восхищаться кем-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "make up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "make up something",
+    "translation": "придумывать (историю); помириться; краситься",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "mix up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "mix up something",
+    "translation": "перепутать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "move in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "move in",
+    "translation": "въезжать (в новый дом)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "move out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "move out",
+    "translation": "съезжать (с квартиры)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "object to",
+    "particle": null,
+    "preposition": "to something",
+    "full_expression": "object to something",
+    "translation": "возражать против чего-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "pass away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "pass away",
+    "translation": "умереть, скончаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "pass out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "pass out",
+    "translation": "потерять сознание",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "pay for",
+    "particle": null,
+    "preposition": "for something",
+    "full_expression": "pay for something",
+    "translation": "платить за что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "pick up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "pick up something/someone",
+    "translation": "подобрать, забрать; научиться (языку)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "point out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "point out something",
+    "translation": "указывать, обращать внимание на",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "put away something",
+    "translation": "убирать на место",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "put down something",
+    "translation": "положить; унижать, критиковать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put down to",
+    "particle": "down",
+    "preposition": "to someone/something",
+    "full_expression": "put something down to someone/something",
+    "translation": "объяснять чем-то / приписывать кому-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "put forward",
+    "particle": "forward",
+    "preposition": null,
+    "full_expression": "put forward something",
+    "translation": "предлагать, выдвигать (идею)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "put off something",
+    "translation": "откладывать на потом",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "put on something",
+    "translation": "надевать (одежду); включать (устройство)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "put out something",
+    "translation": "тушить (огонь)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put up with",
+    "particle": "up",
+    "preposition": "with someone/something",
+    "full_expression": "put up with someone/something",
+    "translation": "терпеть, мириться с кем-то/чем-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "rely on",
+    "particle": null,
+    "preposition": "on someone/something",
+    "full_expression": "rely on someone/something",
+    "translation": "полагаться на кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "run away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "run away",
+    "translation": "убегать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "run into",
+    "particle": null,
+    "preposition": "into someone/something",
+    "full_expression": "run into someone/something",
+    "translation": "случайно встретить кого-то / натолкнуться",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "run out of",
+    "particle": "out",
+    "preposition": "of something",
+    "full_expression": "run out of something",
+    "translation": "заканчиваться (о чём-то)",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "set off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "set off",
+    "translation": "отправляться (в путь)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "set up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "set up something",
+    "translation": "основывать (компанию), устанавливать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "show off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "show off",
+    "translation": "хвастаться, выпендриваться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "show up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "show up",
+    "translation": "появляться, приходить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "shut up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "shut up",
+    "translation": "заткнуться (грубо)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "sign up for",
+    "particle": "up",
+    "preposition": "for something",
+    "full_expression": "sign up for something",
+    "translation": "записаться на что-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "sit down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "sit down",
+    "translation": "садиться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "slow down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "slow down",
+    "translation": "замедляться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "sort out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "sort out something",
+    "translation": "разобраться, решить (проблему)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "speak up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "speak up",
+    "translation": "говорить громче",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "stand for",
+    "particle": null,
+    "preposition": "for something",
+    "full_expression": "stand for something",
+    "translation": "означать, символизировать",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "stand out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "stand out",
+    "translation": "выделяться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "succeed in",
+    "particle": null,
+    "preposition": "in something",
+    "full_expression": "succeed in something",
+    "translation": "преуспеть в чем-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "suffer from",
+    "particle": null,
+    "preposition": "from something",
+    "full_expression": "suffer from something",
+    "translation": "страдать от чего-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "take after",
+    "particle": null,
+    "preposition": "after someone",
+    "full_expression": "take after someone",
+    "translation": "быть похожим на (родственника)",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "take off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "take off",
+    "translation": "взлетать (о самолете); снимать (одежду)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "take up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "take up something",
+    "translation": "начать заниматься чем-то (хобби)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "talk about",
+    "particle": null,
+    "preposition": "about someone/something",
+    "full_expression": "talk about someone/something",
+    "translation": "говорить о ком-то/чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "tear up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "tear up something",
+    "translation": "порвать на кусочки",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "think about",
+    "particle": null,
+    "preposition": "about something",
+    "full_expression": "think about something",
+    "translation": "думать о чём-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "think of",
+    "particle": null,
+    "preposition": "of someone/something",
+    "full_expression": "think of someone/something",
+    "translation": "думать о, иметь мнение о",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "throw away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "throw away something",
+    "translation": "выбрасывать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "try on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "try on something",
+    "translation": "примерять (одежду)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "turn down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "turn down something/someone",
+    "translation": "отклонить (предложение); уменьшить (звук)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "turn into",
+    "particle": null,
+    "preposition": "into something",
+    "full_expression": "turn into something",
+    "translation": "превращаться во что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "turn off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "turn off something",
+    "translation": "выключать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "turn on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "turn on something",
+    "translation": "включать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "turn up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "turn up",
+    "translation": "появляться; увеличивать (звук)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "use up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "use up something",
+    "translation": "израсходовать полностью",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "wait for",
+    "particle": null,
+    "preposition": "for someone/something",
+    "full_expression": "wait for someone/something",
+    "translation": "ждать кого-то/что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "wake up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "wake up",
+    "translation": "просыпаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "watch out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "watch out!",
+    "translation": "осторожно!, берегись!",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "wear out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "wear out",
+    "translation": "изнашиваться; утомлять",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "work out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "work out",
+    "translation": "тренироваться; сработать, получиться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "write down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "write down something",
+    "translation": "записывать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "act on",
+    "particle": null,
+    "preposition": "on something",
+    "full_expression": "act on something",
+    "translation": "действовать на основании (совета, информации)",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "ask out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "ask someone out",
+    "translation": "пригласить на свидание",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "blow away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "blow someone away",
+    "translation": "поразить, ошеломить кого-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "break off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "break off something",
+    "translation": "прекратить, разорвать (отношения, переговоры)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "bring back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "bring back something",
+    "translation": "возвращать; напоминать (о прошлом)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "brush up on",
+    "particle": "up",
+    "preposition": "on something",
+    "full_expression": "brush up on something",
+    "translation": "освежить знания в чём-либо",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "burn out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "burn out",
+    "translation": "выгорать (эмоционально), переутомляться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "call back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "call someone back",
+    "translation": "перезвонить кому-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "check on",
+    "particle": null,
+    "preposition": "on someone/something",
+    "full_expression": "check on someone/something",
+    "translation": "проверить, как дела у кого-то / что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "come down with",
+    "particle": "down",
+    "preposition": "with something",
+    "full_expression": "come down with something",
+    "translation": "заболеть, слечь с (болезнью)",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "cut in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "cut in",
+    "translation": "вмешиваться, прерывать (разговор); подрезать (на дороге)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "die out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "die out",
+    "translation": "вымирать, исчезать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "face up to",
+    "particle": "up",
+    "preposition": "to something",
+    "full_expression": "face up to something",
+    "translation": "признать, смотреть правде в глаза",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "feel like",
+    "particle": null,
+    "preposition": "like doing something",
+    "full_expression": "feel like doing something",
+    "translation": "хотеть что-то сделать, быть в настроении для",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "get back at",
+    "particle": "back",
+    "preposition": "at someone",
+    "full_expression": "get back at someone",
+    "translation": "отомстить кому-то",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "get down to",
+    "particle": "down",
+    "preposition": "to something",
+    "full_expression": "get down to something",
+    "translation": "приступить к, взяться за (дело)",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "give away",
+    "particle": "away",
+    "preposition": null,
+    "full_expression": "give away something",
+    "translation": "раздавать, отдавать бесплатно; выдать (секрет)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "give back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "give back something",
+    "translation": "возвращать, отдавать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go after",
+    "particle": null,
+    "preposition": "after someone/something",
+    "full_expression": "go after someone/something",
+    "translation": "преследовать, идти за",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "go off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "go off",
+    "translation": "сработать (о будильнике, сигнализации); испортиться (о еде)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "grow out of",
+    "particle": "out",
+    "preposition": "of something",
+    "full_expression": "grow out of something",
+    "translation": "вырасти из (одежды, привычки)",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "hold up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "hold up someone/something",
+    "translation": "задерживать; грабить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "iron out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "iron out something",
+    "translation": "уладить, разрешить (проблемы, разногласия)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "join in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "join in",
+    "translation": "присоединяться, принимать участие",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "leave out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "leave out someone/something",
+    "translation": "пропускать, упускать, не включать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "let off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "let someone off",
+    "translation": "отпустить без наказания, простить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "look down on",
+    "particle": "down",
+    "preposition": "on someone",
+    "full_expression": "look down on someone",
+    "translation": "смотреть свысока, презирать",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "make for",
+    "particle": null,
+    "preposition": "for a place",
+    "full_expression": "make for a place",
+    "translation": "направляться куда-либо",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "make up for",
+    "particle": "up",
+    "preposition": "for something",
+    "full_expression": "make up for something",
+    "translation": "компенсировать, наверстать",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "own up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "own up to something",
+    "translation": "признаваться, сознаваться в чём-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "pay back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "pay back someone/something",
+    "translation": "вернуть долг",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "put through",
+    "particle": "through",
+    "preposition": null,
+    "full_expression": "put someone through",
+    "translation": "соединять (по телефону)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "rule out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "rule out something",
+    "translation": "исключать (возможность)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "see to",
+    "particle": null,
+    "preposition": "to something",
+    "full_expression": "see to something",
+    "translation": "позаботиться о, проследить за",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "settle down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "settle down",
+    "translation": "остепениться, обосноваться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "sleep in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "sleep in",
+    "translation": "спать дольше обычного, отсыпаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "stand by",
+    "particle": "by",
+    "preposition": null,
+    "full_expression": "stand by someone",
+    "translation": "поддерживать кого-то; быть наготове",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "stand up for",
+    "particle": "up",
+    "preposition": "for someone/something",
+    "full_expression": "stand up for someone/something",
+    "translation": "отстаивать, заступаться за",
+    "type": "phrasal-prepositional"
+  },
+  {
+    "infinitive": "stick to",
+    "particle": null,
+    "preposition": "to something",
+    "full_expression": "stick to something",
+    "translation": "придерживаться (плана, диеты)",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "take back",
+    "particle": "back",
+    "preposition": null,
+    "full_expression": "take back something",
+    "translation": "взять назад (слова); вернуть (в магазин)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "take on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "take on something",
+    "translation": "браться за (работу, ответственность)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "tell off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "tell someone off",
+    "translation": "отчитывать, ругать кого-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "think over",
+    "particle": "over",
+    "preposition": null,
+    "full_expression": "think something over",
+    "translation": "обдумывать что-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "try out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "try out something",
+    "translation": "испытывать, пробовать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "warm up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "warm up",
+    "translation": "разогреваться, делать разминку",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "wear off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "wear off",
+    "translation": "проходить, ослабевать (о действии, эффекте)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "work on",
+    "particle": null,
+    "preposition": "on something",
+    "full_expression": "work on something",
+    "translation": "работать над чем-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "wrap up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "wrap up something",
+    "translation": "завершать, заканчивать; заворачивать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "bail out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "bail someone/something out",
+    "translation": "выручить из беды (финансово), внести залог",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "beef up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "beef up something",
+    "translation": "усилить, укрепить",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "call on",
+    "particle": null,
+    "preposition": "on someone",
+    "full_expression": "call on someone",
+    "translation": "призывать (к ответу), заходить в гости",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "catch on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "catch on",
+    "translation": "становиться популярным; понимать, догонять (смысл)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "chip in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "chip in",
+    "translation": "скидываться (деньгами), вносить свою долю",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "do over",
+    "particle": "over",
+    "preposition": null,
+    "full_expression": "do something over",
+    "translation": "переделывать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "drift apart",
+    "particle": "apart",
+    "preposition": null,
+    "full_expression": "drift apart",
+    "translation": "отдаляться друг от друга, расходиться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "drop by/in",
+    "particle": "by",
+    "preposition": null,
+    "full_expression": "drop by/in",
+    "translation": "заскочить, заглянуть (в гости)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "egg on",
+    "particle": "on",
+    "preposition": null,
+    "full_expression": "egg someone on",
+    "translation": "подстрекать, науськивать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "factor in",
+    "particle": "in",
+    "preposition": null,
+    "full_expression": "factor in something",
+    "translation": "учитывать (фактор)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "go over",
+    "particle": null,
+    "preposition": "over something",
+    "full_expression": "go over something",
+    "translation": "повторять, тщательно изучать, проходиться по",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "hammer out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "hammer out something",
+    "translation": "выработать, согласовать (с трудом)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "jot down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "jot down something",
+    "translation": "кратко записать, набросать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "lash out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "lash out",
+    "translation": "набрасываться (с критикой), срываться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "lead to",
+    "particle": null,
+    "preposition": "to something",
+    "full_expression": "lead to something",
+    "translation": "приводить к чему-либо",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "level with",
+    "particle": null,
+    "preposition": "with someone",
+    "full_expression": "level with someone",
+    "translation": "говорить начистоту, быть откровенным",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "mull over",
+    "particle": null,
+    "preposition": "over something",
+    "full_expression": "mull over something",
+    "translation": "обдумывать, размышлять над",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "nod off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "nod off",
+    "translation": "дремать, засыпать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "pan out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "pan out",
+    "translation": "удаваться, выходить (о деле, плане)",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "patch up",
+    "particle": "up",
+    "preposition": null,
+    "full_expression": "patch up something",
+    "translation": "улаживать (ссору), подлатать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "phase out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "phase out something",
+    "translation": "постепенно прекращать, выводить из употребления",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "play down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "play down something",
+    "translation": "преуменьшать значение",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "pull over",
+    "particle": "over",
+    "preposition": null,
+    "full_expression": "pull over",
+    "translation": "съезжать на обочину и останавливаться",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "rip off",
+    "particle": "off",
+    "preposition": null,
+    "full_expression": "rip someone/something off",
+    "translation": "ободрать, содрать втридорога",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "see through",
+    "particle": "through",
+    "preposition": null,
+    "full_expression": "see something through",
+    "translation": "доводить до конца; видеть насквозь",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "spell out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "spell out something",
+    "translation": "разъяснять, растолковывать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "take out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "take out something/someone",
+    "translation": "выносить; брать еду на вынос; приглашать куда-то",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "talk into",
+    "particle": null,
+    "preposition": "into doing something",
+    "full_expression": "talk someone into doing something",
+    "translation": "уговорить кого-то сделать что-то",
+    "type": "prepositional"
+  },
+  {
+    "infinitive": "track down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "track down someone/something",
+    "translation": "выслеживать, разыскивать",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "wind down",
+    "particle": "down",
+    "preposition": null,
+    "full_expression": "wind down",
+    "translation": "расслабляться, отдыхать, сбавлять обороты",
+    "type": "phrasal"
+  },
+  {
+    "infinitive": "zone out",
+    "particle": "out",
+    "preposition": null,
+    "full_expression": "zone out",
+    "translation": "отключаться, выпадать из реальности",
+    "type": "phrasal"
+  }
+]

@@ -2522,6 +2522,25 @@ nav::-webkit-scrollbar {
     color: white;
 }
 
+/* Phrasal Verbs UI - matching irregular verbs styles */
+#phrasal-verb-search {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    outline: none;
+    font-family: inherit;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+#phrasal-verb-search:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-alpha-medium);
+}
+
 .verb-preview-container {
     padding: 2rem;
     max-width: 600px;

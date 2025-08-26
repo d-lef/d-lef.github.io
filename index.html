@@ -6,7 +6,7 @@
     <title>Flashcard App</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/styles.css?v=20250823l">
+    <link rel="stylesheet" href="css/styles.css?v=20250826b">
     <meta name="theme-color" content="#4285f4">
     
     <!-- Mobile web app support -->
@@ -241,9 +241,9 @@
                     <h3 data-i18n="card_type.irregular_verbs">Irregular Verbs</h3>
                 </div>
                 
-                <div class="card-type-tile disabled" data-type="placeholder">
-                    <div class="tile-icon">✨</div>
-                    <h3 data-i18n="card_type.coming_soon">Coming Soon</h3>
+                <div class="card-type-tile" data-type="phrasal_verbs" tabindex="0">
+                    <div class="tile-icon">🔗</div>
+                    <h3 data-i18n="card_type.phrasal_verbs">Phrasal Verbs</h3>
                 </div>
             </div>
         </div>
@@ -348,6 +348,49 @@
             </div>
         </div>
 
+        <!-- Phrasal Verbs Selection View -->
+        <div id="phrasal-verbs-view" class="view">
+            <div class="irregular-verbs-header">
+                <button id="back-to-card-type-from-phrasal" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
+            </div>
+            
+            <div class="irregular-verbs-search">
+                <div class="search-container">
+                    <input type="text" id="phrasal-verb-search" data-i18n-placeholder="phrasal_verbs.search_placeholder" placeholder="Type verb or expression (e.g., 'look up', 'give in')..." autocomplete="off">
+                    <div id="phrasal-suggestions" class="verb-suggestions"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phrasal Verb Preview View -->
+        <div id="phrasal-verb-preview-view" class="view">
+            <div class="verb-preview-container">
+                <button id="back-to-phrasal-search" class="back-btn edit-card-back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <div class="verb-forms-display">
+                    <div class="verb-form">
+                        <label data-i18n="phrasal_verbs.infinitive">Infinitive:</label>
+                        <div id="phrasal-preview-infinitive" class="verb-value"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="phrasal_verbs.full_expression">Full Expression:</label>
+                        <div id="phrasal-preview-full-expression" class="verb-value"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="phrasal_verbs.translation">Translation:</label>
+                        <div id="phrasal-preview-translation" class="verb-value translation"></div>
+                    </div>
+                    <div class="verb-form">
+                        <label data-i18n="phrasal_verbs.type">Type:</label>
+                        <div id="phrasal-preview-type" class="verb-value"></div>
+                    </div>
+                </div>
+                
+                <div class="preview-actions">
+                    <button id="save-phrasal-verb-card" class="primary-btn large-btn" data-i18n="phrasal_verbs.create_card">Create Card</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Deck Management View -->
         <div id="deck-view" class="view">
             <div class="deck-header">
@@ -419,13 +462,13 @@
     </div>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-client.js?v=20250823a"></script>
-    <script src="js/storage.js?v=20250823a"></script>
+    <script src="js/supabase-client.js?v=20250826b"></script>
+    <script src="js/storage.js?v=20250826a"></script>
     <script src="js/spaced-repetition.js?v=20250820c"></script>
-    <script src="js/i18n.js?v=20250826a"></script>
+    <script src="js/i18n.js?v=20250826c"></script>
     <script src="js/settings.js?v=20250820c"></script>
     <script src="js/statistics.js?v=20250820c"></script>
-    <script src="js/app.js?v=20250823o"></script>
+    <script src="js/app.js?v=20250826d"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');

@@ -65,7 +65,8 @@ class I18n {
                 'card_type.flip_type_description': 'Active recall by typing answers plus card review',
                 'card_type.irregular_verbs': 'Irregular Verbs',
                 'card_type.irregular_verbs_description': 'Specialized templates for verb conjugation practice',
-                'card_type.coming_soon': 'Coming Soon',
+                'card_type.phrasal_verbs': 'Multi-word Verbs',
+                'card_type.phrasal_verbs_description': 'Phrasal and prepositional verb expressions',
                 'card_type.card_behavior': 'Card Behavior',
                 'card_type.flip_only': 'Flip Only',
                 'card_type.flip_and_type': 'Flip + Type',
@@ -135,6 +136,15 @@ class I18n {
                 'irregular_verbs.translation': 'Translation',
                 'irregular_verbs.create_cards': 'Create 3 Cards',
                 'irregular_verbs.search_placeholder': 'Type infinitive (e.g., \'go\', \'take\')...',
+                
+                // Phrasal Verbs
+                'phrasal_verbs.preview': 'Phrasal Verb Preview',
+                'phrasal_verbs.infinitive': 'Infinitive',
+                'phrasal_verbs.full_expression': 'Full Expression',
+                'phrasal_verbs.translation': 'Translation',
+                'phrasal_verbs.type': 'Type',
+                'phrasal_verbs.create_card': 'Create Card',
+                'phrasal_verbs.search_placeholder': 'Type verb or expression (e.g., \'look up\', \'give in\')...',
                 
                 // Card Statistics Modal
                 'card_stats.title': 'Card Statistics',
@@ -208,7 +218,8 @@ class I18n {
                 'card_type.flip_type_description': 'Активное воспроизведение через набор ответов плюс просмотр карточки',
                 'card_type.irregular_verbs': 'Неправильные глаголы',
                 'card_type.irregular_verbs_description': 'Специальные шаблоны для изучения спряжения глаголов',
-                'card_type.coming_soon': 'Скоро',
+                'card_type.phrasal_verbs': 'Многословные глаголы',
+                'card_type.phrasal_verbs_description': 'Фразовые и предложные глаголы',
                 'card_type.card_behavior': 'Поведение карточки',
                 'card_type.flip_only': 'Только переворот',
                 'card_type.flip_and_type': 'Переворот + Печать',
@@ -278,6 +289,15 @@ class I18n {
                 'irregular_verbs.translation': 'Перевод',
                 'irregular_verbs.create_cards': 'Создать 3 карточки',
                 'irregular_verbs.search_placeholder': 'Введите инфинитив (например, \'go\', \'take\')...',
+                
+                // Phrasal Verbs
+                'phrasal_verbs.preview': 'Предварительный просмотр фразового глагола',
+                'phrasal_verbs.infinitive': 'Инфинитив',
+                'phrasal_verbs.full_expression': 'Полное выражение',
+                'phrasal_verbs.translation': 'Перевод',
+                'phrasal_verbs.type': 'Тип',
+                'phrasal_verbs.create_card': 'Создать карточку',
+                'phrasal_verbs.search_placeholder': 'Введите глагол или выражение (например, \'look up\', \'give in\')...',
                 
                 // Card Statistics Modal
                 'card_stats.title': 'Статистика карточки',
