@@ -122,8 +122,8 @@ class I18n {
                 'modal.deck_name': 'Deck name',
                 'modal.create_card': 'Create New Card',
                 'modal.edit_card': 'Edit Card',
-                'modal.front': 'Front:',
-                'modal.back': 'Back:',
+                'modal.front': 'Front (hint):',
+                'modal.back': 'Back (to study):',
                 'modal.front_placeholder': 'Enter front side text',
                 'modal.back_placeholder': 'Enter back side text',
                 
@@ -265,8 +265,8 @@ class I18n {
                 'modal.deck_name': 'Название колоды',
                 'modal.create_card': 'Создать новую карточку',
                 'modal.edit_card': 'Редактировать карточку',
-                'modal.front': 'Лицевая сторона:',
-                'modal.back': 'Обратная сторона:',
+                'modal.front': 'Лицевая сторона (подсказка):',
+                'modal.back': 'Обратная сторона (изучать):',
                 'modal.front_placeholder': 'Введите текст лицевой стороны',
                 'modal.back_placeholder': 'Введите текст обратной стороны',
                 

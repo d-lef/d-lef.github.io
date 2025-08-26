@@ -389,8 +389,8 @@ class FlashcardApp {
         cardsList.innerHTML = this.currentDeck.cards.map(card => `
             <div class="card-item">
                 <div class="card-item-content" data-card-id="${card.id}">
-                    <div class="card-item-front">${this.escapeHtml(card.front)}</div>
-                    <div class="card-item-back">${this.escapeHtml(card.back)}</div>
+                    <div class="card-item-front">${this.escapeHtml(card.back)}</div>
+                    <div class="card-item-back">${this.escapeHtml(card.front)}</div>
                 </div>
                 <div class="card-actions">
                     <button class="card-edit-btn" data-card-id="${card.id}" title="Edit card">✏️</button>
