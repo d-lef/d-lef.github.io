@@ -39,7 +39,7 @@
         <!-- Header -->
         <header>
             <div class="header-top">
-                <h1>📚 <span data-i18n="app.title">Flashcards</span></h1>
+                <h1><span data-i18n="app.title">Flashcards</span></h1>
             </div>
             <nav>
                 <button id="overview-tab" class="tab-btn active" data-i18n="nav.overview">Overview</button>
@@ -52,9 +52,7 @@
         <div id="overview-view" class="view active">
             <div class="overview-container">
                 <div class="overview-header">
-                    <button id="study-all-btn" class="primary-btn">
-                        📚 <span data-i18n="actions.study_all">Study All Cards</span>
-                    </button>
+                    <button id="study-all-btn" class="primary-btn" data-i18n="actions.study_all">Study All Cards</button>
                 </div>
                 
                 <div class="insights-grid">
@@ -111,7 +109,7 @@
         <!-- Decks View -->
         <div id="decks-view" class="view">
             <div class="action-bar">
-                <button id="new-deck-btn" class="primary-btn">+ <span data-i18n="actions.new_deck">New Deck</span></button>
+                <button id="new-deck-btn" class="primary-btn" data-i18n="actions.new_deck">New Deck</button>
             </div>
             <div id="decks-list" class="decks-grid"></div>
         </div>
@@ -226,17 +224,7 @@
             </div>
             
             <div class="card-type-options">
-                <div class="card-type-tile" data-type="flip" tabindex="0">
-                    <div class="tile-icon">🔄</div>
-                    <h3 data-i18n="card_type.flip">Flip Cards</h3>
-                </div>
-                
-                <div class="card-type-tile selected" data-type="flip_type" tabindex="0">
-                    <div class="tile-icon">⌨️</div>
-                    <h3 data-i18n="card_type.flip_type">Flip + Type</h3>
-                </div>
-                
-                <div class="card-type-tile" data-type="irregular_verbs" tabindex="0">
+                <div class="card-type-tile selected" data-type="irregular_verbs" tabindex="0">
                     <div class="tile-icon">📝</div>
                     <h3 data-i18n="card_type.irregular_verbs">Irregular Verbs</h3>
                 </div>
@@ -259,10 +247,10 @@
                 <div class="card-form-content">
                     <div class="card-form">
                         <label for="card-form-back-input" data-i18n="modal.back">Back:</label>
-                        <textarea id="card-form-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
+                        <textarea id="card-form-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3" autocapitalize="none"></textarea>
                         
                         <label for="card-form-front-input" data-i18n="modal.front">Front:</label>
-                        <textarea id="card-form-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
+                        <textarea id="card-form-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3" autocapitalize="none"></textarea>
                     </div>
                     
                     <div class="card-form-actions">
@@ -291,10 +279,10 @@
                     
                     <div class="card-form">
                         <label for="edit-card-back-input" data-i18n="modal.back">Back:</label>
-                        <textarea id="edit-card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
+                        <textarea id="edit-card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3" autocapitalize="none"></textarea>
                         
                         <label for="edit-card-front-input" data-i18n="modal.front">Front:</label>
-                        <textarea id="edit-card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
+                        <textarea id="edit-card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3" autocapitalize="none"></textarea>
                     </div>
                     
                     <div class="edit-card-actions">
@@ -398,7 +386,8 @@
                 <h2 id="deck-title"></h2>
                 <div class="deck-action-bar">
                     <button id="study-deck-btn" class="deck-action-btn primary-btn" data-i18n="actions.study">Study</button>
-                    <button id="new-card-btn" class="deck-action-btn primary-btn">+ <span data-i18n="actions.new_card">New Card</span></button>
+                    <button id="new-card-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_card">New Card</button>
+                    <button id="new-supercard-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_supercard">New Supercard</button>
                 </div>
             </div>
             
@@ -423,10 +412,10 @@
             <h3 id="card-modal-title" data-i18n="modal.create_card">Create New Card</h3>
             <div class="card-form">
                 <label for="card-back-input" data-i18n="modal.back">Back:</label>
-                <textarea id="card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3"></textarea>
+                <textarea id="card-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3" autocapitalize="none"></textarea>
                 
                 <label for="card-front-input" data-i18n="modal.front">Front:</label>
-                <textarea id="card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3"></textarea>
+                <textarea id="card-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3" autocapitalize="none"></textarea>
             </div>
             <div class="modal-actions">
                 <button id="cancel-card" class="secondary-btn" data-i18n="actions.cancel">Cancel</button>

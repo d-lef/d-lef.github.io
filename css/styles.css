@@ -1072,8 +1072,8 @@ nav::-webkit-scrollbar {
 }
 
 .deck-action-btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
     min-width: auto;
     width: auto;
 }
@@ -1791,8 +1791,8 @@ nav::-webkit-scrollbar {
     .deck-action-btn {
         width: auto;
         min-width: auto;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
     }
     
     .modal-actions {
@@ -2142,7 +2142,6 @@ nav::-webkit-scrollbar {
 }
 
 .card-type-tile.selected {
-    border-color: var(--primary-color);
     background: var(--primary-alpha-light);
 }
 

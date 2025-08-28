@@ -12,6 +12,7 @@ class FlashcardApp {
         this.combinedPairs = []; // array of {card, mode, completed} objects
         this.combinedCardStates = new Map(); // tracks completion per card
         this.selectedCardType = 'flip_type'; // Default card type
+        this.cardFormOrigin = 'deck'; // Track where card form was accessed from: 'deck' or 'card-type'
         
         this.initializeApp();
     }
@@ -46,7 +47,8 @@ class FlashcardApp {
         document.getElementById('overview-next-month').addEventListener('click', () => this.navigateOverviewCalendar(1));
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
-        document.getElementById('new-card-btn').addEventListener('click', () => this.showCardTypeSelection());
+        document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardForm());
+        document.getElementById('new-supercard-btn').addEventListener('click', () => this.showCardTypeSelection());
         document.getElementById('study-all-btn').addEventListener('click', () => this.startStudyAllSession());
         
         document.getElementById('create-deck').addEventListener('click', () => this.createDeck());
@@ -136,7 +138,7 @@ class FlashcardApp {
 
         // Card creation flow event listeners
         document.getElementById('back-to-deck-from-card-type').addEventListener('click', () => this.showView('deck'));
-        document.getElementById('back-to-card-type').addEventListener('click', () => this.showCardTypeSelection());
+        document.getElementById('back-to-card-type').addEventListener('click', () => this.goBackFromCardForm());
         document.getElementById('save-new-card').addEventListener('click', () => this.saveNewCard());
         
         // Edit card flow event listeners
@@ -1188,7 +1190,7 @@ class FlashcardApp {
         document.getElementById('card-front-input').value = '';
         document.getElementById('card-back-input').value = '';
         document.getElementById('new-card-modal').classList.add('active');
-        document.getElementById('card-front-input').focus();
+        document.getElementById('card-back-input').focus();
     }
 
     hideNewCardModal() {
@@ -1200,7 +1202,25 @@ class FlashcardApp {
 
     showCardTypeSelection() {
         if (!this.currentDeck) return;
+        // Set default selection to irregular_verbs (first available option)
+        this.selectedCardType = 'irregular_verbs';
         this.showView('card-type');
+    }
+
+    showNewCardForm() {
+        if (!this.currentDeck) return;
+        // Set default card type to flip_type for new cards
+        this.selectedCardType = 'flip_type';
+        this.cardFormOrigin = 'deck';
+        this.showView('card-form');
+    }
+
+    goBackFromCardForm() {
+        if (this.cardFormOrigin === 'deck') {
+            this.showView('deck');
+        } else {
+            this.showCardTypeSelection();
+        }
     }
 
     renderCardTypeSelection() {
@@ -1232,6 +1252,7 @@ class FlashcardApp {
         } else if (cardType === 'phrasal_verbs') {
             this.showView('phrasal-verbs');
         } else {
+            this.cardFormOrigin = 'card-type';
             this.showView('card-form');
         }
     }
@@ -1241,8 +1262,8 @@ class FlashcardApp {
         document.getElementById('card-form-front-input').value = '';
         document.getElementById('card-form-back-input').value = '';
         
-        // Focus on first input
-        document.getElementById('card-form-front-input').focus();
+        // Focus on back input (which should be filled first)
+        document.getElementById('card-form-back-input').focus();
     }
 
     async saveNewCard() {
@@ -1363,8 +1384,8 @@ class FlashcardApp {
             this.updateToggleLabels(true);
         });
         
-        // Focus on first input
-        document.getElementById('edit-card-front-input').focus();
+        // Focus on back input (which should be filled first)
+        document.getElementById('edit-card-back-input').focus();
     }
 
     updateToggleLabels(isFlipType) {
