@@ -244,7 +244,7 @@ class FlashcardApp {
     async renderOverview() {
         const decks = await storage.loadDecks();
         
-        // Calculate insights
+        // Calculate insights using the same logic as getCardsForStudy
         let dueCount = 0;
         let overdueCount = 0;
         let totalCards = 0;
@@ -253,11 +253,16 @@ class FlashcardApp {
         decks.forEach(deck => {
             totalCards += deck.cards.length;
             deck.cards.forEach(card => {
-                const cardDueDate = card.dueDate || card.due_date;
-                if (cardDueDate) {
-                    if (cardDueDate === today) {
+                const cardDueDate = card.dueDate || card.due_date || card.nextReview;
+                
+                // Include new cards (same logic as getCardsForStudy)
+                if (!cardDueDate || (card.reps || card.repetitions || 0) === 0) {
+                    dueCount++; // New cards are considered "due"
+                } else {
+                    const cardDueDateOnly = cardDueDate.split('T')[0]; // Handle both date and datetime
+                    if (cardDueDateOnly === today) {
                         dueCount++;
-                    } else if (cardDueDate < today) {
+                    } else if (cardDueDateOnly < today) {
                         overdueCount++;
                     }
                 }
@@ -444,7 +449,7 @@ class FlashcardApp {
         
         // For deck study, include ALL cards regardless of schedule
         if (this.currentDeck.cards.length === 0) {
-            alert('No cards in this deck to study!');
+            alert(window.i18n.translate('alerts.no_cards_in_deck'));
             return;
         }
         
@@ -467,7 +472,7 @@ class FlashcardApp {
             this.currentStudyCards = [...this.currentDeck.cards];
             
             if (this.currentStudyCards.length === 0) {
-                alert('No cards in this deck to study!');
+                alert(window.i18n.translate('alerts.no_cards_in_deck'));
                 return;
             }
             
@@ -757,7 +762,7 @@ class FlashcardApp {
             await this.updateCardInStorage(updatedCard);
             
             // Track review stats
-            await this.trackReviewStat(difficulty, card.id);
+            await this.trackReviewStat(difficulty, updatedCard.id);
             
             this.studySession.cardsStudied++;
             
@@ -773,7 +778,7 @@ class FlashcardApp {
         await this.updateCardInStorage(updatedCard);
         
         // Track review stats
-        await this.trackReviewStat(difficulty);
+        await this.trackReviewStat(difficulty, updatedCard.id);
         
         this.studySession.cardsStudied++;
         this.currentCardIndex++;
@@ -820,8 +825,9 @@ class FlashcardApp {
             
             // Only check all_due_completed for "Study All Cards" sessions (scheduled reviews)
             // Individual deck study shouldn't affect calendar coloring or streaks
+            // Don't check completion during session - only at the end
             const isScheduledStudy = this.studySession && this.studySession.isStudyAll;
-            const allDueCompleted = isScheduledStudy ? await this.checkAllDueCompleted() : null;
+            const allDueCompleted = null; // Will be set properly at session end
             
             if (window.supabaseService) {
                 await window.supabaseService.updateReviewStats(today, isCorrect, allDueCompleted, isFirstReviewToday);
@@ -847,11 +853,14 @@ class FlashcardApp {
                 stats[date] = { reviews: 0, correct: 0, lapses: 0 };
             }
             
-            stats[date].reviews++;
-            if (isCorrect) {
-                stats[date].correct++;
-            } else {
-                stats[date].lapses++;
+            // Only increment counters if isCorrect is not null (meaning this is an actual review)
+            if (isCorrect !== null) {
+                stats[date].reviews++;
+                if (isCorrect) {
+                    stats[date].correct++;
+                } else {
+                    stats[date].lapses++;
+                }
             }
             
             // Update all_due_completed if provided
@@ -911,7 +920,7 @@ class FlashcardApp {
         console.log('User answer:', userAnswer, 'Correct answer:', correctAnswer);
         
         if (!userAnswer) {
-            alert('Please type an answer first!');
+            alert(window.i18n.translate('alerts.type_answer_first'));
             return;
         }
         
@@ -1098,34 +1107,49 @@ class FlashcardApp {
     
     
     
-    finishStudySession() {
+    async finishStudySession() {
         if (this.studySession && this.studySession.isStudyAll) {
+            // Check if all due cards have been completed at session end
+            const allDueCompleted = await this.checkAllDueCompleted();
+            const today = this.getLocalDateString();
+            
+            // Update the final all_due_completed status in review stats
+            if (window.supabaseService) {
+                await window.supabaseService.updateReviewStats(today, null, allDueCompleted, false);
+            }
+            this.storeLocalReviewStat(today, null, allDueCompleted);
+            
             // Only update streaks for "Study All Cards" sessions, not individual deck study
             const stats = storage.loadStats();
-            const today = new Date().toDateString();
+            const todayDateString = new Date().toDateString();
             const lastStudyDate = stats.lastStudyDate ? new Date(stats.lastStudyDate).toDateString() : null;
             
             let newStreak = stats.streak;
-            if (lastStudyDate === today) {
+            if (lastStudyDate === todayDateString) {
                 // Already studied today, don't change streak
             } else if (lastStudyDate === new Date(Date.now() - 86400000).toDateString()) {
                 // Studied yesterday, increment streak
                 newStreak++;
-            } else if (lastStudyDate === null || lastStudyDate !== today) {
+            } else if (lastStudyDate === null || lastStudyDate !== todayDateString) {
                 // First time or broke streak, start new streak
                 newStreak = 1;
             }
             
             storage.updateStats({
                 streak: newStreak,
-                cardsStudiedToday: (lastStudyDate === today ? stats.cardsStudiedToday : 0) + this.studySession.cardsStudied,
+                cardsStudiedToday: (lastStudyDate === todayDateString ? stats.cardsStudiedToday : 0) + this.studySession.cardsStudied,
                 lastStudyDate: new Date().toISOString()
             });
             
-            alert(`Study session complete!\n\nCards studied: ${this.studySession.cardsStudied}\nCurrent streak: ${newStreak} days`);
+            // Celebrate with confetti if all due cards completed
+            if (allDueCompleted) {
+                this.celebrateWithConfetti();
+            }
+            
+            alert(`${window.i18n.translate('alerts.study_complete')}\n\n${window.i18n.translate('alerts.cards_studied')}: ${this.studySession.cardsStudied}\n${window.i18n.translate('alerts.current_streak')}: ${newStreak} ${window.i18n.translate('alerts.days')}\n${window.i18n.translate('alerts.all_due_completed')}: ${allDueCompleted ? window.i18n.translate('alerts.all_due_completed_yes') : window.i18n.translate('alerts.all_due_completed_no')}`);
         } else {
             // Individual deck study - no streak update, just show completion message
-            alert(`Deck study complete!\n\nCards reviewed: ${this.studySession.cardsStudied}`);
+            alert(`${window.i18n.translate('alerts.deck_complete')}\n\n${window.i18n.translate('alerts.cards_reviewed')}: ${this.studySession.cardsStudied}`);
         }
         
         this.showView('decks');
@@ -1149,7 +1173,7 @@ class FlashcardApp {
     async createDeck() {
         const name = document.getElementById('deck-name-input').value.trim();
         if (!name) {
-            alert('Please enter a deck name');
+            alert(window.i18n.translate('alerts.enter_deck_name'));
             return;
         }
         
@@ -1162,7 +1186,7 @@ class FlashcardApp {
                 this.hideNewDeckModal();
                 this.renderDecks();
             } else {
-                alert('Failed to update deck');
+                alert(window.i18n.translate('alerts.failed_update_deck'));
             }
         } else {
             // Create new deck
@@ -1177,7 +1201,7 @@ class FlashcardApp {
                 this.hideNewDeckModal();
                 this.renderDecks();
             } else {
-                alert('Failed to create deck');
+                alert(window.i18n.translate('alerts.failed_create_deck'));
             }
         }
     }
@@ -1275,7 +1299,7 @@ class FlashcardApp {
             console.log('saveNewCard: Front/Back values:', { front, back });
             
             if (!front || !back) {
-                alert('Please fill in both front and back of the card');
+                alert(window.i18n.translate('alerts.fill_both_sides'));
                 return;
             }
 
@@ -1292,7 +1316,7 @@ class FlashcardApp {
                 interval: 1,
                 reps: 0,
                 lapses: 0,
-                dueDate: this.getLocalDateString(),
+                dueDate: null, // Will be set after first review
                 lastReviewed: null,
                 createdAt: new Date().toISOString(),
                 card_type: this.selectedCardType, // Add the card type
@@ -1450,7 +1474,7 @@ class FlashcardApp {
         const saveButton = document.getElementById('save-card');
         
         if (!front || !back) {
-            alert('Please fill in both sides of the card');
+            alert(window.i18n.translate('alerts.fill_both_sides_card'));
             return;
         }
         
@@ -1477,7 +1501,7 @@ class FlashcardApp {
                     interval: 1,
                     reps: 0,
                     lapses: 0,
-                    due_date: this.getLocalDateString(),
+                    due_date: null, // Will be set after first review
                     reviewCount: 0,
                     isNew: true
                 };
@@ -1489,11 +1513,11 @@ class FlashcardApp {
                 this.hideNewCardModal();
                 this.renderDeckView();
             } else {
-                alert('Failed to save card');
+                alert(window.i18n.translate('alerts.failed_save_card'));
             }
         } catch (error) {
             console.error('Error saving card:', error);
-            alert('Failed to save card');
+            alert(window.i18n.translate('alerts.failed_save_card'));
         } finally {
             // Re-enable the save button
             saveButton.disabled = false;
@@ -1513,7 +1537,7 @@ class FlashcardApp {
         });
         
         if (allCards.length === 0) {
-            alert('No cards available to study!');
+            alert(window.i18n.translate('alerts.no_cards_available'));
             return;
         }
         
@@ -1522,7 +1546,7 @@ class FlashcardApp {
         this.currentStudyCards = spacedRepetition.getCardsForStudy(tempDeck, 50);
         
         if (this.currentStudyCards.length === 0) {
-            alert('No cards to study right now!');
+            alert(window.i18n.translate('alerts.no_cards_due'));
             return;
         }
         
@@ -1577,7 +1601,7 @@ class FlashcardApp {
                     this.showView('overview');
                 }
             } catch (error) {
-                alert('Failed to delete deck. Please try again.');
+                alert(window.i18n.translate('alerts.failed_delete_deck'));
                 console.error('Delete deck error:', error);
             }
         }
@@ -1599,7 +1623,7 @@ class FlashcardApp {
                 
                 this.renderDeckView();
             } catch (error) {
-                alert('Failed to delete card. Please try again.');
+                alert(window.i18n.translate('alerts.failed_delete_card'));
                 console.error('Delete card error:', error);
             }
         }
@@ -1609,6 +1633,34 @@ class FlashcardApp {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Confetti celebration function
+    celebrateWithConfetti() {
+        if (typeof confetti !== 'undefined') {
+            // Burst from center
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            
+            // Additional burst after a short delay
+            setTimeout(() => {
+                confetti({
+                    particleCount: 50,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 50,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+            }, 300);
+        }
     }
 
 
@@ -1901,7 +1953,7 @@ class FlashcardApp {
 
     async saveIrregularVerbCards() {
         if (!this.selectedVerb || !this.currentDeck) {
-            alert('No deck selected. Please select a deck first.');
+            alert(window.i18n.translate('alerts.no_deck_selected'));
             return;
         }
 
@@ -1919,7 +1971,7 @@ class FlashcardApp {
                     interval: 1,
                     reps: 0,
                     lapses: 0,
-                    due_date: new Date().toISOString().split('T')[0],
+                    due_date: null, // Will be set after first review
                     reviewCount: 0,
                     isNew: true
                 },
@@ -1932,7 +1984,7 @@ class FlashcardApp {
                     interval: 1,
                     reps: 0,
                     lapses: 0,
-                    due_date: new Date().toISOString().split('T')[0],
+                    due_date: null, // Will be set after first review
                     reviewCount: 0,
                     isNew: true
                 },
@@ -1945,7 +1997,7 @@ class FlashcardApp {
                     interval: 1,
                     reps: 0,
                     lapses: 0,
-                    due_date: new Date().toISOString().split('T')[0],
+                    due_date: null, // Will be set after first review
                     reviewCount: 0,
                     isNew: true
                 }
@@ -1963,7 +2015,7 @@ class FlashcardApp {
             this.showView('deck');
         } catch (error) {
             console.error('Error saving irregular verb cards:', error);
-            alert('Failed to save cards. Please try again.');
+            alert(window.i18n.translate('alerts.failed_save_cards'));
         }
     }
 
@@ -1994,8 +2046,20 @@ class FlashcardApp {
             
             decks.forEach(deck => {
                 deck.cards.forEach(card => {
-                    const cardDueDate = card.dueDate || card.due_date;
-                    if (cardDueDate && cardDueDate <= today) {
+                    const cardDueDate = card.dueDate || card.due_date || card.nextReview;
+                    
+                    // Include new cards and due/overdue cards (same logic as getCardsForStudy)
+                    if (!cardDueDate || (card.reps || card.repetitions || 0) === 0) {
+                        totalDueCards++; // New cards count as due
+                        // Check if new card was reviewed today
+                        const lastReviewed = card.lastReviewed || card.last_reviewed;
+                        if (lastReviewed) {
+                            const reviewedDate = lastReviewed.split('T')[0]; // Extract date part
+                            if (reviewedDate === today) {
+                                completedDueCards++;
+                            }
+                        }
+                    } else if (cardDueDate.split('T')[0] <= today) {
                         totalDueCards++;
                         
                         // Check if card was reviewed today (has lastReviewed date = today)
@@ -2322,7 +2386,7 @@ class FlashcardApp {
             this.showView('deck');
         } catch (error) {
             console.error('Error saving phrasal verb card:', error);
-            alert('Failed to save card. Please try again.');
+            alert(window.i18n.translate('alerts.failed_save_card'));
         }
     }
 

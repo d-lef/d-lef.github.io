@@ -205,7 +205,7 @@
                     </div>
                 </div>
                 <div class="typing-input-area">
-                    <input type="text" id="typing-input" data-i18n-placeholder="study.type_placeholder" placeholder="Type your answer..." autocomplete="off">
+                    <input type="text" id="typing-input" data-i18n-placeholder="study.type_placeholder" placeholder="Type your answer..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
                     <button id="check-answer" class="check-btn" data-i18n="study.check_answer">Check Answer</button>
                     <button id="dont-remember" class="dont-remember-btn" data-i18n="study.dont_remember">I don't remember</button>
                 </div>
@@ -455,6 +455,7 @@
     </div>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="js/supabase-client.js?v=20250826b"></script>
     <script src="js/storage.js?v=20250826a"></script>
     <script src="js/spaced-repetition.js?v=20250820c"></script>

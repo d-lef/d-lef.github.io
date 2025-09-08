@@ -214,7 +214,7 @@ class SupabaseService {
             reps: parseInt(card.reps || card.repetitions || 0),
             lapses: parseInt(card.lapses || 0),
             grade: card.grade ? parseInt(card.grade) : null,
-            due_date: card.dueDate || card.due_date || (card.nextReview ? new Date(card.nextReview).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+            due_date: card.dueDate || card.due_date || (card.nextReview ? new Date(card.nextReview).toISOString().split('T')[0] : null),
             last_reviewed: card.lastReviewed || card.last_reviewed || null,
             created_at: card.createdAt || card.created_at || new Date().toISOString(),
             updated_at: new Date().toISOString()
@@ -402,11 +402,15 @@ class SupabaseService {
         
         // Prepare the stats object
         const statsUpdate = {
-            day: date,
-            reviews: isFirstReviewToday ? 1 : 0, // Only count first review of each card
-            correct: isCorrect ? 1 : 0,
-            lapses: isCorrect ? 0 : 1
+            day: date
         };
+        
+        // Only add review counters if this is an actual review (isCorrect is not null)
+        if (isCorrect !== null) {
+            statsUpdate.reviews = 1; // Count every time a difficulty button is pressed
+            statsUpdate.correct = isCorrect ? 1 : 0;
+            statsUpdate.lapses = isCorrect ? 0 : 1;
+        }
         
         // Only include all_due_completed if explicitly provided
         if (allDueCompleted !== null) {
@@ -439,11 +443,20 @@ class SupabaseService {
 
             // Update with incremented values
             const newStats = {
-                day: date,
-                reviews: (current?.reviews || 0) + (isFirstReviewToday ? 1 : 0), // Only count first review of each card
-                correct: (current?.correct || 0) + (isCorrect ? 1 : 0),
-                lapses: (current?.lapses || 0) + (isCorrect ? 0 : 1)
+                day: date
             };
+            
+            // Only increment review counters if this is an actual review
+            if (isCorrect !== null) {
+                newStats.reviews = (current?.reviews || 0) + 1; // Count every difficulty button press
+                newStats.correct = (current?.correct || 0) + (isCorrect ? 1 : 0);
+                newStats.lapses = (current?.lapses || 0) + (isCorrect ? 0 : 1);
+            } else {
+                // Preserve existing values when only updating all_due_completed
+                newStats.reviews = current?.reviews || 0;
+                newStats.correct = current?.correct || 0;
+                newStats.lapses = current?.lapses || 0;
+            }
             
             // Only update all_due_completed if explicitly provided
             if (allDueCompleted !== null) {

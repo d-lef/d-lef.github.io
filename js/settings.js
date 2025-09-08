@@ -2,7 +2,7 @@ class Settings {
     constructor() {
         this.settings = {
             theme: 'light',
-            language: 'en'
+            language: 'ru'
         };
         
         this.loadSettings();

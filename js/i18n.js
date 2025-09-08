@@ -1,6 +1,6 @@
 class I18n {
     constructor() {
-        this.currentLanguage = 'en';
+        this.currentLanguage = 'ru';
         this.translations = {
             en: {
                 // App
@@ -14,8 +14,8 @@ class I18n {
                 
                 // Overview
                 'overview.title': 'Study Overview',
-                'overview.due_today': 'Due Today',
-                'overview.reviewed_today': 'Reviewed Today',
+                'overview.due_today': 'Ready to Study',
+                'overview.reviewed_today': 'Studied Today',
                 'overview.overdue': 'Overdue Cards',
                 'overview.study_streak': 'Study Streak',
                 'overview.recent_activity': 'Recent Activity',
@@ -153,7 +153,32 @@ class I18n {
                 'card_stats.failed_reviews': 'Failed Reviews So Far',
                 'card_stats.next_due_date': 'Next Due Date',
                 'card_stats.not_scheduled': 'Not scheduled',
-                'card_stats.close': 'Close'
+                'card_stats.close': 'Close',
+                
+                // Alert Messages
+                'alerts.no_cards_in_deck': 'No cards in this deck to study!',
+                'alerts.type_answer_first': 'Please type an answer first!',
+                'alerts.study_complete': 'Study session complete!',
+                'alerts.deck_complete': 'Deck study complete!',
+                'alerts.cards_studied': 'Cards studied',
+                'alerts.cards_reviewed': 'Cards reviewed',
+                'alerts.current_streak': 'Current streak',
+                'alerts.days': 'days',
+                'alerts.all_due_completed_yes': 'Yes',
+                'alerts.all_due_completed_no': 'No',
+                'alerts.all_due_completed': 'All due cards completed',
+                'alerts.enter_deck_name': 'Please enter a deck name',
+                'alerts.failed_update_deck': 'Failed to update deck',
+                'alerts.failed_create_deck': 'Failed to create deck',
+                'alerts.fill_both_sides': 'Please fill in both front and back of the card',
+                'alerts.fill_both_sides_card': 'Please fill in both sides of the card',
+                'alerts.failed_save_card': 'Failed to save card',
+                'alerts.no_cards_available': 'No cards available to study!',
+                'alerts.no_cards_due': 'No cards to study right now!',
+                'alerts.failed_delete_deck': 'Failed to delete deck. Please try again.',
+                'alerts.failed_delete_card': 'Failed to delete card. Please try again.',
+                'alerts.no_deck_selected': 'No deck selected. Please select a deck first.',
+                'alerts.failed_save_cards': 'Failed to save cards. Please try again.'
             },
             
             ru: {
@@ -168,8 +193,8 @@ class I18n {
                 
                 // Overview
                 'overview.title': 'Обзор изучения',
-                'overview.due_today': 'Сегодня',
-                'overview.reviewed_today': 'Повторено сегодня',
+                'overview.due_today': 'Готово к изучению',
+                'overview.reviewed_today': 'Изучено сегодня',
                 'overview.overdue': 'Просрочено',
                 'overview.study_streak': 'Дни подряд',
                 'overview.recent_activity': 'Последняя активность',
@@ -307,7 +332,32 @@ class I18n {
                 'card_stats.failed_reviews': 'Неудачных повторений',
                 'card_stats.next_due_date': 'Следующий срок повторения',
                 'card_stats.not_scheduled': 'Не запланировано',
-                'card_stats.close': 'Закрыть'
+                'card_stats.close': 'Закрыть',
+                
+                // Alert Messages
+                'alerts.no_cards_in_deck': 'В этой колоде нет карточек для изучения!',
+                'alerts.type_answer_first': 'Сначала введите ответ!',
+                'alerts.study_complete': 'Изучение завершено!',
+                'alerts.deck_complete': 'Изучение колоды завершено!',
+                'alerts.cards_studied': 'Карточек изучено',
+                'alerts.cards_reviewed': 'Карточек повторено',
+                'alerts.current_streak': 'Текущая серия',
+                'alerts.days': 'дней',
+                'alerts.all_due_completed_yes': 'Да',
+                'alerts.all_due_completed_no': 'Нет',
+                'alerts.all_due_completed': 'Все срочные карточки изучены',
+                'alerts.enter_deck_name': 'Введите название колоды',
+                'alerts.failed_update_deck': 'Не удалось обновить колоду',
+                'alerts.failed_create_deck': 'Не удалось создать колоду',
+                'alerts.fill_both_sides': 'Заполните обе стороны карточки',
+                'alerts.fill_both_sides_card': 'Заполните обе стороны карточки',
+                'alerts.failed_save_card': 'Не удалось сохранить карточку',
+                'alerts.no_cards_available': 'Нет карточек для изучения!',
+                'alerts.no_cards_due': 'Сейчас нет карточек для изучения!',
+                'alerts.failed_delete_deck': 'Не удалось удалить колоду. Попробуйте еще раз.',
+                'alerts.failed_delete_card': 'Не удалось удалить карточку. Попробуйте еще раз.',
+                'alerts.no_deck_selected': 'Колода не выбрана. Сначала выберите колоду.',
+                'alerts.failed_save_cards': 'Не удалось сохранить карточки. Попробуйте еще раз.'
             }
         };
         
