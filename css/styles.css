@@ -547,6 +547,68 @@ nav::-webkit-scrollbar {
     text-align: left;
 }
 
+.insight-action {
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    margin-top: 0.375rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.study-streak-section {
+    margin-top: 1.5rem;
+}
+
+.study-streak-wide {
+    width: 100%;
+}
+
+.insight-card.tappable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.streak-calendar-combined {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-top: 1.5rem;
+}
+
+.top-stats-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+.streak-section, .future-cards-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.divider-line {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1rem 0;
+}
+
+.calendar-section {
+    margin-top: 1rem;
+}
+
+.calendar-header {
+    margin-bottom: 1rem;
+}
+
 .recent-activity {
     background: var(--card-bg);
     border-radius: 16px;
@@ -709,11 +771,7 @@ nav::-webkit-scrollbar {
 
 /* Calendar Section */
 .calendar-section {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px var(--shadow);
+    /* Background and shadow removed - now part of combined panel */
 }
 
 .calendar-header {
@@ -1071,21 +1129,12 @@ nav::-webkit-scrollbar {
     gap: 0.75rem;
 }
 
-.deck-action-row {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-}
-
 .deck-action-btn {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
-    min-width: auto;
-    width: auto;
-    max-width: 140px;
+    width: 200px;
+    min-width: 200px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 #deck-title {
@@ -1740,8 +1789,7 @@ nav::-webkit-scrollbar {
     }
     
     .compact-calendar-section {
-        padding: 1rem;
-        margin-top: 1.5rem;
+        /* Mobile styling removed - now part of combined panel */
     }
     
     .recent-deck-name {
@@ -1798,20 +1846,12 @@ nav::-webkit-scrollbar {
         gap: 0.75rem;
     }
     
-    .deck-action-row {
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
     .deck-action-btn {
-        width: auto;
-        min-width: auto;
-        max-width: 120px;
+        width: 180px;
+        min-width: 180px;
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
     
     .modal-actions {
@@ -1943,14 +1983,7 @@ nav::-webkit-scrollbar {
 
 /* Compact Calendar for Overview */
 .compact-calendar-section {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-top: 2rem;
-    box-shadow: 0 4px 20px var(--shadow);
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    /* Styling removed - now part of combined panel */
 }
 
 .compact-calendar-header {
@@ -1978,6 +2011,15 @@ nav::-webkit-scrollbar {
     margin: 0;
     min-width: 120px;
     text-align: center;
+}
+
+.calendar-title-centered {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: center;
+    display: block;
+    width: 100%;
 }
 
 .compact-study-calendar {

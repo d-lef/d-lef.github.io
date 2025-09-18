@@ -50,55 +50,69 @@
         <!-- Overview View -->
         <div id="overview-view" class="view active">
             <div class="overview-container">
-                <div class="overview-header">
-                    <button id="study-all-btn" class="primary-btn" data-i18n="actions.study_all">Study All Cards</button>
-                </div>
-                
                 <div class="insights-grid">
-                    <div class="insight-card due-cards">
+                    <div class="insight-card all-cards tappable" data-study-type="all">
+                        <div class="insight-icon">📚</div>
+                        <div class="insight-content">
+                            <div class="insight-number" id="all-cards-count">0</div>
+                            <div class="insight-label" data-i18n="overview.all_cards_to_study">All cards to study</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card due-cards tappable" data-study-type="due">
                         <div class="insight-icon">🎯</div>
                         <div class="insight-content">
                             <div class="insight-number" id="due-cards-count">0</div>
-                            <div class="insight-label" data-i18n="overview.due_today">Due Today</div>
+                            <div class="insight-label" data-i18n="overview.cards_due_today">Cards due today</div>
                         </div>
                     </div>
                     
-                    <div class="insight-card reviewed-cards">
-                        <div class="insight-icon">✅</div>
-                        <div class="insight-content">
-                            <div class="insight-number" id="reviewed-today-count">0</div>
-                            <div class="insight-label" data-i18n="overview.reviewed_today">Reviewed Today</div>
-                        </div>
-                    </div>
-                    
-                    <div class="insight-card overdue-cards">
+                    <div class="insight-card overdue-cards tappable" data-study-type="overdue">
                         <div class="insight-icon">⏰</div>
                         <div class="insight-content">
                             <div class="insight-number" id="overdue-cards-count">0</div>
-                            <div class="insight-label" data-i18n="overview.overdue">Overdue Cards</div>
+                            <div class="insight-label" data-i18n="overview.overdue_cards">Overdue cards</div>
                         </div>
                     </div>
                     
-                    <div class="insight-card study-streak">
-                        <div class="insight-icon">🔥</div>
+                    <div class="insight-card new-cards tappable" data-study-type="new">
+                        <div class="insight-icon">✨</div>
                         <div class="insight-content">
-                            <div class="insight-number" id="overview-streak-count">0</div>
-                            <div class="insight-label" data-i18n="overview.study_streak">Study Streak</div>
+                            <div class="insight-number" id="new-cards-count">0</div>
+                            <div class="insight-label" data-i18n="overview.new_cards">New cards</div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Compact Study Calendar -->
-                <div class="compact-calendar-section">
-                    <div class="compact-calendar-header">
-                        <div class="calendar-nav-controls">
-                            <button id="overview-prev-month" class="calendar-nav">‹</button>
-                            <span id="overview-current-month" class="calendar-title"></span>
-                            <button id="overview-next-month" class="calendar-nav">›</button>
+                <!-- Combined Study Streak and Calendar Panel -->
+                <div class="streak-calendar-combined">
+                    <div class="top-stats-row">
+                        <div class="streak-section">
+                            <div class="insight-icon">🔥</div>
+                            <div class="insight-content">
+                                <div class="insight-number" id="overview-streak-count">0</div>
+                                <div class="insight-label" data-i18n="overview.study_streak">Study Streak</div>
+                            </div>
+                        </div>
+                        
+                        <div class="future-cards-section">
+                            <div class="insight-icon">📅</div>
+                            <div class="insight-content">
+                                <div class="insight-number" id="future-cards-count">0</div>
+                                <div class="insight-label" data-i18n="overview.future_cards">Cards scheduled for future</div>
+                            </div>
                         </div>
                     </div>
-                    <div id="overview-study-calendar" class="compact-study-calendar">
-                        <!-- Calendar will be generated here -->
+                    
+                    <div class="divider-line"></div>
+                    
+                    <div class="calendar-section">
+                        <div class="calendar-header">
+                            <span id="overview-current-month" class="calendar-title-centered"></span>
+                        </div>
+                        <div id="overview-study-calendar" class="compact-study-calendar">
+                            <!-- Calendar will be generated here -->
+                        </div>
                     </div>
                 </div>
                 
@@ -381,16 +395,11 @@
         <!-- Deck Management View -->
         <div id="deck-view" class="view">
             <div class="deck-header">
-                <button id="back-to-decks-from-deck" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
                 <h2 id="deck-title"></h2>
                 <div class="deck-action-bar">
-                    <div class="deck-action-row">
-                        <button id="study-deck-btn" class="deck-action-btn primary-btn" data-i18n="actions.study">Study</button>
-                    </div>
-                    <div class="deck-action-row">
-                        <button id="new-card-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_card">New Card</button>
-                        <button id="new-supercard-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_supercard">New Supercard</button>
-                    </div>
+                    <button id="study-deck-btn" class="deck-action-btn primary-btn" data-i18n="actions.study">Study</button>
+                    <button id="new-card-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_card">New Card</button>
+                    <button id="new-supercard-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_supercard">New Supercard</button>
                 </div>
             </div>
             

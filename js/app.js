@@ -42,14 +42,14 @@ class FlashcardApp {
         document.getElementById('decks-tab').addEventListener('click', () => this.showView('decks'));
         document.getElementById('settings-tab').addEventListener('click', () => this.showView('settings'));
         
-        // Overview calendar navigation
-        document.getElementById('overview-prev-month').addEventListener('click', () => this.navigateOverviewCalendar(-1));
-        document.getElementById('overview-next-month').addEventListener('click', () => this.navigateOverviewCalendar(1));
+        // Calendar navigation removed - showing current month only
         
         document.getElementById('new-deck-btn').addEventListener('click', () => this.showNewDeckModal());
         document.getElementById('new-card-btn').addEventListener('click', () => this.showNewCardForm());
         document.getElementById('new-supercard-btn').addEventListener('click', () => this.showCardTypeSelection());
-        document.getElementById('study-all-btn').addEventListener('click', () => this.startStudyAllSession());
+        
+        // Add event listeners for tappable insight cards
+        this.setupInsightCardListeners();
         
         document.getElementById('create-deck').addEventListener('click', () => this.createDeck());
         document.getElementById('cancel-deck').addEventListener('click', () => this.hideNewDeckModal());
@@ -78,8 +78,7 @@ class FlashcardApp {
         document.getElementById('good-btn').addEventListener('click', () => this.answerCard('good'));
         document.getElementById('easy-btn').addEventListener('click', () => this.answerCard('easy'));
         
-        // Back to decks button was removed from study view for mobile UX
-        document.getElementById('back-to-decks-from-deck').addEventListener('click', () => this.showView('decks'));
+        // Back to decks button removed - users can use navigation tabs
         document.getElementById('study-deck-btn').addEventListener('click', () => this.showStudyModeSelection());
         
         // Typing mode event listeners - handled dynamically in renderTypingInterface
@@ -244,9 +243,11 @@ class FlashcardApp {
     async renderOverview() {
         const decks = await storage.loadDecks();
         
-        // Calculate insights using the same logic as getCardsForStudy
-        let dueCount = 0;
-        let overdueCount = 0;
+        // Calculate insights for each panel separately
+        let dueCount = 0;        // Cards due today (not including new)
+        let overdueCount = 0;    // Cards overdue
+        let newCardsCount = 0;   // New cards (never studied)
+        let futureCardsCount = 0; // Cards scheduled for future dates
         let totalCards = 0;
         const today = this.getLocalDateString();
         
@@ -255,19 +256,24 @@ class FlashcardApp {
             deck.cards.forEach(card => {
                 const cardDueDate = card.dueDate || card.due_date || card.nextReview;
                 
-                // Include new cards (same logic as getCardsForStudy)
+                // Separate new cards from due cards
                 if (!cardDueDate || (card.reps || card.repetitions || 0) === 0) {
-                    dueCount++; // New cards are considered "due"
+                    newCardsCount++; // New cards count separately
                 } else {
                     const cardDueDateOnly = cardDueDate.split('T')[0]; // Handle both date and datetime
                     if (cardDueDateOnly === today) {
-                        dueCount++;
+                        dueCount++; // Due today
                     } else if (cardDueDateOnly < today) {
-                        overdueCount++;
+                        overdueCount++; // Overdue
+                    } else if (cardDueDateOnly > today) {
+                        futureCardsCount++; // Scheduled for future
                     }
                 }
             });
         });
+        
+        // Calculate all cards that can be studied (due + overdue + new)
+        const allCardsCount = dueCount + overdueCount + newCardsCount;
         
         // Get today's review stats
         let reviewedToday = 0;
@@ -291,9 +297,11 @@ class FlashcardApp {
         }
         
         // Update insight cards
+        document.getElementById('all-cards-count').textContent = allCardsCount;
         document.getElementById('due-cards-count').textContent = dueCount;
-        document.getElementById('reviewed-today-count').textContent = reviewedToday;
         document.getElementById('overdue-cards-count').textContent = overdueCount;
+        document.getElementById('new-cards-count').textContent = newCardsCount;
+        document.getElementById('future-cards-count').textContent = futureCardsCount;
         document.getElementById('overview-streak-count').textContent = streak;
         
         // Render compact study calendar
@@ -303,15 +311,13 @@ class FlashcardApp {
     }
 
     async renderOverviewCalendar() {
-        // Initialize current calendar date if not set
-        if (!this.overviewCalendarDate) {
-            this.overviewCalendarDate = new Date();
-        }
+        // Always show current month only
+        const currentDate = new Date();
         
         // Update month title
         const monthElement = document.getElementById('overview-current-month');
         if (monthElement) {
-            monthElement.textContent = this.overviewCalendarDate.toLocaleDateString('en-US', { 
+            monthElement.textContent = currentDate.toLocaleDateString('en-US', { 
                 month: 'long', 
                 year: 'numeric' 
             });
@@ -322,18 +328,9 @@ class FlashcardApp {
         
         if (window.statistics && calendarContainer) {
             if (typeof window.statistics.renderCalendarMonth === 'function') {
-                await window.statistics.renderCalendarMonth(this.overviewCalendarDate, calendarContainer, true);
+                await window.statistics.renderCalendarMonth(currentDate, calendarContainer, true);
             }
         }
-    }
-
-    navigateOverviewCalendar(direction) {
-        if (!this.overviewCalendarDate) {
-            this.overviewCalendarDate = new Date();
-        }
-        
-        this.overviewCalendarDate.setMonth(this.overviewCalendarDate.getMonth() + direction);
-        this.renderOverviewCalendar();
     }
 
     async renderDecks() {
@@ -1551,6 +1548,73 @@ class FlashcardApp {
         }
         
         // For study all, directly start combined mode
+        this.currentDeck = null; // Mark as study all mode
+        this.studySession = {
+            startTime: new Date(),
+            cardsStudied: 0,
+            isStudyAll: true
+        };
+        
+        this.startStudySessionWithMode('combined');
+    }
+
+    setupInsightCardListeners() {
+        // Add click listeners to all tappable insight cards
+        const tappableCards = document.querySelectorAll('.insight-card.tappable');
+        tappableCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                const studyType = card.getAttribute('data-study-type');
+                this.startStudyByType(studyType);
+            });
+        });
+    }
+
+    async startStudyByType(studyType) {
+        const decks = await storage.loadDecks();
+        const allCards = [];
+        
+        // Collect all cards from all decks
+        decks.forEach(deck => {
+            deck.cards.forEach(card => {
+                allCards.push({...card, deckName: deck.name});
+            });
+        });
+        
+        if (allCards.length === 0) {
+            alert(window.i18n.translate('alerts.no_cards_available'));
+            return;
+        }
+        
+        let studyCards = [];
+        const tempDeck = {cards: allCards};
+        
+        switch (studyType) {
+            case 'all':
+                // All cards that can be studied today (due + overdue + new)
+                studyCards = spacedRepetition.getCardsForStudy(tempDeck, 50);
+                break;
+            case 'due':
+                // Only cards due today
+                studyCards = spacedRepetition.getCardsDueToday(tempDeck);
+                break;
+            case 'overdue':
+                // Only overdue cards
+                studyCards = spacedRepetition.getOverdueCards(tempDeck);
+                break;
+            case 'new':
+                // Only new cards
+                studyCards = spacedRepetition.getNewCards(tempDeck);
+                break;
+            default:
+                return;
+        }
+        
+        if (studyCards.length === 0) {
+            alert(window.i18n.translate('alerts.no_cards_due'));
+            return;
+        }
+        
+        this.currentStudyCards = studyCards;
         this.currentDeck = null; // Mark as study all mode
         this.studySession = {
             startTime: new Date(),

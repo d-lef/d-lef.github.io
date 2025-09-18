@@ -14,10 +14,19 @@ class I18n {
                 
                 // Overview
                 'overview.title': 'Study Overview',
+                'overview.all_cards_to_study': 'All cards to study',
+                'overview.start_studying': 'Start studying',
+                'overview.cards_due_today': 'Cards due today',
+                'overview.study_due': 'Study due cards',
+                'overview.overdue_cards': 'Overdue cards',
+                'overview.study_overdue': 'Study overdue',
+                'overview.new_cards': 'New cards',
+                'overview.study_new': 'Study new cards',
                 'overview.due_today': 'Ready to Study',
                 'overview.reviewed_today': 'Studied Today',
                 'overview.overdue': 'Overdue Cards',
                 'overview.study_streak': 'Study Streak',
+                'overview.future_cards': 'Cards scheduled for future',
                 'overview.recent_activity': 'Recent Activity',
                 'overview.study_calendar': 'Study Calendar',
                 
@@ -193,10 +202,19 @@ class I18n {
                 
                 // Overview
                 'overview.title': 'Обзор изучения',
+                'overview.all_cards_to_study': 'Все карточки для изучения',
+                'overview.start_studying': 'Начать изучение',
+                'overview.cards_due_today': 'Карточки на сегодня',
+                'overview.study_due': 'Изучить на сегодня',
+                'overview.overdue_cards': 'Просроченные карточки',
+                'overview.study_overdue': 'Изучить просроченные',
+                'overview.new_cards': 'Новые карточки',
+                'overview.study_new': 'Изучить новые',
                 'overview.due_today': 'Готово к изучению',
                 'overview.reviewed_today': 'Изучено сегодня',
                 'overview.overdue': 'Просрочено',
                 'overview.study_streak': 'Дни подряд',
+                'overview.future_cards': 'Будущие карточки',
                 'overview.recent_activity': 'Последняя активность',
                 'overview.study_calendar': 'Календарь изучения',
                 

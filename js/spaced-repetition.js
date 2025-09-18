@@ -111,6 +111,56 @@ class SpacedRepetition {
         return studyCards.slice(0, limit);
     }
 
+    getCardsDueToday(deck) {
+        const today = new Date().toISOString().split('T')[0];
+        const dueCards = [];
+
+        for (const card of deck.cards) {
+            const dueDate = card.dueDate || card.due_date || card.nextReview;
+            
+            if (dueDate && (card.reps || card.repetitions || 0) > 0) {
+                const cardDueDate = dueDate.split('T')[0];
+                if (cardDueDate === today) {
+                    dueCards.push({...card, isDue: true});
+                }
+            }
+        }
+
+        return dueCards;
+    }
+
+    getOverdueCards(deck) {
+        const today = new Date().toISOString().split('T')[0];
+        const overdueCards = [];
+
+        for (const card of deck.cards) {
+            const dueDate = card.dueDate || card.due_date || card.nextReview;
+            
+            if (dueDate && (card.reps || card.repetitions || 0) > 0) {
+                const cardDueDate = dueDate.split('T')[0];
+                if (cardDueDate < today) {
+                    overdueCards.push({...card, isOverdue: true});
+                }
+            }
+        }
+
+        return overdueCards;
+    }
+
+    getNewCards(deck) {
+        const newCards = [];
+
+        for (const card of deck.cards) {
+            const dueDate = card.dueDate || card.due_date || card.nextReview;
+            
+            if (!dueDate || (card.reps || card.repetitions || 0) === 0) {
+                newCards.push({...card, isNew: true});
+            }
+        }
+
+        return newCards;
+    }
+
     getDueCount(deck) {
         const today = new Date().toISOString().split('T')[0];
         let dueCount = 0;
