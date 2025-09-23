@@ -175,6 +175,24 @@
                     </div>
                 </div>
 
+                <div class="settings-section">
+                    <h3 data-i18n="settings.gamification">Gamification</h3>
+                    <div class="setting-row">
+                        <span data-i18n="settings.star_race">Star Race Game</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="star-race-toggle">
+                            <span class="slider"></span>
+                            <span class="toggle-labels">
+                                <span data-i18n="settings.off">OFF</span>
+                                <span data-i18n="settings.on">ON</span>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="setting-description">
+                        <small data-i18n="settings.star_race_description">Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!</small>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -421,6 +439,40 @@
         </div>
     </div>
 
+    <!-- Star Race Game Overlay -->
+    <div id="star-race-overlay" class="game-overlay">
+        <div id="star-race-container" class="game-container">
+            <div class="game-header">
+                <button id="star-race-exit" class="game-exit-btn">✕</button>
+                <div class="game-score">
+                    <div class="stars-counter">
+                        <span id="stars-earned">0</span>/5 ⭐
+                    </div>
+                </div>
+            </div>
+            <div id="star-race-question" class="game-question">
+                <p id="star-race-question-text"></p>
+            </div>
+            <canvas id="star-race-canvas" class="game-canvas"></canvas>
+            <div id="star-race-controls" class="game-controls">
+                <button id="star-race-up" class="game-control-btn">▲</button>
+                <button id="star-race-attack" class="game-control-btn attack-btn">🚀</button>
+                <button id="star-race-down" class="game-control-btn">▼</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Result Modal -->
+    <div id="star-race-result-modal" class="modal game-modal">
+        <div class="modal-content game-modal-content">
+            <h3 id="star-race-result-title"></h3>
+            <p id="star-race-result-message"></p>
+            <div class="modal-actions">
+                <button id="star-race-continue" class="primary-btn" data-i18n="actions.continue">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modals -->
     <div id="new-deck-modal" class="modal">
         <div class="modal-content">
@@ -483,6 +535,7 @@
     <script src="js/supabase-client.js?v=20250826b"></script>
     <script src="js/storage.js?v=20250826a"></script>
     <script src="js/spaced-repetition.js?v=20250820c"></script>
+    <script src="js/star-race.js"></script>
     <script src="js/i18n.js?v=20250826c"></script>
     <script src="js/settings.js?v=20250820c"></script>
     <script src="js/statistics.js?v=20250820c"></script>

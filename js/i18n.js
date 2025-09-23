@@ -58,7 +58,10 @@ class I18n {
                 'settings.sm2_grades_desc': '<strong>Again</strong> (restart), <strong>Hard</strong> (shorter interval), <strong>Good</strong> (normal), <strong>Easy</strong> (longer interval).',
                 'settings.sm2_retention': '💡 Long-term Memory',
                 'settings.sm2_retention_desc': 'Reviews happen just before you\'re likely to forget, maximizing retention with minimal effort.',
-                
+                'settings.gamification': 'Gamification',
+                'settings.star_race': 'Star Race Game',
+                'settings.star_race_description': 'Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!',
+
                 // Actions
                 'actions.study_all': 'Study All Cards',
                 'actions.new_deck': 'New Deck',
@@ -71,6 +74,7 @@ class I18n {
                 'actions.select': 'Select',
                 'actions.save': 'Save',
                 'actions.delete': 'Delete',
+                'actions.continue': 'Continue',
                 
                 // Card Types
                 'card_type.select_type': 'Select Card Type',
@@ -251,7 +255,10 @@ class I18n {
                 'settings.sm2_grades_desc': '<strong>Снова</strong> (сначала), <strong>Сложно</strong> (короче интервал), <strong>Хорошо</strong> (обычно), <strong>Легко</strong> (длиннее интервал).',
                 'settings.sm2_retention': '💡 Долговременная память',
                 'settings.sm2_retention_desc': 'Повторения происходят как раз перед тем, как вы забудете, максимизируя запоминание при минимальных усилиях.',
-                
+                'settings.gamification': 'Геймификация',
+                'settings.star_race': 'Звёздная гонка',
+                'settings.star_race_description': 'Космическая мини-игра, которая появляется во время изучения. Собирайте звёзды, отвечая правильно!',
+
                 // Actions
                 'actions.study_all': 'Изучить все карточки',
                 'actions.new_deck': 'Новая колода',
@@ -264,6 +271,7 @@ class I18n {
                 'actions.select': 'Выбрать',
                 'actions.save': 'Сохранить',
                 'actions.delete': 'Удалить',
+                'actions.continue': 'Продолжить',
                 
                 // Card Types
                 'card_type.select_type': 'Выберите тип карточки',

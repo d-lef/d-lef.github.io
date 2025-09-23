@@ -11,7 +11,9 @@
       "Bash(tasklist:*)",
       "Bash(taskkill:*)",
       "Bash(dir:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Read(//c/Users/d.lefanov/Desktop/**)",
+      "Read(//c/Users/d.lefanov/flashcard_app_for_dasha - Copy/test_app/**)"
     ],
     "deny": [],
     "ask": [],

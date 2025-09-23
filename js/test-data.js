@@ -43,6 +43,83 @@ class TestDataManager {
                         due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // Due in 2 days
                         isNew: false
                     },
+                    {
+                        id: 'test-card-ger-004',
+                        front: 'House',
+                        back: 'Haus',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-005',
+                        front: 'Book',
+                        back: 'Buch',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-006',
+                        front: 'Water',
+                        back: 'Wasser',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-007',
+                        front: 'Cat',
+                        back: 'Katze',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-008',
+                        front: 'Dog',
+                        back: 'Hund',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-009',
+                        front: 'Apple',
+                        back: 'Apfel',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-ger-010',
+                        front: 'Tree',
+                        back: 'Baum',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
                 ]
             },
             {
@@ -104,6 +181,61 @@ class TestDataManager {
                         lapses: 2,
                         due_date: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // Due 30 minutes ago
                         isNew: false
+                    },
+                    {
+                        id: 'test-card-rus-006',
+                        front: 'Bread',
+                        back: 'Хлеб',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-rus-007',
+                        front: 'Milk',
+                        back: 'Молоко',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-rus-008',
+                        front: 'Fish',
+                        back: 'Рыба',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-rus-009',
+                        front: 'Moon',
+                        back: 'Луна',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
+                    },
+                    {
+                        id: 'test-card-rus-010',
+                        front: 'Bird',
+                        back: 'Птица',
+                        ease: 2.5,
+                        interval: 1,
+                        reps: 0,
+                        lapses: 0,
+                        due_date: null,
+                        isNew: true
                     }
                 ]
             }
