@@ -19,8 +19,12 @@ class Statistics {
             // Get current month's data
             const startDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth, 1));
             const endDate = this.getLocalDateString(new Date(this.currentYear, this.currentMonth + 1, 0));
-            
-            const reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
+
+            // SAFETY: Don't access database in test mode
+            let reviewStats = [];
+            if (!(window.testModeDetector && window.testModeDetector.isTestingMode())) {
+                reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
+            }
             
             // Get today's stats
             const today = this.getLocalDateString();
@@ -107,8 +111,12 @@ class Statistics {
             
             const startDate = this.getLocalDateString(yearAgo);
             const endDate = this.getLocalDateString(today);
-            
-            const reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
+
+            // SAFETY: Don't access database in test mode
+            let reviewStats = [];
+            if (!(window.testModeDetector && window.testModeDetector.isTestingMode())) {
+                reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
+            }
             
             // Create a set of complete study days (where all due cards were studied)
             const completeStudyDays = new Set(
@@ -345,7 +353,8 @@ class Statistics {
         
         let monthStats = [];
         try {
-            if (window.supabaseService) {
+            // SAFETY: Don't access database in test mode
+            if (window.supabaseService && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                 monthStats = await window.supabaseService.getReviewStats(startDate, endDate);
             }
         } catch (error) {
@@ -363,9 +372,35 @@ class Statistics {
 
     getLocalReviewStats(startDate, endDate) {
         try {
+            // SAFETY: In test mode, return test review stats
+            if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+                if (window.testDataManager) {
+                    const testStats = window.testDataManager.getReviewStats();
+                    return testStats
+                        .filter(stats => stats.date >= startDate && stats.date <= endDate)
+                        .map(stats => ({
+                            day: stats.date,
+                            reviews: stats.cardsReviewed || 0,
+                            correct: stats.correctAnswers || 0,
+                            lapses: (stats.cardsReviewed || 0) - (stats.correctAnswers || 0),
+                            all_due_completed: stats.allDueCompleted || null
+                        }));
+                }
+                return [];
+            }
+
+            // Normal mode - use localStorage
             const key = 'flashcard_app_review_stats';
-            const allStats = JSON.parse(localStorage.getItem(key)) || {};
-            
+            let allStats = {};
+            try {
+                const data = localStorage.getItem(key);
+                allStats = data ? JSON.parse(data) : {};
+            } catch (error) {
+                console.error('🚨 CRITICAL: Failed to load review stats from localStorage:', error);
+                console.error('🚨 Using empty stats to prevent app crash');
+                allStats = {};
+            }
+
             const result = [];
             for (const [date, stats] of Object.entries(allStats)) {
                 if (date >= startDate && date <= endDate) {
@@ -378,7 +413,7 @@ class Statistics {
                     });
                 }
             }
-            
+
             return result;
         } catch (error) {
             console.error('Failed to load local review stats:', error);

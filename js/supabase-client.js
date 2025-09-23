@@ -12,19 +12,49 @@ class SupabaseService {
 
     setupEventListeners() {
         window.addEventListener('online', () => {
-            this.isOnline = true;
-            this.processSyncQueue();
+            try {
+                this.isOnline = true;
+                console.log('🌐 Network: Online event detected');
+
+                // Add small delay to ensure any concurrent test mode changes are complete
+                setTimeout(() => {
+                    try {
+                        // Double-check we're still online and not in test mode before processing
+                        if (this.isOnline && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
+                            console.log('🌐 Network: Processing sync queue after online event');
+                            this.processSyncQueue();
+                        } else if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+                            console.log('🌐 Network: Online event ignored - test mode is active');
+                        }
+                    } catch (error) {
+                        console.error('🚨 Network online handler delayed processing error:', error);
+                    }
+                }, 250); // Small delay to handle race conditions
+            } catch (error) {
+                console.error('🚨 CRITICAL: Network online event handler error:', error);
+            }
         });
-        
+
         window.addEventListener('offline', () => {
-            this.isOnline = false;
+            try {
+                this.isOnline = false;
+                console.log('🌐 Network: Offline event detected');
+            } catch (error) {
+                console.error('🚨 CRITICAL: Network offline event handler error:', error);
+            }
         });
     }
 
     async syncDecks() {
+        // CRITICAL SAFETY: Never sync decks in test mode to prevent data contamination
+        if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+            console.log('🧪 BLOCKED: syncDecks() blocked in test mode - returning null to force localStorage fallback');
+            return null;
+        }
+
         try {
             console.log('Syncing decks from Supabase...');
-            
+
             // First, test basic connection
             const { data: testData, error: testError } = await this.client
                 .from('decks')
@@ -327,14 +357,36 @@ class SupabaseService {
     }
 
     addToSyncQueue(operation) {
+        // CRITICAL SAFETY: Never queue test operations - they must never reach real database
+        if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+            console.log('🧪 BLOCKED: Sync queue operation blocked in test mode:', operation.type);
+            console.log('🧪 This operation will NOT be persisted or synced (this is intentional)');
+            return;
+        }
+
         this.syncQueue.push(operation);
-        // Persist queue to localStorage
-        localStorage.setItem('supabase_sync_queue', JSON.stringify(this.syncQueue));
+
+        // Safely persist queue to localStorage
+        try {
+            localStorage.setItem('supabase_sync_queue', JSON.stringify(this.syncQueue));
+        } catch (error) {
+            console.error('Failed to persist sync queue to localStorage:', error);
+            // Continue without persistence - better than crashing
+        }
     }
 
     async processSyncQueue() {
         if (!this.isOnline || this.syncQueue.length === 0) return;
 
+        // CRITICAL SAFETY: Never process sync queue in test mode
+        // This protects against: offline changes → test mode → online scenario
+        if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+            console.log('🧪 BLOCKED: Sync queue processing blocked in test mode - preserving queue for later');
+            console.log(`🧪 Queue contains ${this.syncQueue.length} operations that will be processed when test mode is disabled`);
+            return;
+        }
+
+        console.log(`Processing sync queue with ${this.syncQueue.length} operations...`);
         const queue = [...this.syncQueue];
         this.syncQueue = [];
 
@@ -361,7 +413,12 @@ class SupabaseService {
         }
 
         // Clear processed items from localStorage
-        localStorage.setItem('supabase_sync_queue', JSON.stringify(this.syncQueue));
+        try {
+            localStorage.setItem('supabase_sync_queue', JSON.stringify(this.syncQueue));
+        } catch (error) {
+            console.error('🚨 CRITICAL: Failed to clear processed sync queue items from localStorage:', error);
+            console.error('🚨 Sync queue persistence may be inconsistent');
+        }
     }
 
     loadSyncQueue() {
@@ -398,6 +455,12 @@ class SupabaseService {
     }
 
     async executeUpdateReviewStats(date, isCorrect, allDueCompleted = null, isFirstReviewToday = true) {
+        // CRITICAL SAFETY: Never update review_stats in test mode
+        if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+            console.log('🧪 BLOCKED: Review stats update blocked in test mode');
+            return true; // Return success to prevent error handling
+        }
+
         console.log('Updating review stats for:', { date, isCorrect, allDueCompleted });
         
         // Prepare the stats object
@@ -480,6 +543,12 @@ class SupabaseService {
     }
 
     async getReviewStats(startDate, endDate) {
+        // CRITICAL SAFETY: Never return user review stats in test mode
+        if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+            console.log('🧪 BLOCKED: getReviewStats() blocked in test mode - returning empty array');
+            return [];
+        }
+
         try {
             let query = this.client
                 .from('review_stats')
@@ -507,83 +576,7 @@ class SupabaseService {
         }
     }
 
-    async clearAllData() {
-        try {
-            console.log('Starting to clear all Supabase data...');
-            
-            // Delete all cards first (due to foreign key constraints)
-            const { data: cardsData, error: cardsError } = await this.client
-                .from('cards')
-                .delete()
-                .gte('id', ''); // This will match all records since all IDs are non-empty strings
-            
-            if (cardsError) {
-                console.error('Failed to delete cards:', cardsError);
-                // Don't throw immediately, try a different approach
-                console.log('Trying alternative delete method for cards...');
-                const { error: cardsError2 } = await this.client
-                    .from('cards')
-                    .delete()
-                    .not('id', 'is', null);
-                
-                if (cardsError2) {
-                    console.error('Alternative cards delete also failed:', cardsError2);
-                    throw cardsError2;
-                }
-            }
-            console.log('Cards deleted successfully');
-            
-            // Delete all decks
-            const { data: decksData, error: decksError } = await this.client
-                .from('decks')
-                .delete()
-                .gte('id', ''); // This will match all records since all IDs are non-empty strings
-            
-            if (decksError) {
-                console.error('Failed to delete decks:', decksError);
-                // Try alternative approach
-                console.log('Trying alternative delete method for decks...');
-                const { error: decksError2 } = await this.client
-                    .from('decks')
-                    .delete()
-                    .not('id', 'is', null);
-                
-                if (decksError2) {
-                    console.error('Alternative decks delete also failed:', decksError2);
-                    throw decksError2;
-                }
-            }
-            console.log('Decks deleted successfully');
-            
-            // Delete all review stats
-            const { data: statsData, error: statsError } = await this.client
-                .from('review_stats')
-                .delete()
-                .gte('day', ''); // This will match all records since all days are non-empty strings
-            
-            if (statsError) {
-                console.error('Failed to delete review stats:', statsError);
-                // Try alternative approach
-                console.log('Trying alternative delete method for review stats...');
-                const { error: statsError2 } = await this.client
-                    .from('review_stats')
-                    .delete()
-                    .not('day', 'is', null);
-                
-                if (statsError2) {
-                    console.error('Alternative stats delete also failed:', statsError2);
-                    throw statsError2;
-                }
-            }
-            console.log('Review stats deleted successfully');
-            
-            console.log('All Supabase data cleared successfully');
-            return true;
-        } catch (error) {
-            console.error('Failed to clear all data:', error);
-            throw error;
-        }
-    }
+    // DANGEROUS FUNCTION REMOVED: clearAllData() was unused and could destroy all user data
 
     generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

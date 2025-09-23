@@ -278,7 +278,8 @@ class FlashcardApp {
         // Get today's review stats
         let reviewedToday = 0;
         try {
-            if (window.supabaseService) {
+            // SAFETY: Don't access database in test mode
+            if (window.supabaseService && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                 const stats = await window.supabaseService.getReviewStats(today, today);
                 reviewedToday = stats.length > 0 ? stats[0].reviews : 0;
             }
@@ -826,7 +827,8 @@ class FlashcardApp {
             const isScheduledStudy = this.studySession && this.studySession.isStudyAll;
             const allDueCompleted = null; // Will be set properly at session end
             
-            if (window.supabaseService) {
+            // SAFETY: Don't update database in test mode
+            if (window.supabaseService && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                 await window.supabaseService.updateReviewStats(today, isCorrect, allDueCompleted, isFirstReviewToday);
             }
             
@@ -843,13 +845,48 @@ class FlashcardApp {
 
     storeLocalReviewStat(date, isCorrect, allDueCompleted = null) {
         try {
+            // SAFETY: In test mode, use test data manager instead of localStorage
+            if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
+                if (window.testDataManager) {
+                    const stats = window.testDataManager.getReviewStats();
+                    const dateStr = date.toString();
+
+                    // Find or create entry for this date
+                    let dayStats = stats.find(s => s.date === dateStr);
+                    if (!dayStats) {
+                        dayStats = { date: dateStr, cardsReviewed: 0, correctAnswers: 0 };
+                        stats.push(dayStats);
+                    }
+
+                    // Update test stats
+                    if (isCorrect !== null) {
+                        dayStats.cardsReviewed++;
+                        if (isCorrect) {
+                            dayStats.correctAnswers++;
+                        }
+                    }
+
+                    console.log('🧪 Test review stats updated');
+                }
+                return;
+            }
+
+            // Normal mode - use localStorage
             const key = 'flashcard_app_review_stats';
-            let stats = JSON.parse(localStorage.getItem(key)) || {};
-            
+            let stats = {};
+            try {
+                const data = localStorage.getItem(key);
+                stats = data ? JSON.parse(data) : {};
+            } catch (error) {
+                console.error('🚨 CRITICAL: Failed to load review stats from localStorage:', error);
+                console.error('🚨 Using empty stats to prevent app crash');
+                stats = {};
+            }
+
             if (!stats[date]) {
                 stats[date] = { reviews: 0, correct: 0, lapses: 0 };
             }
-            
+
             // Only increment counters if isCorrect is not null (meaning this is an actual review)
             if (isCorrect !== null) {
                 stats[date].reviews++;
@@ -859,12 +896,12 @@ class FlashcardApp {
                     stats[date].lapses++;
                 }
             }
-            
+
             // Update all_due_completed if provided
             if (allDueCompleted !== null) {
                 stats[date].all_due_completed = allDueCompleted;
             }
-            
+
             localStorage.setItem(key, JSON.stringify(stats));
         } catch (error) {
             console.error('Failed to store local review stat:', error);
@@ -1111,7 +1148,8 @@ class FlashcardApp {
             const today = this.getLocalDateString();
             
             // Update the final all_due_completed status in review stats
-            if (window.supabaseService) {
+            // SAFETY: Don't update database in test mode
+            if (window.supabaseService && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                 await window.supabaseService.updateReviewStats(today, null, allDueCompleted, false);
             }
             this.storeLocalReviewStat(today, null, allDueCompleted);
@@ -1139,8 +1177,12 @@ class FlashcardApp {
             });
             
             // Celebrate with confetti if all due cards completed
+            console.log(`🎉 Study session completed! allDueCompleted: ${allDueCompleted}`);
             if (allDueCompleted) {
+                console.log('🎊 Triggering confetti celebration!');
                 this.celebrateWithConfetti();
+            } else {
+                console.log('❌ No confetti - not all due cards completed');
             }
             
             alert(`${window.i18n.translate('alerts.study_complete')}\n\n${window.i18n.translate('alerts.cards_studied')}: ${this.studySession.cardsStudied}\n${window.i18n.translate('alerts.current_streak')}: ${newStreak} ${window.i18n.translate('alerts.days')}\n${window.i18n.translate('alerts.all_due_completed')}: ${allDueCompleted ? window.i18n.translate('alerts.all_due_completed_yes') : window.i18n.translate('alerts.all_due_completed_no')}`);
@@ -1678,13 +1720,17 @@ class FlashcardApp {
         if (confirm(`Are you sure you want to delete this card?\n\nFront: "${card.front}"\nBack: "${card.back}"\n\nThis action cannot be undone.`)) {
             try {
                 // Delete card from Supabase first
-                if (window.supabaseService) {
+                // SAFETY: Don't delete from database in test mode
+                if (window.supabaseService && !(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                     await window.supabaseService.deleteCard(cardId);
                 }
                 
                 // Then remove card from current deck locally
                 this.currentDeck.cards = this.currentDeck.cards.filter(c => c.id !== cardId);
-                
+
+                // Save the updated deck to storage (works in both test mode and normal mode)
+                await window.storage.saveDeck(this.currentDeck);
+
                 this.renderDeckView();
             } catch (error) {
                 alert(window.i18n.translate('alerts.failed_delete_card'));
@@ -1701,7 +1747,9 @@ class FlashcardApp {
 
     // Confetti celebration function
     celebrateWithConfetti() {
+        console.log('🎊 celebrateWithConfetti() called');
         if (typeof confetti !== 'undefined') {
+            console.log('✅ Confetti library is loaded - starting celebration');
             // Burst from center
             confetti({
                 particleCount: 100,

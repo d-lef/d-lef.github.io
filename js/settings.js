@@ -2,9 +2,18 @@ class Settings {
     constructor() {
         this.settings = {
             theme: 'light',
-            language: 'ru'
+            language: 'ru',
+            testingMode: false
         };
-        
+
+        // Race condition protection
+        this._testModeChanging = false;
+        this._lastTestModeChange = 0;
+        this._testModeDebounceDelay = 500; // 500ms debounce
+
+        // Memory leak prevention
+        this._timeouts = new Set(); // Track timeouts for cleanup
+
         this.loadSettings();
         this.initializeUI();
         this.setupEventListeners();
@@ -12,31 +21,46 @@ class Settings {
     }
     
     loadSettings() {
-        const saved = localStorage.getItem('flashcard_settings');
-        if (saved) {
-            try {
-                this.settings = { ...this.settings, ...JSON.parse(saved) };
-            } catch (error) {
-                console.error('Failed to load settings:', error);
+        try {
+            const saved = localStorage.getItem('flashcard_settings');
+            if (saved) {
+                try {
+                    this.settings = { ...this.settings, ...JSON.parse(saved) };
+                } catch (parseError) {
+                    console.error('Failed to parse saved settings:', parseError);
+                }
             }
+        } catch (error) {
+            console.error('🚨 CRITICAL: Failed to access localStorage for loading settings:', error);
+            console.error('🚨 Using default settings to prevent app crash');
         }
     }
-    
+
     saveSettings() {
-        localStorage.setItem('flashcard_settings', JSON.stringify(this.settings));
+        try {
+            localStorage.setItem('flashcard_settings', JSON.stringify(this.settings));
+        } catch (error) {
+            console.error('🚨 CRITICAL: Failed to save settings to localStorage:', error);
+            console.error('🚨 Settings changes will not persist across sessions');
+        }
     }
     
     initializeUI() {
         // Set initial toggle states
         const themeToggle = document.getElementById('theme-toggle');
         const langToggle = document.getElementById('lang-toggle');
-        
+        const testingToggle = document.getElementById('testing-toggle');
+
         if (themeToggle) {
             themeToggle.checked = this.settings.theme === 'dark';
         }
-        
+
         if (langToggle) {
             langToggle.checked = this.settings.language === 'ru';
+        }
+
+        if (testingToggle) {
+            testingToggle.checked = this.settings.testingMode;
         }
     }
     
@@ -49,11 +73,31 @@ class Settings {
             });
         }
         
-        // Language toggle  
+        // Language toggle
         const langToggle = document.getElementById('lang-toggle');
         if (langToggle) {
             langToggle.addEventListener('change', (e) => {
                 this.setLanguage(e.target.checked ? 'ru' : 'en');
+            });
+        }
+
+        // Testing mode toggle
+        const testingToggle = document.getElementById('testing-toggle');
+        if (testingToggle) {
+            testingToggle.addEventListener('change', (e) => {
+                const success = this.setTestingMode(e.target.checked);
+
+                // If test mode change was blocked, revert UI toggle to reflect actual state
+                if (!success) {
+                    console.log('🧪 UI: Test mode change blocked, reverting toggle state');
+                    const timeoutId = setTimeout(() => {
+                        if (testingToggle) {
+                            testingToggle.checked = this.settings.testingMode;
+                        }
+                        this._timeouts.delete(timeoutId);
+                    }, 50);
+                    this._timeouts.add(timeoutId);
+                }
             });
         }
     }
@@ -69,10 +113,85 @@ class Settings {
         this.saveSettings();
         this.applyLanguage();
     }
-    
+
+    setTestingMode(enabled) {
+        const now = Date.now();
+
+        // RACE CONDITION PROTECTION: Prevent concurrent test mode switches
+        if (this._testModeChanging) {
+            console.log('🧪 BLOCKED: Test mode change already in progress, ignoring concurrent request');
+            return false;
+        }
+
+        // DEBOUNCE PROTECTION: Prevent rapid successive test mode switches
+        if (now - this._lastTestModeChange < this._testModeDebounceDelay) {
+            console.log('🧪 BLOCKED: Test mode change too soon after previous change, ignoring rapid toggle');
+            return false;
+        }
+
+        // Check if mode is actually changing
+        if (this.settings.testingMode === enabled) {
+            console.log('🧪 Test mode already ' + (enabled ? 'enabled' : 'disabled') + ', no change needed');
+            return true;
+        }
+
+        try {
+            this._testModeChanging = true;
+            this._lastTestModeChange = now;
+
+            console.log(`🧪 Starting test mode transition: ${this.settings.testingMode} → ${enabled}`);
+
+            this.settings.testingMode = enabled;
+            this.saveSettings();
+            this.applyTestingMode();
+
+            // CRITICAL: Update the fail-safe detector
+            if (window.testModeDetector) {
+                window.testModeDetector.setTestingMode(enabled);
+            }
+
+            // Reset app state when toggling test mode
+            if (window.app) {
+                window.app.currentDeck = null;
+                window.app.currentStudyCards = [];
+                window.app.studySession = null;
+                window.app.editingCard = null;
+                window.app.editingDeck = null;
+                window.app.showView('overview');
+            }
+
+            // When disabling test mode, process any pending sync queue
+            if (!enabled && window.supabaseService) {
+                console.log('🧪 Test mode disabled - checking for pending sync operations...');
+                const timeoutId = setTimeout(() => {
+                    if (window.supabaseService && !this.isTestingMode()) {
+                        window.supabaseService.processSyncQueue();
+                    }
+                    this._timeouts.delete(timeoutId);
+                }, 1000); // Small delay to ensure all state is properly updated
+                this._timeouts.add(timeoutId);
+            }
+
+            console.log(enabled ? '🧪 Test mode enabled' : '🧪 Test mode disabled');
+            return true;
+
+        } catch (error) {
+            console.error('🚨 CRITICAL: Test mode transition failed:', error);
+            return false;
+        } finally {
+            // Always unlock after transition attempt
+            const timeoutId = setTimeout(() => {
+                this._testModeChanging = false;
+                this._timeouts.delete(timeoutId);
+            }, 100); // Small delay to prevent immediate re-triggering
+            this._timeouts.add(timeoutId);
+        }
+    }
+
     applySettings() {
         this.applyTheme();
         this.applyLanguage();
+        this.applyTestingMode();
     }
     
     applyTheme() {
@@ -89,13 +208,43 @@ class Settings {
             window.i18n.setLanguage(this.settings.language);
         }
     }
-    
+
+    applyTestingMode() {
+        const body = document.body;
+        if (this.settings.testingMode) {
+            body.setAttribute('data-testing-mode', 'true');
+        } else {
+            body.removeAttribute('data-testing-mode');
+        }
+    }
+
+    isTestingMode() {
+        return this.settings.testingMode;
+    }
+
     getSetting(key) {
         return this.settings[key];
     }
     
     getAllSettings() {
         return { ...this.settings };
+    }
+
+    // MEMORY LEAK PREVENTION: Cleanup method to clear all timeouts
+    cleanup() {
+        try {
+            console.log('🧪 Cleaning up Settings...');
+
+            // Clear all timeouts
+            this._timeouts.forEach(timeoutId => {
+                clearTimeout(timeoutId);
+            });
+            this._timeouts.clear();
+
+            console.log('🧪 Settings cleanup completed');
+        } catch (error) {
+            console.error('🚨 CRITICAL: Settings cleanup failed:', error);
+        }
     }
 }
 

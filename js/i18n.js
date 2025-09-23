@@ -37,6 +37,11 @@ class I18n {
                 'settings.light': 'Light',
                 'settings.dark': 'Dark',
                 'settings.language': 'Language',
+                'settings.testing': 'Testing',
+                'settings.testing_mode': 'Test Mode',
+                'settings.testing_description': 'Demo mode with sample data. Your real data stays safe and untouched.',
+                'settings.on': 'ON',
+                'settings.off': 'OFF',
                 'settings.notifications': 'Notifications',
                 'settings.enable_notifications': 'Enable Daily Reminders',
                 'settings.reminder_time': 'Reminder Time',
@@ -225,6 +230,11 @@ class I18n {
                 'settings.light': 'Светлая',
                 'settings.dark': 'Тёмная',
                 'settings.language': 'Язык',
+                'settings.testing': 'Тестирование',
+                'settings.testing_mode': 'Тестовый режим',
+                'settings.testing_description': 'Демо-режим с образцами данных. Ваши реальные данные остаются в безопасности.',
+                'settings.on': 'ВКЛ',
+                'settings.off': 'ВЫКЛ',
                 'settings.notifications': 'Уведомления',
                 'settings.enable_notifications': 'Ежедневные напоминания',
                 'settings.reminder_time': 'Время напоминания',
@@ -383,14 +393,24 @@ class I18n {
     }
     
     loadLanguagePreference() {
-        const saved = localStorage.getItem('flashcard_language');
-        if (saved && this.translations[saved]) {
-            this.currentLanguage = saved;
+        try {
+            const saved = localStorage.getItem('flashcard_language');
+            if (saved && this.translations[saved]) {
+                this.currentLanguage = saved;
+            }
+        } catch (error) {
+            console.error('🚨 CRITICAL: Failed to load language preference from localStorage:', error);
+            console.error('🚨 Using default language to prevent app crash');
         }
     }
-    
+
     saveLanguagePreference() {
-        localStorage.setItem('flashcard_language', this.currentLanguage);
+        try {
+            localStorage.setItem('flashcard_language', this.currentLanguage);
+        } catch (error) {
+            console.error('🚨 CRITICAL: Failed to save language preference to localStorage:', error);
+            console.error('🚨 Language preference will not persist across sessions');
+        }
     }
     
     setLanguage(lang) {
