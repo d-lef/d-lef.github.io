@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flashcard-app-v31-local-libs';
+const CACHE_NAME = 'flashcard-app-v32-vendor-libs';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,8 +10,8 @@ const urlsToCache = [
   '/js/statistics.js',
   '/js/i18n.js',
   '/js/settings.js',
-  '/js/lib/supabase.min.js',
-  '/js/lib/confetti.min.js',
+  '/js/vendor/supabase.js',
+  '/js/vendor/confetti.min.js',
   '/manifest.json'
 ];
 

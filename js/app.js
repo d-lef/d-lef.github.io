@@ -1176,22 +1176,29 @@ class FlashcardApp {
                 lastStudyDate: new Date().toISOString()
             });
             
-            // Celebrate with confetti if all due cards completed
-            console.log(`🎉 Study session completed! allDueCompleted: ${allDueCompleted}`);
-            if (allDueCompleted) {
-                console.log('🎊 Triggering confetti celebration!');
+            // Check if all study session cards are completed (for confetti)
+            const allStudySessionCardsCompleted = await this.checkAllStudySessionCardsCompleted();
+
+            // Celebrate with confetti if all study session cards completed
+            console.log(`🎉 Study session completed! allStudySessionCardsCompleted: ${allStudySessionCardsCompleted}, allDueCompleted: ${allDueCompleted}`);
+            if (allStudySessionCardsCompleted) {
+                console.log('🎊 Triggering confetti celebration - all study session cards completed!');
                 this.celebrateWithConfetti();
             } else {
-                console.log('❌ No confetti - not all due cards completed');
+                console.log('❌ No confetti - not all study session cards completed');
             }
             
             alert(`${window.i18n.translate('alerts.study_complete')}\n\n${window.i18n.translate('alerts.cards_studied')}: ${this.studySession.cardsStudied}\n${window.i18n.translate('alerts.current_streak')}: ${newStreak} ${window.i18n.translate('alerts.days')}\n${window.i18n.translate('alerts.all_due_completed')}: ${allDueCompleted ? window.i18n.translate('alerts.all_due_completed_yes') : window.i18n.translate('alerts.all_due_completed_no')}`);
+
+            // Return to overview screen for "Study All Cards" sessions
+            this.showView('overview');
         } else {
             // Individual deck study - no streak update, just show completion message
             alert(`${window.i18n.translate('alerts.deck_complete')}\n\n${window.i18n.translate('alerts.cards_reviewed')}: ${this.studySession.cardsStudied}`);
+
+            // Return to decks screen for individual deck study
+            this.showView('decks');
         }
-        
-        this.showView('decks');
     }
 
     showNewDeckModal() {
@@ -1756,7 +1763,7 @@ class FlashcardApp {
                 spread: 70,
                 origin: { y: 0.6 }
             });
-            
+
             // Additional burst after a short delay
             setTimeout(() => {
                 confetti({
@@ -1772,6 +1779,8 @@ class FlashcardApp {
                     origin: { x: 1 }
                 });
             }, 300);
+        } else {
+            console.error('❌ Confetti library not loaded - cannot display celebration');
         }
     }
 
@@ -2151,15 +2160,15 @@ class FlashcardApp {
         try {
             const decks = await storage.loadDecks();
             const today = this.getLocalDateString();
-            
+
             // Count all due cards (due today + overdue)
             let totalDueCards = 0;
             let completedDueCards = 0;
-            
+
             decks.forEach(deck => {
                 deck.cards.forEach(card => {
                     const cardDueDate = card.dueDate || card.due_date || card.nextReview;
-                    
+
                     // Include new cards and due/overdue cards (same logic as getCardsForStudy)
                     if (!cardDueDate || (card.reps || card.repetitions || 0) === 0) {
                         totalDueCards++; // New cards count as due
@@ -2173,7 +2182,7 @@ class FlashcardApp {
                         }
                     } else if (cardDueDate.split('T')[0] <= today) {
                         totalDueCards++;
-                        
+
                         // Check if card was reviewed today (has lastReviewed date = today)
                         const lastReviewed = card.lastReviewed || card.last_reviewed;
                         if (lastReviewed) {
@@ -2185,14 +2194,71 @@ class FlashcardApp {
                     }
                 });
             });
-            
+
             // All due cards completed if we have due cards and all are completed
             const allCompleted = totalDueCards > 0 && completedDueCards >= totalDueCards;
             console.log(`Due cards check: ${completedDueCards}/${totalDueCards} completed, all due completed: ${allCompleted}`);
-            
+
             return allCompleted;
         } catch (error) {
             console.error('Failed to check due cards completion:', error);
+            return false;
+        }
+    }
+
+    // Check if all cards in the current study session are completed
+    async checkAllStudySessionCardsCompleted() {
+        try {
+            if (!this.studySession || !this.studySession.isStudyAll) {
+                console.log('No "Study All Cards" session active');
+                return false;
+            }
+
+            const today = this.getLocalDateString();
+
+            // Get all cards from all decks (same logic as startStudyAllSession)
+            const decks = await storage.loadDecks();
+            const allCards = [];
+
+            decks.forEach(deck => {
+                deck.cards.forEach(card => {
+                    allCards.push({...card, deckName: deck.name});
+                });
+            });
+
+            if (allCards.length === 0) {
+                console.log('🎊 All study session cards completed - no cards exist!');
+                return true;
+            }
+
+            // Use spaced repetition to get cards that would be studied (same logic as startStudyAllSession)
+            const tempDeck = {cards: allCards};
+            const studyCards = spacedRepetition.getCardsForStudy(tempDeck, 50);
+
+            if (studyCards.length === 0) {
+                console.log('🎊 All study session cards completed - no cards left to study!');
+                return true;
+            }
+
+            // Count how many were completed today
+            let completedToday = 0;
+            studyCards.forEach(cardData => {
+                const card = cardData.card;
+                const lastReviewed = card.lastReviewed || card.last_reviewed;
+                if (lastReviewed) {
+                    const reviewedDate = lastReviewed.split('T')[0];
+                    if (reviewedDate === today) {
+                        completedToday++;
+                    }
+                }
+            });
+
+            const allCompleted = completedToday >= studyCards.length;
+            console.log(`Study session cards check: ${completedToday}/${studyCards.length} completed, all study session cards completed: ${allCompleted}`);
+
+            return allCompleted;
+        } catch (error) {
+            console.error('Failed to check study session cards completion:', error);
             return false;
         }
     }
