@@ -108,7 +108,7 @@ class Statistics {
             const today = new Date();
             const yearAgo = new Date(today);
             yearAgo.setDate(today.getDate() - 365);
-            
+
             const startDate = this.getLocalDateString(yearAgo);
             const endDate = this.getLocalDateString(today);
 
@@ -116,6 +116,12 @@ class Statistics {
             let reviewStats = [];
             if (!(window.testModeDetector && window.testModeDetector.isTestingMode())) {
                 reviewStats = await window.supabaseService.getReviewStats(startDate, endDate);
+            }
+
+            // Fallback to local storage if database is unavailable (test mode or offline)
+            if (reviewStats.length === 0) {
+                reviewStats = this.getLocalReviewStats(startDate, endDate);
+                console.log(`📊 Using local review stats for streak calculation: ${reviewStats.length} entries`);
             }
             
             // Create a set of complete study days (where all due cards were studied)

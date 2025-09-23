@@ -43,28 +43,6 @@ class TestDataManager {
                         due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // Due in 2 days
                         isNew: false
                     },
-                    {
-                        id: 'test-card-ger-004',
-                        front: 'Good morning',
-                        back: 'Guten Morgen',
-                        ease: 2.3,
-                        interval: 1,
-                        reps: 1,
-                        lapses: 1,
-                        due_date: new Date(Date.now()).toISOString(), // Due today
-                        isNew: false
-                    },
-                    {
-                        id: 'test-card-ger-005',
-                        front: 'Goodbye',
-                        back: 'Auf Wiedersehen',
-                        ease: 2.5,
-                        interval: 1,
-                        reps: 0,
-                        lapses: 0,
-                        due_date: null,
-                        isNew: true
-                    }
                 ]
             },
             {
@@ -169,6 +147,10 @@ class TestDataManager {
 
     getReviewStats() {
         return JSON.parse(JSON.stringify(this.testReviewStats));
+    }
+
+    updateReviewStats(reviewStats) {
+        this.testReviewStats = JSON.parse(JSON.stringify(reviewStats));
     }
 
     // Update test data in memory (for testing CRUD operations)

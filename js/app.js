@@ -849,12 +849,12 @@ class FlashcardApp {
             if (window.testModeDetector && window.testModeDetector.isTestingMode()) {
                 if (window.testDataManager) {
                     const stats = window.testDataManager.getReviewStats();
-                    const dateStr = date.toString();
+                    const dateStr = date; // Keep the original date format (YYYY-MM-DD)
 
                     // Find or create entry for this date
                     let dayStats = stats.find(s => s.date === dateStr);
                     if (!dayStats) {
-                        dayStats = { date: dateStr, cardsReviewed: 0, correctAnswers: 0 };
+                        dayStats = { date: dateStr, cardsReviewed: 0, correctAnswers: 0, allDueCompleted: null };
                         stats.push(dayStats);
                     }
 
@@ -865,6 +865,15 @@ class FlashcardApp {
                             dayStats.correctAnswers++;
                         }
                     }
+
+                    // Update all_due_completed if provided
+                    if (allDueCompleted !== null) {
+                        dayStats.allDueCompleted = allDueCompleted;
+                        console.log(`🧪 Test review stats: allDueCompleted set to ${allDueCompleted} for ${dateStr}`);
+                    }
+
+                    // Update the test data manager with modified stats
+                    window.testDataManager.updateReviewStats(stats);
 
                     console.log('🧪 Test review stats updated');
                 }
@@ -1154,24 +1163,14 @@ class FlashcardApp {
             }
             this.storeLocalReviewStat(today, null, allDueCompleted);
             
-            // Only update streaks for "Study All Cards" sessions, not individual deck study
+            // Update basic study stats (streak is calculated by statistics.js from review data)
             const stats = storage.loadStats();
-            const todayDateString = new Date().toDateString();
-            const lastStudyDate = stats.lastStudyDate ? new Date(stats.lastStudyDate).toDateString() : null;
-            
-            let newStreak = stats.streak;
-            if (lastStudyDate === todayDateString) {
-                // Already studied today, don't change streak
-            } else if (lastStudyDate === new Date(Date.now() - 86400000).toDateString()) {
-                // Studied yesterday, increment streak
-                newStreak++;
-            } else if (lastStudyDate === null || lastStudyDate !== todayDateString) {
-                // First time or broke streak, start new streak
-                newStreak = 1;
-            }
+            const todayDateString = this.getLocalDateString();
+            const lastStudyDate = stats.lastStudyDate ? this.getLocalDateString(new Date(stats.lastStudyDate)) : null;
+
+            console.log(`📊 Study session completed. AllDueCompleted: ${allDueCompleted}`);
             
             storage.updateStats({
-                streak: newStreak,
                 cardsStudiedToday: (lastStudyDate === todayDateString ? stats.cardsStudiedToday : 0) + this.studySession.cardsStudied,
                 lastStudyDate: new Date().toISOString()
             });
@@ -1188,7 +1187,17 @@ class FlashcardApp {
                 console.log('❌ No confetti - not all study session cards completed');
             }
             
-            alert(`${window.i18n.translate('alerts.study_complete')}\n\n${window.i18n.translate('alerts.cards_studied')}: ${this.studySession.cardsStudied}\n${window.i18n.translate('alerts.current_streak')}: ${newStreak} ${window.i18n.translate('alerts.days')}\n${window.i18n.translate('alerts.all_due_completed')}: ${allDueCompleted ? window.i18n.translate('alerts.all_due_completed_yes') : window.i18n.translate('alerts.all_due_completed_no')}`);
+            // Get current streak from statistics system
+            let currentStreak = 0;
+            if (window.statistics) {
+                try {
+                    currentStreak = await window.statistics.calculateStreak();
+                } catch (error) {
+                    console.log('Could not get current streak:', error);
+                }
+            }
+
+            alert(`${window.i18n.translate('alerts.study_complete')}\n\n${window.i18n.translate('alerts.cards_studied')}: ${this.studySession.cardsStudied}\n${window.i18n.translate('alerts.current_streak')}: ${currentStreak} ${window.i18n.translate('alerts.days')}\n${window.i18n.translate('alerts.all_due_completed')}: ${allDueCompleted ? window.i18n.translate('alerts.all_due_completed_yes') : window.i18n.translate('alerts.all_due_completed_no')}`);
 
             // Return to overview screen for "Study All Cards" sessions
             this.showView('overview');
@@ -2195,8 +2204,10 @@ class FlashcardApp {
                 });
             });
 
-            // All due cards completed if we have due cards and all are completed
-            const allCompleted = totalDueCards > 0 && completedDueCards >= totalDueCards;
+            // All due cards completed if:
+            // 1. There are no due cards (0 total = all completed by definition), OR
+            // 2. There are due cards and all of them are completed
+            const allCompleted = totalDueCards === 0 || completedDueCards >= totalDueCards;
             console.log(`Due cards check: ${completedDueCards}/${totalDueCards} completed, all due completed: ${allCompleted}`);
 
             return allCompleted;
