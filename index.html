@@ -157,6 +157,23 @@
                     </div>
                 </div>
 
+                <div class="settings-section">
+                    <h3 data-i18n="settings.testing">Testing</h3>
+                    <div class="setting-row">
+                        <span data-i18n="settings.testing_mode">Test Mode</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="testing-toggle">
+                            <span class="slider"></span>
+                            <span class="toggle-labels">
+                                <span data-i18n="settings.off">OFF</span>
+                                <span data-i18n="settings.on">ON</span>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="setting-description">
+                        <small data-i18n="settings.testing_description">Demo mode with sample data. Your real data stays safe and untouched.</small>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -462,8 +479,10 @@
         </div>
     </div>
 
-    <script src="js/lib/supabase.min.js"></script>
-    <script src="js/lib/confetti.min.js"></script>
+    <script src="js/vendor/supabase.js"></script>
+    <script src="js/vendor/confetti.min.js"></script>
+    <script src="js/test-mode-detector.js"></script>
+    <script src="js/test-data.js"></script>
     <script src="js/supabase-client.js?v=20250826b"></script>
     <script src="js/storage.js?v=20250826a"></script>
     <script src="js/spaced-repetition.js?v=20250820c"></script>
