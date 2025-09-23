@@ -2695,3 +2695,51 @@ nav::-webkit-scrollbar {
         font-size: 1rem;
     }
 }
+
+/* Text fields in verb-form structure need proper sizing and responsiveness */
+.verb-form textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+.verb-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-border-light);
+}
+
+/* Override verb-form layout for text fields to be full width */
+.verb-form:has(textarea) {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.verb-form:has(textarea) label {
+    margin-bottom: 0.5rem;
+    text-align: left;
+    min-width: unset;
+}
+
+/* Responsive adjustments for text fields */
+@media (max-width: 768px) {
+    .verb-form textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 0.75rem;
+    }
+
+    .verb-forms-display {
+        padding: 1rem;
+    }
+}

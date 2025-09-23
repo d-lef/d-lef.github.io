@@ -268,24 +268,21 @@
 
         <!-- Card Creation Form View -->
         <div id="card-form-view" class="view">
-            <div class="card-form-header">
-                <button id="back-to-card-type" class="back-btn">← <span data-i18n="actions.back">Back</span></button>
-                <h2 id="card-form-title" data-i18n="modal.create_card">Create New Card</h2>
-            </div>
-            
-            <div class="card-form-container">
-                <div class="card-form-content">
-                    <div class="card-form">
+            <div class="verb-preview-container">
+                <button id="back-to-card-type" class="back-btn edit-card-back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <div class="verb-forms-display">
+                    <div class="verb-form">
                         <label for="card-form-back-input" data-i18n="modal.back">Back:</label>
                         <textarea id="card-form-back-input" data-i18n-placeholder="modal.back_placeholder" placeholder="Enter back side text" rows="3" autocapitalize="none"></textarea>
-                        
+                    </div>
+                    <div class="verb-form">
                         <label for="card-form-front-input" data-i18n="modal.front">Front:</label>
                         <textarea id="card-form-front-input" data-i18n-placeholder="modal.front_placeholder" placeholder="Enter front side text" rows="3" autocapitalize="none"></textarea>
                     </div>
-                    
-                    <div class="card-form-actions">
-                        <button id="save-new-card" class="primary-btn large-btn" data-i18n="actions.create">Create Card</button>
-                    </div>
+                </div>
+
+                <div class="preview-actions">
+                    <button id="save-new-card" class="primary-btn large-btn" data-i18n="actions.create">Create Card</button>
                 </div>
             </div>
         </div>
