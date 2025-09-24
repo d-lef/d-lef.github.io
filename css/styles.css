@@ -32,11 +32,11 @@
     --green-color: #4caf50;
     --green-border: #388e3c;
     --green-dark: #2e7d32;
-    --primary-alpha-light: var(--primary-alpha-light);
-    --primary-alpha-medium: var(--primary-alpha-medium);
-    --primary-alpha-strong: var(--primary-alpha-strong);
-    --primary-alpha-hover: var(--primary-alpha-hover);
-    --primary-border-light: var(--primary-border-light);
+    --primary-alpha-light: rgba(66, 133, 244, 0.1);
+    --primary-alpha-medium: rgba(66, 133, 244, 0.2);
+    --primary-alpha-strong: rgba(66, 133, 244, 0.3);
+    --primary-alpha-hover: rgba(66, 133, 244, 0.05);
+    --primary-border-light: rgba(66, 133, 244, 0.3);
     --primary-border-medium: rgba(66, 133, 244, 0.5);
     --primary-border-strong: rgba(66, 133, 244, 0.8);
     --gray-light: #ddd;
@@ -655,6 +655,12 @@ nav::-webkit-scrollbar {
 }
 
 /* Settings */
+.settings-scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .settings-container {
     max-width: 800px;
     margin: 0 auto;
@@ -683,11 +689,15 @@ nav::-webkit-scrollbar {
     padding-bottom: 0.5rem;
 }
 
-.setting-description p {
+.setting-description {
     color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.4;
     margin: 0;
+}
+
+.setting-description small {
+    color: var(--text-secondary);
 }
 
 .clickable-setting {
@@ -695,12 +705,23 @@ nav::-webkit-scrollbar {
     user-select: none;
     transition: all 0.2s ease;
     border-radius: 6px;
-    padding: 0.25rem 0.5rem;
-    margin: -0.25rem -0.5rem;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    -webkit-tap-highlight-color: var(--primary-alpha-light);
+    touch-action: manipulation;
+    display: inline-block;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
 }
 
 .clickable-setting:hover {
     /* No visual change on hover */
+}
+
+.clickable-setting:active {
+    background-color: var(--primary-alpha-light);
 }
 
 .game-rules-content {
@@ -722,7 +743,7 @@ nav::-webkit-scrollbar {
     max-width: 800px;
     margin: 0 auto;
     padding: 1rem;
-    background: white;
+    background: transparent;
     min-height: 100vh;
 }
 

@@ -130,69 +130,71 @@
 
         <!-- Settings View -->
         <div id="settings-view" class="view">
-            <div class="settings-container">
-                <div class="settings-section">
-                    <h3 data-i18n="settings.appearance">Appearance</h3>
-                    <div class="setting-row">
-                        <span data-i18n="settings.theme">Theme</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="theme-toggle">
-                            <span class="slider"></span>
-                            <span class="toggle-labels">
-                                <span data-i18n="settings.light">Light</span>
-                                <span data-i18n="settings.dark">Dark</span>
-                            </span>
-                        </label>
+            <div class="settings-scroll-container">
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3 data-i18n="settings.appearance">Appearance</h3>
+                        <div class="setting-row">
+                            <span data-i18n="settings.theme">Theme</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="theme-toggle">
+                                <span class="slider"></span>
+                                <span class="toggle-labels">
+                                    <span data-i18n="settings.light">Light</span>
+                                    <span data-i18n="settings.dark">Dark</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span data-i18n="settings.language">Language</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="lang-toggle">
+                                <span class="slider"></span>
+                                <span class="toggle-labels">
+                                    <span>EN</span>
+                                    <span>RU</span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="setting-row">
-                        <span data-i18n="settings.language">Language</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="lang-toggle">
-                            <span class="slider"></span>
-                            <span class="toggle-labels">
-                                <span>EN</span>
-                                <span>RU</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
 
-                <div class="settings-section">
-                    <h3 data-i18n="settings.testing">Testing</h3>
-                    <div class="setting-row">
-                        <span data-i18n="settings.testing_mode">Test Mode</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="testing-toggle">
-                            <span class="slider"></span>
-                            <span class="toggle-labels">
-                                <span data-i18n="settings.off">OFF</span>
-                                <span data-i18n="settings.on">ON</span>
-                            </span>
-                        </label>
+                    <div class="settings-section">
+                        <h3 data-i18n="settings.testing">Testing</h3>
+                        <div class="setting-row">
+                            <span data-i18n="settings.testing_mode">Test Mode</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="testing-toggle">
+                                <span class="slider"></span>
+                                <span class="toggle-labels">
+                                    <span data-i18n="settings.off">OFF</span>
+                                    <span data-i18n="settings.on">ON</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="setting-description">
+                            <small data-i18n="settings.testing_description">Demo mode with sample data. Your real data stays safe and untouched.</small>
+                        </div>
                     </div>
-                    <div class="setting-description">
-                        <small data-i18n="settings.testing_description">Demo mode with sample data. Your real data stays safe and untouched.</small>
-                    </div>
-                </div>
 
-                <div class="settings-section">
-                    <h3 data-i18n="settings.gamification">Gamification</h3>
-                    <div class="setting-row">
-                        <span data-i18n="settings.spaceship" class="clickable-setting" id="spaceship-name">Spaceship Game</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="star-race-toggle">
-                            <span class="slider"></span>
-                            <span class="toggle-labels">
-                                <span data-i18n="settings.off">OFF</span>
-                                <span data-i18n="settings.on">ON</span>
-                            </span>
-                        </label>
+                    <div class="settings-section">
+                        <h3 data-i18n="settings.gamification">Gamification</h3>
+                        <div class="setting-row">
+                            <span data-i18n="settings.spaceship" class="clickable-setting" id="spaceship-name">Spaceship Game</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="star-race-toggle">
+                                <span class="slider"></span>
+                                <span class="toggle-labels">
+                                    <span data-i18n="settings.off">OFF</span>
+                                    <span data-i18n="settings.on">ON</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="setting-description">
+                            <small data-i18n="settings.spaceship_description" class="clickable-setting" id="spaceship-description">Space-themed mini-game. Tap here to see the rules.</small>
+                        </div>
                     </div>
-                    <div class="setting-description">
-                        <small data-i18n="settings.spaceship_description" class="clickable-setting" id="spaceship-description">Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!</small>
-                    </div>
-                </div>
 
+                </div>
             </div>
         </div>
 

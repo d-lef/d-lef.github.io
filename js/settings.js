@@ -124,10 +124,18 @@ class Settings {
             spaceshipName.addEventListener('click', () => {
                 this.showGameRules();
             });
+            spaceshipName.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.showGameRules();
+            });
         }
 
         if (spaceshipDescription) {
             spaceshipDescription.addEventListener('click', () => {
+                this.showGameRules();
+            });
+            spaceshipDescription.addEventListener('touchend', (e) => {
+                e.preventDefault();
                 this.showGameRules();
             });
         }

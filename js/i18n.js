@@ -60,7 +60,7 @@ class I18n {
                 'settings.sm2_retention_desc': 'Reviews happen just before you\'re likely to forget, maximizing retention with minimal effort.',
                 'settings.gamification': 'Gamification',
                 'settings.spaceship': 'Spaceship Game',
-                'settings.spaceship_description': 'Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!',
+                'settings.spaceship_description': 'Space-themed mini-game. Tap here to see the rules.',
 
                 // Spaceship Game
                 'game.victory': '🌟 Victory!',
@@ -277,7 +277,7 @@ class I18n {
                 'settings.sm2_retention_desc': 'Повторения происходят как раз перед тем, как вы забудете, максимизируя запоминание при минимальных усилиях.',
                 'settings.gamification': 'Геймификация',
                 'settings.spaceship': 'Космический корабль',
-                'settings.spaceship_description': 'Космическая мини-игра, которая появляется во время изучения. Собирайте звёзды, отвечая правильно!',
+                'settings.spaceship_description': 'Космическая мини-игра. Нажмите здесь, чтобы увидеть правила.',
 
                 // Spaceship Game
                 'game.victory': '🌟 Победа!',
