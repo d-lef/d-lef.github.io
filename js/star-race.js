@@ -22,7 +22,8 @@ class StarRaceGame {
             missiles: [],
             starsEarned: 0,
             gameComplete: false,
-            lastAnswerSpawnTime: 0
+            lastAnswerSpawnTime: 0,
+            lastCollisionTime: 0
         };
 
         this.canvas = null;
@@ -131,6 +132,7 @@ class StarRaceGame {
         this.gameState.starsEarned = 0; // Explicitly reset to 0
         this.gameState.gameComplete = false;
         this.gameState.lastAnswerSpawnTime = 0;
+        this.gameState.lastCollisionTime = 0;
 
         console.log(`🌟 DEBUG: Game state reset - starsEarned: ${this.gameState.starsEarned}`);
     }
@@ -317,6 +319,16 @@ class StarRaceGame {
             // Check collision with spaceship
             const spaceship = this.gameState.spaceship;
             if (this.checkCollision(spaceship, answer)) {
+                // Prevent rapid successive collisions
+                const now = Date.now();
+                if (now - this.gameState.lastCollisionTime < 200) { // 200ms cooldown
+                    continue; // Skip this collision
+                }
+
+                // Remove the answer immediately to prevent multiple collisions
+                this.gameState.answers.splice(i, 1);
+                this.gameState.lastCollisionTime = now;
+                console.log(`🌟 DEBUG: Collision detected with "${answer.text}" (correct: ${answer.isCorrect})`);
                 this.handleAnswerCollision(answer);
                 return;
             }
