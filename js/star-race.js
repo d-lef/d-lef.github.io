@@ -115,24 +115,24 @@ class StarRaceGame {
     }
 
     resetGameState() {
-        this.gameState = {
-            ...this.gameState,
-            correctAnswers: 0,
-            gameSpeed: 2,
-            spaceship: {
-                x: 80,
-                y: 0,
-                trackIndex: 2,
-                width: 40,
-                height: 20
-            },
-            stars: [],
-            answers: [],
-            missiles: [],
-            starsEarned: 0,
-            gameComplete: false,
-            lastAnswerSpawnTime: 0
+        // Don't use spread operator to avoid preserving old state values
+        this.gameState.correctAnswers = 0;
+        this.gameState.gameSpeed = 2;
+        this.gameState.spaceship = {
+            x: 80,
+            y: 0,
+            trackIndex: 2,
+            width: 40,
+            height: 20
         };
+        this.gameState.stars = [];
+        this.gameState.answers = [];
+        this.gameState.missiles = [];
+        this.gameState.starsEarned = 0; // Explicitly reset to 0
+        this.gameState.gameComplete = false;
+        this.gameState.lastAnswerSpawnTime = 0;
+
+        console.log(`🌟 DEBUG: Game state reset - starsEarned: ${this.gameState.starsEarned}`);
     }
 
     initializeGame() {
@@ -145,6 +145,7 @@ class StarRaceGame {
 
         // Update stars counter
         this.updateStarsCounter();
+        console.log(`🌟 DEBUG: Game initialized - starsEarned: ${this.gameState.starsEarned}`);
 
         // Initialize canvas
         this.resizeCanvas();
@@ -222,19 +223,49 @@ class StarRaceGame {
             }
         }
 
-        // Create more answers per spawn (4-6 instead of 3)
-        const allOptions = [correctAnswer, ...distractors, ...distractors.slice(0, 2)].sort(() => 0.5 - Math.random());
-        const availableTracks = Array.from(Array(this.trackCount).keys()).sort(() => 0.5 - Math.random());
+        // Create answers (3-4 per spawn to avoid overcrowding)
+        const allOptions = [correctAnswer, ...distractors.slice(0, 2)].sort(() => 0.5 - Math.random());
 
-        allOptions.forEach((text, index) => {
+        // Find available tracks (tracks without recent strings)
+        const availableTracks = this.findAvailableTracks();
+
+        // Only spawn as many strings as we have available tracks
+        const maxSpawn = Math.min(allOptions.length, availableTracks.length);
+
+        for (let i = 0; i < maxSpawn; i++) {
             this.gameState.answers.push({
-                text,
-                x: this.canvas.width + index * (this.canvas.width / 3), // Closer spacing
-                trackIndex: availableTracks[index % availableTracks.length],
-                isCorrect: text === correctAnswer,
+                text: allOptions[i],
+                x: this.canvas.width + 50 + i * (this.canvas.width / 2), // Better horizontal spacing
+                trackIndex: availableTracks[i], // Use unique tracks
+                isCorrect: allOptions[i] === correctAnswer,
                 width: 0 // Will be calculated during render
             });
-        });
+        }
+    }
+
+    findAvailableTracks() {
+        // Find tracks that don't have strings too close to the spawn area
+        const availableTracks = [];
+        const spawnZone = this.canvas.width * 0.8; // Consider right 80% of screen as spawn zone
+
+        for (let trackIndex = 0; trackIndex < this.trackCount; trackIndex++) {
+            // Check if this track has any strings in the spawn zone
+            const hasStringsInTrack = this.gameState.answers.some(answer =>
+                answer.trackIndex === trackIndex && answer.x > spawnZone
+            );
+
+            if (!hasStringsInTrack) {
+                availableTracks.push(trackIndex);
+            }
+        }
+
+        // If no tracks are available, use all tracks (fallback)
+        if (availableTracks.length === 0) {
+            return Array.from(Array(this.trackCount).keys()).sort(() => 0.5 - Math.random());
+        }
+
+        // Shuffle available tracks for randomness
+        return availableTracks.sort(() => 0.5 - Math.random());
     }
 
     moveSpaceship(direction) {
@@ -356,12 +387,15 @@ class StarRaceGame {
         this.gameState.gameSpeed += 0.3; // Increase speed
         this.updateStarsCounter();
 
+        console.log(`🌟 DEBUG: Correct answer hit! starsEarned: ${this.gameState.starsEarned}, correctAnswers: ${this.gameState.correctAnswers}`);
 
         if (this.gameState.starsEarned >= 5) {
+            console.log(`🌟 DEBUG: Victory condition met! starsEarned: ${this.gameState.starsEarned} >= 5`);
             this.showResult('🌟 Victory!', `You collected ${this.gameState.starsEarned} stars! Excellent work!`, () => {
                 this.completeGame('Good');
             });
         } else {
+            console.log(`🌟 DEBUG: Game continues... need ${5 - this.gameState.starsEarned} more stars`);
             // Continue game with increased difficulty
             this.spawnAnswers();
         }
@@ -376,6 +410,9 @@ class StarRaceGame {
     updateStarsCounter() {
         if (this.starsCounter) {
             this.starsCounter.textContent = this.gameState.starsEarned;
+            console.log(`🌟 DEBUG: UI updated - stars counter shows: ${this.gameState.starsEarned}`);
+        } else {
+            console.log(`🌟 DEBUG: starsCounter element not found!`);
         }
     }
 
