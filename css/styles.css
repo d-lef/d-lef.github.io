@@ -2841,14 +2841,16 @@ nav::-webkit-scrollbar {
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
-    padding: 1rem 1.5rem;
+    padding: 1.5rem 1.5rem;
     background: rgba(0, 0, 0, 0.9);
     border-top: 2px solid #333;
     position: relative;
     z-index: 1002;
     flex-shrink: 0;
-    /* Add safe area padding only at bottom to avoid iPhone home indicator */
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    /* Increase bottom padding significantly to avoid iPhone home indicator */
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+    /* Also add margin-bottom to push controls higher */
+    margin-bottom: env(safe-area-inset-bottom, 20px);
 }
 
 .game-control-btn {
@@ -2942,9 +2944,10 @@ nav::-webkit-scrollbar {
     }
 
     .game-controls {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         gap: 1rem;
-        padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+        margin-bottom: env(safe-area-inset-bottom, 25px);
     }
 
     .game-control-btn {
