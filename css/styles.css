@@ -200,8 +200,7 @@ header {
     /* Extend header to cover iOS safe areas and prevent blue background showing */
     padding-top: max(1rem, env(safe-area-inset-top));
     margin-top: calc(-1 * env(safe-area-inset-top));
-    /* Ensure header extends beyond viewport on over-scroll */
-    position: relative;
+    /* Keep sticky positioning to prevent scrolling on iOS */
 }
 
 header::before {
@@ -664,6 +663,7 @@ nav::-webkit-scrollbar {
 .settings-container {
     max-width: 800px;
     margin: 0 auto;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom) + 1rem); /* Add bottom padding to prevent content from touching edge */
 }
 
 .settings-container h2 {
@@ -743,6 +743,7 @@ nav::-webkit-scrollbar {
     max-width: 800px;
     margin: 0 auto;
     padding: 1rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom) + 1rem); /* Add bottom padding to prevent text from touching edge, accounting for iPhone home indicator */
     background: transparent;
     min-height: 100vh;
 }
