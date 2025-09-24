@@ -178,7 +178,7 @@
                 <div class="settings-section">
                     <h3 data-i18n="settings.gamification">Gamification</h3>
                     <div class="setting-row">
-                        <span data-i18n="settings.star_race">Star Race Game</span>
+                        <span data-i18n="settings.spaceship" class="clickable-setting" id="spaceship-name">Spaceship Game</span>
                         <label class="toggle">
                             <input type="checkbox" id="star-race-toggle">
                             <span class="slider"></span>
@@ -189,7 +189,7 @@
                         </label>
                     </div>
                     <div class="setting-description">
-                        <small data-i18n="settings.star_race_description">Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!</small>
+                        <small data-i18n="settings.spaceship_description" class="clickable-setting" id="spaceship-description">Space-themed mini-game that appears during study sessions. Collect stars by answering correctly!</small>
                     </div>
                 </div>
 
@@ -434,8 +434,26 @@
                     <button id="new-supercard-btn" class="deck-action-btn primary-btn" data-i18n="actions.new_supercard">New Supercard</button>
                 </div>
             </div>
-            
+
             <div id="cards-list" class="cards-list"></div>
+        </div>
+
+        <!-- Game Rules View -->
+        <div id="game-rules-view" class="view">
+            <div class="game-rules-container">
+                <button id="back-from-game-rules" class="back-btn edit-card-back-btn">← <span data-i18n="actions.back">Back</span></button>
+                <div class="game-rules-header">
+                    <h2 data-i18n="game.rules_title">Spaceship Game Rules</h2>
+                </div>
+                <div class="game-rules-content">
+                    <p data-i18n="game.rule_1">Control your spaceship with the up/down buttons and fire with the rocket button.</p>
+                    <p data-i18n="game.rule_2">When you shoot the correct answer, you earn a star and the card is marked with Good difficulty in the spaced repetition system.</p>
+                    <p data-i18n="game.rule_3">When you shoot an incorrect answer, no star is earned and the card is marked with Hard difficulty, meaning it will appear more frequently for review.</p>
+                    <p data-i18n="game.rule_4">When you bump into the correct answer with your spaceship, you earn a star and the card is marked with Easy difficulty in the spaced repetition system.</p>
+                    <p data-i18n="game.rule_5">When you bump into an incorrect answer with your spaceship, no star is earned and the card is marked with Again difficulty, meaning it will be shown immediately for re-study.</p>
+                    <p data-i18n="game.rule_6">The game integrates with the spaced repetition algorithm to optimize your learning schedule based on your performance.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -527,6 +545,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="js/vendor/supabase.js"></script>
     <script src="js/vendor/confetti.min.js"></script>

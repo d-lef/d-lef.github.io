@@ -690,6 +690,70 @@ nav::-webkit-scrollbar {
     margin: 0;
 }
 
+.clickable-setting {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    margin: -0.25rem -0.5rem;
+}
+
+.clickable-setting:hover {
+    /* No visual change on hover */
+}
+
+.game-rules-content {
+    margin: 1.5rem 0;
+}
+
+.game-rules-content p {
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.game-rules-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Game Rules View */
+.game-rules-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: white;
+    min-height: 100vh;
+}
+
+.game-rules-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.game-rules-header h2 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+#game-rules-view .game-rules-content {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+#game-rules-view .game-rules-content p {
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+#game-rules-view .game-rules-content p:last-child {
+    margin-bottom: 0;
+}
+
 .sm2-explanation {
     display: grid;
     gap: 1.5rem;

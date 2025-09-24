@@ -114,6 +114,29 @@ class Settings {
                 this.setStarRaceGame(e.target.checked);
             });
         }
+
+        // Game rules navigation
+        const spaceshipName = document.getElementById('spaceship-name');
+        const spaceshipDescription = document.getElementById('spaceship-description');
+        const backFromGameRules = document.getElementById('back-from-game-rules');
+
+        if (spaceshipName) {
+            spaceshipName.addEventListener('click', () => {
+                this.showGameRules();
+            });
+        }
+
+        if (spaceshipDescription) {
+            spaceshipDescription.addEventListener('click', () => {
+                this.showGameRules();
+            });
+        }
+
+        if (backFromGameRules) {
+            backFromGameRules.addEventListener('click', () => {
+                this.hideGameRules();
+            });
+        }
     }
     
     setTheme(theme) {
@@ -252,6 +275,18 @@ class Settings {
     
     getAllSettings() {
         return { ...this.settings };
+    }
+
+    showGameRules() {
+        if (window.app) {
+            window.app.showView('game-rules');
+        }
+    }
+
+    hideGameRules() {
+        if (window.app) {
+            window.app.showView('settings');
+        }
     }
 
     // MEMORY LEAK PREVENTION: Cleanup method to clear all timeouts
