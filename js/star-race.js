@@ -90,13 +90,18 @@ class StarRaceGame {
         });
     }
 
-    startGame(card, onComplete, onExit, getDistractors = null) {
+    startGame(cards, onComplete, onExit, getDistractors = null, onCardMarked = null) {
         if (this.isActive) return false;
 
-        this.gameState.currentCard = card;
+        // Store array of cards for the game
+        this.gameCards = Array.isArray(cards) ? cards : [cards];
+        this.currentCardIndex = 0;
+        this.gameState.currentCard = this.gameCards[0];
+
         this.onGameComplete = onComplete;
         this.onGameExit = onExit;
         this.getDistractors = getDistractors;
+        this.onCardMarked = onCardMarked;
 
         // Reset game state
         this.resetGameState();
@@ -243,6 +248,34 @@ class StarRaceGame {
                 width: 0 // Will be calculated during render
             });
         }
+    }
+
+    advanceToNextCard() {
+        this.currentCardIndex++;
+
+        if (this.currentCardIndex >= this.gameCards.length) {
+            // No more cards - end game successfully
+            console.log('🌟 DEBUG: No more cards available, ending game');
+            this.showResult('🌟 Game Complete!', `You completed the Star Race with ${this.gameState.starsEarned} stars!`, () => {
+                this.completeGame('Good');
+            });
+            return false;
+        }
+
+        // Update to next card
+        this.gameState.currentCard = this.gameCards[this.currentCardIndex];
+
+        // Update question display
+        if (this.questionText) {
+            this.questionText.textContent = this.gameState.currentCard.front;
+        }
+
+        console.log(`🌟 DEBUG: Advanced to card ${this.currentCardIndex + 1}/${this.gameCards.length}: "${this.gameState.currentCard.front}"`);
+
+        // Spawn new answers for the new card
+        this.spawnAnswers();
+
+        return true;
     }
 
     findAvailableTracks() {
@@ -401,6 +434,9 @@ class StarRaceGame {
 
         console.log(`🌟 DEBUG: Correct answer hit! starsEarned: ${this.gameState.starsEarned}, correctAnswers: ${this.gameState.correctAnswers}`);
 
+        // Mark current card as "Good" in spaced repetition system
+        this.markCurrentCard('Good');
+
         if (this.gameState.starsEarned >= 5) {
             console.log(`🌟 DEBUG: Victory condition met! starsEarned: ${this.gameState.starsEarned} >= 5`);
             this.showResult('🌟 Victory!', `You collected ${this.gameState.starsEarned} stars! Excellent work!`, () => {
@@ -408,15 +444,28 @@ class StarRaceGame {
             });
         } else {
             console.log(`🌟 DEBUG: Game continues... need ${5 - this.gameState.starsEarned} more stars`);
-            // Continue game with increased difficulty
-            this.spawnAnswers();
+            // Advance to next card
+            this.advanceToNextCard();
         }
     }
 
     handleIncorrectAnswer() {
+        // Mark current card as "Hard" in spaced repetition system
+        this.markCurrentCard('Hard');
+
         this.showResult('❌ Wrong Answer', `The correct answer was: "${this.gameState.currentCard.back}"`, () => {
             this.completeGame('Hard');
         });
+    }
+
+    markCurrentCard(difficulty) {
+        // This method handles the spaced repetition system integration
+        // It should be called by the main app through a callback
+        if (this.onCardMarked && typeof this.onCardMarked === 'function') {
+            this.onCardMarked(this.gameState.currentCard, difficulty);
+        } else {
+            console.warn('🌟 No onCardMarked callback provided - card not marked in SRS');
+        }
     }
 
     updateStarsCounter() {

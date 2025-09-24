@@ -2620,17 +2620,20 @@ class FlashcardApp {
     startStarRaceGame() {
         console.log('🌟 Starting Star Race game!');
 
-        // Get the current card for the game
-        const currentCard = this.studyMode === 'combined'
-            ? this.combinedPairs[this.currentCardIndex].card
-            : this.currentStudyCards[this.currentCardIndex];
+        // Get remaining cards for the game (up to 5 cards for the game)
+        const remainingCards = this.studyMode === 'combined'
+            ? this.combinedPairs.slice(this.currentCardIndex, this.currentCardIndex + 5).map(pair => pair.card)
+            : this.currentStudyCards.slice(this.currentCardIndex, this.currentCardIndex + 5);
+
+        console.log(`🌟 Starting Star Race with ${remainingCards.length} cards`);
 
         // Start the game
         window.starRaceGame.startGame(
-            currentCard,
+            remainingCards,
             (card, difficulty, starsEarned) => this.onStarRaceComplete(card, difficulty, starsEarned),
             () => this.onStarRaceExit(),
-            (currentFront) => this.getStarRaceDistractors(currentFront)
+            (currentFront) => this.getStarRaceDistractors(currentFront),
+            (card, difficulty) => this.markCardInStarRace(card, difficulty)
         );
     }
 
@@ -2641,11 +2644,36 @@ class FlashcardApp {
         this.cardsStudiedSinceLastGame = 0;
         this.hasPlayedStarRaceGame = true;
 
-        // Update the card with the difficulty from the game
-        this.handleStarRaceResult(card, difficulty);
+        // Skip the cards that were processed in the game
+        // The game will have marked each card as it was answered
+        const cardsProcessedInGame = window.starRaceGame.currentCardIndex || 0;
+        this.currentCardIndex += cardsProcessedInGame;
+
+        console.log(`🌟 Skipping ${cardsProcessedInGame} cards processed in Star Race`);
 
         // Continue to next card
         this.continueAfterStarRace();
+    }
+
+    async markCardInStarRace(card, difficulty) {
+        try {
+            console.log(`🌟 Marking card in Star Race: "${card.front}" as ${difficulty}`);
+
+            // Update card with spaced repetition
+            const updatedCard = spacedRepetition.updateCardAfterReview(card, difficulty);
+            await this.updateCardInStorage(updatedCard);
+
+            // Track review stats
+            await this.trackReviewStat(difficulty, updatedCard.id);
+
+            // Increment cards studied counter
+            this.cardsStudiedToday++;
+            this.cardsStudiedSinceLastGame++;
+
+            console.log(`🌟 Card marked successfully in Star Race`);
+        } catch (error) {
+            console.error('Error marking card in Star Race:', error);
+        }
     }
 
     onStarRaceExit() {
