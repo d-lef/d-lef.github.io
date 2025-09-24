@@ -265,12 +265,19 @@ class StarRaceGame {
         // Update to next card
         this.gameState.currentCard = this.gameCards[this.currentCardIndex];
 
+        // CRITICAL FIX: Update existing answers' isCorrect status for the new card
+        const newCorrectAnswer = this.gameState.currentCard.back;
+        this.gameState.answers.forEach(answer => {
+            answer.isCorrect = (answer.text === newCorrectAnswer);
+        });
+
         // Update question display
         if (this.questionText) {
             this.questionText.textContent = this.gameState.currentCard.front;
         }
 
         console.log(`🌟 DEBUG: Advanced to card ${this.currentCardIndex + 1}/${this.gameCards.length}: "${this.gameState.currentCard.front}"`);
+        console.log(`🌟 DEBUG: Updated ${this.gameState.answers.length} existing answers for new correct answer: "${newCorrectAnswer}"`);
 
         // Spawn new answers for the new card
         this.spawnAnswers();
