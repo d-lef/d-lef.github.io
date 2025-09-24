@@ -75,10 +75,10 @@ class I18n {
                 'game.wrong_answer_fallback_2': 'Wrong Answer 2',
                 'game.rules_title': 'Spaceship Game Rules',
                 'game.rule_1': 'Control your spaceship with the up/down buttons and fire with the rocket button.',
-                'game.rule_2': 'When you shoot the correct answer, you earn a star and the card is marked with Good difficulty in the spaced repetition system.',
-                'game.rule_3': 'When you shoot an incorrect answer, no star is earned and the card is marked with Hard difficulty, meaning it will appear more frequently for review.',
-                'game.rule_4': 'When you bump into the correct answer with your spaceship, you earn a star and the card is marked with Easy difficulty in the spaced repetition system.',
-                'game.rule_5': 'When you bump into an incorrect answer with your spaceship, no star is earned and the card is marked with Again difficulty, meaning it will be shown immediately for re-study.',
+                'game.rule_2': 'When you shoot the correct answer, you destroy it and the card is marked with Hard difficulty, meaning it will appear more frequently for review.',
+                'game.rule_3': 'When you shoot an incorrect answer, the game continues without penalty.',
+                'game.rule_4': 'When you bump into the correct answer with your spaceship, you earn a star and the card is marked with Good difficulty in the spaced repetition system.',
+                'game.rule_5': 'When you bump into an incorrect answer with your spaceship, no star is earned and the card is marked with Hard difficulty, meaning it will appear more frequently for review.',
                 'game.rule_6': 'The game integrates with the spaced repetition algorithm to optimize your learning schedule based on your performance.',
 
                 // Actions
@@ -292,10 +292,10 @@ class I18n {
                 'game.wrong_answer_fallback_2': 'Неправильный ответ 2',
                 'game.rules_title': 'Правила игры Космический корабль',
                 'game.rule_1': 'Управляйте космическим кораблём кнопками вверх/вниз и стреляйте кнопкой ракеты.',
-                'game.rule_2': 'Когда вы стреляете в правильный ответ, вы получаете звезду и карточка отмечается как Хорошая сложность в системе интервальных повторений.',
-                'game.rule_3': 'Когда вы стреляете в неправильный ответ, звезда не засчитывается и карточка отмечается как Сложная, что означает более частые повторения.',
-                'game.rule_4': 'Когда вы врезаетесь в правильный ответ своим кораблём, вы получаете звезду и карточка отмечается как Лёгкая сложность в системе интервальных повторений.',
-                'game.rule_5': 'Когда вы врезаетесь в неправильный ответ своим кораблём, звезда не засчитывается и карточка отмечается как Повторить, что означает немедленный повтор.',
+                'game.rule_2': 'Когда вы стреляете в правильный ответ, вы его уничтожаете и карточка отмечается как Сложная, что означает более частые повторения.',
+                'game.rule_3': 'Когда вы стреляете в неправильный ответ, игра продолжается без штрафа.',
+                'game.rule_4': 'Когда вы врезаетесь в правильный ответ своим кораблём, вы получаете звезду и карточка отмечается как Хорошая сложность в системе интервальных повторений.',
+                'game.rule_5': 'Когда вы врезаетесь в неправильный ответ своим кораблём, звезда не засчитывается и карточка отмечается как Сложная, что означает более частые повторения.',
                 'game.rule_6': 'Игра интегрирована с алгоритмом интервальных повторений для оптимизации расписания обучения на основе вашей производительности.',
 
                 // Actions

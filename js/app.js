@@ -94,10 +94,10 @@ class FlashcardApp {
                 console.log('Enter key pressed, button text:', document.getElementById('check-answer')?.textContent);
                 // Only check if button still says "Check Answer"
                 const checkBtn = document.getElementById('check-answer');
-                if (checkBtn && checkBtn.textContent.trim() === 'Check Answer') {
+                if (checkBtn && checkBtn.textContent.trim() === window.i18n.translate('study.check_answer')) {
                     console.log('Triggering check answer via Enter');
                     this.checkTypedAnswer();
-                } else if (checkBtn && checkBtn.textContent.trim() === 'Continue') {
+                } else if (checkBtn && checkBtn.textContent.trim() === window.i18n.translate('actions.continue')) {
                     console.log('Triggering continue via Enter');
                     checkBtn.click();
                 }
@@ -591,7 +591,7 @@ class FlashcardApp {
             
             // Reset check answer button
             const checkBtn = document.getElementById('check-answer');
-            checkBtn.textContent = 'Check Answer';
+            checkBtn.textContent = window.i18n.translate('study.check_answer');
             // Clear all event handlers
             checkBtn.onclick = null;
             checkBtn.onmousedown = null;
@@ -2749,7 +2749,7 @@ class FlashcardApp {
 
         } catch (error) {
             console.error('Error generating Star Race distractors:', error);
-            return ['Wrong Answer 1', 'Wrong Answer 2']; // fallback
+            return [window.i18n.translate('game.wrong_answer_fallback_1'), window.i18n.translate('game.wrong_answer_fallback_2')]; // fallback
         }
     }
 

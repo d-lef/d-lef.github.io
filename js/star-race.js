@@ -218,7 +218,7 @@ class StarRaceGame {
         const correctAnswer = card.back;
 
         // Generate distractors from other card fronts
-        let distractors = ['Wrong Answer 1', 'Wrong Answer 2']; // fallback
+        let distractors = [window.i18n.translate('game.wrong_answer_fallback_1'), window.i18n.translate('game.wrong_answer_fallback_2')]; // fallback
         if (this.getDistractors && typeof this.getDistractors === 'function') {
             try {
                 const realDistractors = this.getDistractors(card.front);
@@ -256,7 +256,7 @@ class StarRaceGame {
         if (this.currentCardIndex >= this.gameCards.length) {
             // No more cards - end game successfully
             console.log('🌟 DEBUG: No more cards available, ending game');
-            this.showResult('🌟 Game Complete!', `You completed the Star Race with ${this.gameState.starsEarned} stars!`, () => {
+            this.showResult(window.i18n.translate('game.game_complete'), window.i18n.translate('game.game_complete_message').replace('{0}', this.gameState.starsEarned), () => {
                 this.completeGame('Good');
             });
             return false;
@@ -424,7 +424,7 @@ class StarRaceGame {
     handleMissileHit(answer) {
         if (answer.isCorrect) {
             // Correct answer destroyed = Hard difficulty
-            this.showResult('💥 Target Destroyed!', 'You destroyed the correct answer. Marking as Hard difficulty.', () => {
+            this.showResult(window.i18n.translate('game.target_destroyed'), window.i18n.translate('game.target_destroyed_message'), () => {
                 this.completeGame('Hard');
             });
         } else {
@@ -446,7 +446,7 @@ class StarRaceGame {
 
         if (this.gameState.starsEarned >= 5) {
             console.log(`🌟 DEBUG: Victory condition met! starsEarned: ${this.gameState.starsEarned} >= 5`);
-            this.showResult('🌟 Victory!', `You collected ${this.gameState.starsEarned} stars! Excellent work!`, () => {
+            this.showResult(window.i18n.translate('game.victory'), window.i18n.translate('game.victory_message').replace('{0}', this.gameState.starsEarned), () => {
                 this.completeGame('Good');
             });
         } else {
@@ -460,7 +460,7 @@ class StarRaceGame {
         // Mark current card as "Hard" in spaced repetition system
         this.markCurrentCard('Hard');
 
-        this.showResult('❌ Wrong Answer', `The correct answer was: "${this.gameState.currentCard.back}"`, () => {
+        this.showResult(window.i18n.translate('game.wrong_answer'), window.i18n.translate('game.wrong_answer_message').replace('{0}', this.gameState.currentCard.back), () => {
             this.completeGame('Hard');
         });
     }
